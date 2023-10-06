@@ -1,6 +1,7 @@
 export * from './private-layout'
 export * from './guest-layout'
 export * from './private/channel'
+export * from './private/channelsList'
 
 export { default as LayoutController } from './layout-controller'
 export { default as Sidepanel } from './private/sidepanel'
