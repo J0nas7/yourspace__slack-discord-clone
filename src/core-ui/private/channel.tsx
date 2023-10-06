@@ -3,19 +3,18 @@ import React from 'react'
 
 // Internal
 import { Block, Text } from '@/components'
-import styles from '../Private.module.scss'
 
 export const Channel = ({children} : any) => {
   return (
-    <Block className={styles.channelWrapper}>
-        <Block className={styles.channelHeader}>
-            <Block className={styles.leftside}>
-                <Block className={styles.hashtag} variant="span">#</Block>
-                <Block className={styles.channelName} variant="span">reactFTW</Block>
+    <Block className="channel-wrapper">
+        <Block className="channel-header">
+            <Block className="left-side">
+                <Text className="hashtag" variant="span">#</Text>
+                <Text className="channel-name" variant="span">reactFTW</Text>
             </Block>
-            <Block className={styles.rightside}>Live: Real-time updates</Block>
+            <Block className="right-side">Live: Real-time updates</Block>
         </Block>
-        <Block className={styles.channelContent}>
+        <Block className="channel-content">
             {children}
         </Block>
     </Block>

@@ -1,9 +1,9 @@
-.guest_wrapper {
+.guest-wrapper {
     width: 100%;
     height: 100vh;
     position: relative;
 
-    .contents {
+    .guest-contents {
         height: 100vh;
         //background: #f0f0f0;
         background-image: url("../Assets/Images/brickBackground.png");
@@ -47,13 +47,13 @@
                 margin: 15px 0;
             }
 
-            .teaserTxt {
+            .teaser-text {
                 color: rgba(0, 0, 0, .87);
                 font-size: .8125rem;
                 font-weight: 300;
             }
 
-            .guestForm {
+            .guest-form {
                 margin: 50px 0 30px;
                 
                 input, textarea, select {
@@ -77,13 +77,13 @@
                     cursor: pointer;
                 }
 
-                .error_notice {
+                .error-notice {
                     color: #ff0000;
                     font-size: .8125rem;
                 }
             }
 
-            .guestLink {
+            .guest-link {
                 color: rgba(0, 0, 0, .87);
                 font-size: .8125rem;
                 display: block;
@@ -98,7 +98,7 @@
         }
     }
 
-    .teaserCard {
+    .teaser-card {
         display: none;
         position: absolute;
         width: 50%;
@@ -114,7 +114,7 @@
             justify-content: center;
         }
 
-        #teaserImg {
+        #teaser-img {
             width: 95%;
             height: auto;
         }

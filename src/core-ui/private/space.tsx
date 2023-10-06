@@ -5,7 +5,6 @@ import { faEllipsis, faPlus, faGear } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text, Field } from '@/components'
-import styles from '../Private.module.scss'
 import { ChannelList } from "../"
 
 export default function Space() {
@@ -13,17 +12,17 @@ export default function Space() {
   const tempChannelsList:any = ["reactFTW", "Laravel for Leif", "CSS = Can't See Sharp"]
 
   return (
-    <Block className={styles.spaceWrapper}>
-        <Block className={styles.spaceHeader}>
-          <Block className={styles.leftside}>
-            <Text className={styles.spaceTitle}>Developers</Text>
+    <Block className="space-wrapper">
+        <Block className="space-header">
+          <Block className="leftside">
+            <Text className="space-title">Developers</Text>
           </Block>
-          <Block className={styles.rightside}>
+          <Block className="rightside">
             <FontAwesomeIcon icon={faEllipsis} />
           </Block>
         </Block>
-        <Block className={styles.spaceContent}>
-          <Block className={styles.spaceSearch}>
+        <Block className="space-content">
+          <Block className="space-search">
             <Field
                 type="text"
                 lbl="" 
@@ -31,17 +30,17 @@ export default function Space() {
                 value={spaceSearch}
                 onChange={(e: string) => setSpaceSearch(e)}
                 disabled={false}
-                className={styles.spaceSearchField}
+                className="space-search-field"
             />
           </Block>
           <ChannelList format="Text">{tempChannelsList}</ChannelList>
           <ChannelList format="Audio">{tempChannelsList}</ChannelList>
           <ChannelList format="Video">{tempChannelsList}</ChannelList>
           
-          <Block className={styles.channelInfo+" "+styles.members}>
-            <Block className={styles.channelInfoTop+" "+styles.members}>
-              <Text variant="span" className={styles.channelInfoName+" "+styles.leftside}>MEMBERS</Text>
-              <Text variant="span" className={styles.channelInfoSettings+" "+styles.rightside}/>
+          <Block className="channel-info members">
+            <Block className="channel-info-top members">
+              <Text variant="span" className="channel-info-name leftside">MEMBERS</Text>
+              <Text variant="span" className="channel-info-settings rightside" />
             </Block>
           </Block>
         </Block>

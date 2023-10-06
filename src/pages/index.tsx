@@ -1,16 +1,37 @@
+// External
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import { useEffect, useState } from 'react'
 
-const inter = Inter({ subsets: ['latin'] })
+// Internal
+import { Block, Text } from '@/components'
 
 export default function Home() {
-  const [counter,setCounter] = useState<number>(1)
-  useEffect(() => {
-    console.log(counter+" fester")
-  }, [counter])
-  
+  const messages = [
+    {
+      userID: 1,
+      userName: "Bjarnil",
+      messageContent: "Lorem ipsum",
+      messageDate: new Date()
+    },
+    {
+      userID: 2,
+      userName: "Eigol",
+      messageContent: "Ipsum lorem",
+      messageDate: new Date()
+    },
+    {
+      userID: 3,
+      userName: "Hanners",
+      messageContent: "Dolor sit amet",
+      messageDate: new Date()
+    }
+  ]
+
   return (
-    <span onClick={() => setCounter(counter+1)} className="block">Festet {counter.toString()} gange</span>
+    <Block>
+      {messages && messages.map((message, i) =>
+        <Block className="channel-message"></Block>
+      )}
+    </Block>
   )
 }

@@ -7,7 +7,6 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from "@/components"
-import styles from './Private.module.scss'
 import { Sidepanel, Space, Channel } from "./"
 
 export const PrivateLayout = ({children} : any) => {
@@ -17,10 +16,10 @@ export const PrivateLayout = ({children} : any) => {
     }
     
     return (
-        <Block className={styles.mainWrapper}>
+        <Block className="main-wrapper">
             <Sidepanel></Sidepanel>
             <Space></Space>
-            <Channel></Channel>
+            <Channel>{children}</Channel>
         </Block>
     )
 }

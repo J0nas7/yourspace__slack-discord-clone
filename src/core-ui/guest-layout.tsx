@@ -1,12 +1,11 @@
-import { Block, Heading } from "@/components"
-import styles from '@/core-ui/Guest.module.scss'
+import { Block } from "@/components"
 
-export const GuestLayout = ({children} : any) => {
+export const GuestLayout = ({ children }: any) => {
   return (
-    <Block className={styles.guest_wrapper}>
-        <Block className={styles.contents}>
-            {children}
-        </Block>
+    <Block className="guest-wrapper">
+      <Block className="guest-contents">
+        {children}
+      </Block>
     </Block>
   )
 }

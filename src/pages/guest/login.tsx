@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 
 // Internal
 import { Block, Text, Heading, Field } from "@/components"
-import styles from '@/core-ui/Guest.module.scss'
 import { useAuth } from "@/hooks"
 import { selectIsLoggedIn, useTypedSelector } from "@/redux"
 

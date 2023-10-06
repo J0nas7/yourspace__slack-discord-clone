@@ -4,6 +4,8 @@ import { Provider } from "react-redux"
 
 // Internal
 import '@/styles/globals.css'
+import '@/core-ui/Guest.scss';
+import '@/core-ui/Private.scss';
 import appStore from '@/redux/store'
 import { LayoutController } from '@/core-ui/'
 

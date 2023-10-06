@@ -5,20 +5,19 @@ import Image from 'next/image'
 
 // Internal
 import { Block, Text } from '@/components'
-import styles from '../Private.module.scss'
 import pp_logo from '@/Assets/Images/headerLogo.png'
 
 export default function Sidepanel() {
   return (
-    <Block className={styles.sidepanelWrapper}>
-        <Block className={styles.sidepanelHeader}>
+    <Block className="sidepanel-wrapper">
+        <Block className="sidepanel-header">
             <Link href="/">
                 <Image
-                    id={styles.Logo}
+                    id="logo"
                     src={pp_logo}
                     alt="Spaces logo"
                 />
-                <Text theId={styles.Logotxt} variant="span">Spaces</Text>
+                <Text theId="logo-text" variant="span">Spaces</Text>
             </Link>
         </Block>
     </Block>

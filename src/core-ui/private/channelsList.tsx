@@ -5,7 +5,6 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from '@/components'
-import styles from '../Private.module.scss'
 
 type Props = {
     format: string
@@ -18,14 +17,14 @@ export const ChannelList = ({
     const channelsList = children
 
     return (
-        <Block className={styles.channelFormat}>
-            <Block className={styles.channelFormatTop}>
-                <Text variant="span" className={styles.channelFormatName + " " + styles.leftside}>{format} channels</Text>
-                <FontAwesomeIcon icon={faPlus} className={styles.channelNewChannel + " " + styles.rightside} />
+        <Block className="channel-format">
+            <Block className="channel-format-top">
+                <Text variant="span" className="channel-format-name leftside">{format} channels</Text>
+                <FontAwesomeIcon icon={faPlus} className="channel-new-channel rightside" />
             </Block>
-            <Block className={styles.channelFormatList}>
+            <Block className="channel-format-list">
                 {channelsList && channelsList.map((channelName:string, i:string) =>
-                    <Block variant="span" className={styles.channelFormatListItem} key={i}>{channelName}</Block>
+                    <Block variant="span" className="channel-format-list-item" key={i}>{channelName}</Block>
                 )}
             </Block>
         </Block>
