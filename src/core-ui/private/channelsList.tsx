@@ -19,8 +19,8 @@ export const ChannelList = ({
     return (
         <Block className="channel-format">
             <Block className="channel-format-top">
-                <Text variant="span" className="channel-format-name leftside">{format} channels</Text>
-                <FontAwesomeIcon icon={faPlus} className="channel-new-channel rightside" />
+                <Text variant="span" className="channel-format-name left-side">{format} channels</Text>
+                <FontAwesomeIcon icon={faPlus} className="channel-new-channel right-side" />
             </Block>
             <Block className="channel-format-list">
                 {channelsList && channelsList.map((channelName:string, i:string) =>

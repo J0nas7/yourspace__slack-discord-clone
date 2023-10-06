@@ -16,7 +16,7 @@ export const PrivateLayout = ({children} : any) => {
     }
     
     return (
-        <Block className="main-wrapper">
+        <Block className="private-wrapper">
             <Sidepanel></Sidepanel>
             <Space></Space>
             <Channel>{children}</Channel>

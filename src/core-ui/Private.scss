@@ -4,7 +4,7 @@
     font-size: 1.5rem;
 }
 
-.mainWrapper {
+.page-wrapper {
     width: 100%;
     height: auto;
     --spaceBg: #edeff1;
@@ -18,13 +18,13 @@
         font-size: 1.2rem;
     }
 
-    .sidepanelWrapper {
+    .sidepanel-wrapper {
         width: 60px;
         height: 100vh;
         float: left;
         background-color: #dadce1;
 
-        .sidepanelHeader {
+        .sidepanel-header {
             width: 100%;
             height: auto;
             
@@ -46,21 +46,21 @@
         }
     }
 
-    .leftside {
+    .left-side {
         order: 1;
     }
-    .rightside {
+    .right-side {
         margin-left: auto;
         order: 2;
     }
 
-    .spaceWrapper {
+    .space-wrapper {
         width: calc(25% - 60px);
         height: 100vh;
         float: left;
         background-color: var(--spaceBg);
         
-        .spaceHeader {
+        .space-header {
             width: 100%;
             height: var(--headerH);
             padding: 0 10px;
@@ -69,23 +69,23 @@
             background-color: var(--spaceBg);
             border-bottom: 2px #dbdddf solid;
 
-            .spaceTitle {
+            .space-title {
                 font-weight: 700;
             }
         }
 
-        .spaceContent {
+        .space-content {
             width: 100%;
             padding: 10px;
             height: calc(100vh - var(--headerH));
 
-            .spaceSearch {
+            .space-search {
                 width: calc(100% - 20px);
                 margin: 10px;
                 padding-bottom: 20px;
                 border-bottom: 2px #dbdddf solid;
 
-                .spaceSearchField {
+                .space-search-field {
                     width: 100%;
                     height: 24px;
                     font-size: 1.1rem;
@@ -98,18 +98,18 @@
                 }
             }
 
-            .channelFormat, .channelInfo {
+            .channel-format, .channel-info {
                 width: calc(100% - 20px);
                 margin: 10px;
 
-                .channelFormatTop, .channelInfoTop {
+                .channel-format-top, .channel-info-top {
                     display: flex;
                     font-weight: 700;
                     color: #585858;
                     text-transform: uppercase;
 
-                    .leftside { font-size: .8rem; }
-                    &.members .channelInfoSettings {
+                    .left-side { font-size: .8rem; }
+                    &.members .channel-info-settings {
                         display: block;
                         width: 15px;
                         height: 15px;
@@ -121,7 +121,7 @@
                 }
             }
 
-            .channelFormatListItem {
+            .channel-format-list-item {
                 display: flex;
                 align-items: center;
                 width: 100%;
@@ -146,13 +146,13 @@
         }
     }
 
-    .channelWrapper {
+    .channel-wrapper {
         width: 75%;
         height: 100vh;
         background-color: var(--channelBg);
         float: right;
         
-        .channelHeader {
+        .channel-header {
             width: 100%;
             height: var(--headerH);
             display: flex;
@@ -162,7 +162,7 @@
             border-bottom: 2px #dedede solid;
             position: relative;
 
-            .leftside {
+            .left-side {
                 display: flex;
                 align-items: center;
 
@@ -170,12 +170,12 @@
                     @include hashtag;
                     margin-right: 10px;
                 }
-                .channelName {
+                .channel-name {
                     font-weight: bold;
                     font-size: .9rem;
                 }
             }
-            .rightside {
+            .right-side {
                 background-color: rgb(105, 186, 105);
                 color: white;
                 padding: 5px;
@@ -183,54 +183,10 @@
             }
         }
 
-        .channelContent {
+        .channel-content {
             width: 100%;
             padding: 10px;
             height: calc(100vh - var(--headerH));
-        }
-    }
-
-
-    .mainContents {
-        width: calc(100% - 20px);
-        height: auto;
-        margin: 10px;
-        padding: 10px;
-        //background: #fff;
-        
-        @media (min-width: 992px) {
-            width: 990px;
-            margin: 0 auto;
-            margin-top: 10px;
-        }
-
-        &:has(.homePage) {
-            background: white;
-        }
-
-        .contentWrapper {
-            width: 100%;
-            margin-top: 10px;
-            display: inline-block;
-
-            .card-wrapper {
-                width: 100%;
-                height: auto;
-                padding: 10px;
-                
-                background-color: #fff;
-                border-color: #000;
-                border-style: solid;
-                border-width: 1px;
-                padding-bottom: 20px;
-                margin-bottom: 20px;
-                //border-bottom: 1px #999 solid;
-                //border-bottom: 10px #d8dfea solid;
-
-                /*&:last-child {
-                    border-bottom: 0;
-                }*/
-            }
         }
     }
 }

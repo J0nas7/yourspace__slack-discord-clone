@@ -40,13 +40,13 @@ export default function Login() {
     }, [])
 
     return (
-        <Block className={styles.login}>
+        <Block className="login">
             <Heading title="Sign in to your account" />
-            <Text className={styles.teaserTxt}>Your space to hangout and communicate</Text>
+            <Text className="teaser-text">Your space to hangout and communicate</Text>
 
-            <Block className={styles.guestForm}>
+            <Block className="guest-form">
                 {errorMsg && status === 'resolved' && (
-                    <Text className={styles.error_notice} variant="p">{errorMsg}</Text>
+                    <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
 
                 <form onSubmit={doLogin}>
@@ -70,11 +70,11 @@ export default function Login() {
                     
                     <Text variant="p">
                         <button
-                            className={'login-btn button ' + (loginPending ? styles.pending : '')}
+                            className={'login-btn button ' + (loginPending ? "pending" : "")}
                             onClick={doLogin}
                             disabled={status === 'resolving'}
                         >
-                            <Text variant="span" className="btnTxt">Log on</Text>
+                            <Text variant="span" className="button button-text">Log on</Text>
                         </button>
                     </Text>
                 </form>

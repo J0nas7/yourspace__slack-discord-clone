@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <Block>
       {messages && messages.map((message, i) =>
-        <Block className="channel-message"></Block>
+        <Block className="channel-message">hej</Block>
       )}
     </Block>
   )

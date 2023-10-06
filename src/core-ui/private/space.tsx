@@ -14,10 +14,10 @@ export default function Space() {
   return (
     <Block className="space-wrapper">
         <Block className="space-header">
-          <Block className="leftside">
+          <Block className="left-side">
             <Text className="space-title">Developers</Text>
           </Block>
-          <Block className="rightside">
+          <Block className="right-side">
             <FontAwesomeIcon icon={faEllipsis} />
           </Block>
         </Block>
@@ -39,8 +39,8 @@ export default function Space() {
           
           <Block className="channel-info members">
             <Block className="channel-info-top members">
-              <Text variant="span" className="channel-info-name leftside">MEMBERS</Text>
-              <Text variant="span" className="channel-info-settings rightside" />
+              <Text variant="span" className="channel-info-name left-side">MEMBERS</Text>
+              <Text variant="span" className="channel-info-settings right-side" />
             </Block>
           </Block>
         </Block>
