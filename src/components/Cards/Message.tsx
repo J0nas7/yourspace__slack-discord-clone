@@ -1,5 +1,7 @@
 // External
 import { useRouter } from 'next/navigation'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 //import { useAxios } from '@/hooks'
@@ -32,18 +34,33 @@ const Message = ({
         }
     }
 
+    const deleteMessage = () => {
+        if (Message.messageID) {
+            router.push("/channel/1/deleteMessage/"+Message.messageID)
+            /*navigate('/order', {
+                orderID: Order.Order_ID,
+            })*/
+        }
+    }
+
     if (variant == "in-channel") {
         return (
-            <Block className={styles["message-item"]} onClick={() => editMessage()}>
+            <Block className={styles["message-item"]}>
                 <img className={styles["profile-picture"]} width="100px" src={profilePicFolder + Message.userName} />
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
-                        <Text variant="span" className={styles["message-username"]}>{Message.userName}</Text>
-                        <Text variant="span" className={styles["message-datestamp"]}>{Message.messageDate.getFullYear()}</Text>
+                        <Block className="left-side">
+                            <Text variant="span" className={styles["message-username"]}>{Message.userName}</Text>
+                            <Text variant="span" className={styles["message-datestamp"]}>{Message.messageDate.getFullYear()}</Text>
+                        </Block>
+                        <Block className={"right-side "+styles["message-actions"]}>
+                            <FontAwesomeIcon icon={faPen} className={styles["message-action"]} onClick={() => editMessage()} />
+                            <FontAwesomeIcon icon={faTrash} className={styles["message-action"]} onClick={() => deleteMessage()} />
+                        </Block>
                     </Block>
                     <Block className={styles["message-content"]}>
                         {Message.messageContent}
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultrices eros. vel ultrices eros.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultres eros. vel ultrices eros.
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultrices eros. vel ultrices eros.
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultrices eros. vel ultrices eros.
                     </Block>

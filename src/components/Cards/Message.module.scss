@@ -34,6 +34,16 @@
         .message-top {
             display: flex;
             align-items: center;
+
+            .message-actions {
+                display: none;
+
+                .message-action {
+                    margin-left: 10px;
+                    color: #424242;
+                    cursor: pointer;
+                }
+            }
         }
 
         .message-username {
@@ -51,6 +61,12 @@
 
     .message-content {
         display: inline-block;
+    }
+
+    &:hover {
+        .message-details .message-top .message-actions {
+            display: block;
+        }
     }
 }
 
