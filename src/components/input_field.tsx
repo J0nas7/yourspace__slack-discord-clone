@@ -47,7 +47,7 @@ export const Field = ({
 	}
 
 	return (
-		<Block className={'field' + (error ? ' field--error' : '') }>
+		<Block className={'field' + (error ? ' field--error' : '') } theId={className}>
             { (lbl || displayLabel === true) && (
                 <label htmlFor={ `field-${ lbl }` }>
                     { lbl }

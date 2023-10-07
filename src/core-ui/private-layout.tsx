@@ -2,8 +2,6 @@
 import Link from "next/link"
 import Image from 'next/image'
 import { useState } from "react"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from "@/components"

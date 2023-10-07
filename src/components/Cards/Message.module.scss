@@ -1,0 +1,108 @@
+.channel-messages {
+    width: 100%;
+    height: calc(100vh - var(--headerH) - 100px);
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.message-item {
+    width: 100%;
+    height: auto;
+    background: none;
+    float: left;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+
+    &:nth-child(2) {
+        background-color: #f0f0f0;
+    }
+
+    .profile-picture {
+        float: left;
+        width: 40px;
+        height: 40px;
+        background: black;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    
+    .message-details {
+        float: left;
+        width: calc(100% - 50px);
+
+        .message-top {
+            display: flex;
+            align-items: center;
+        }
+
+        .message-username {
+            float: left;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .message-datestamp {
+            float: left;
+            font-size: .9rem;
+            color: #5c5c5c;
+        }
+    }
+
+    .message-content {
+        display: inline-block;
+    }
+}
+
+.channel-new-message {
+    width: 100%;
+    height: 80px;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+
+    .new-message-tools {
+        width: 90%;
+        height: 60px;
+        margin: 0 5%;
+        padding: 0 15px;
+        border-radius: 8px;
+        background-color: #c3c5c7;
+        display: flex;
+        align-items: center;
+
+        .message-add-media {
+            order: 1;
+            width: 30px;
+            height: 30px;
+            color: white;
+            background-color: #585858;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #new-message-field {
+            order: 2;
+            width: calc(100% - 105px);
+            padding: 8px;
+
+            .new-message-field, ::placeholder {
+                width: 100%;
+                color: #424242;
+                background: none;
+                opacity: 1; // Firefox
+            }
+        }
+        .message-emoticons {
+            color: #585858;
+            width: 30px;
+            height: 30px;
+            margin-left: auto;
+            order: 3;
+        }
+    }
+}
