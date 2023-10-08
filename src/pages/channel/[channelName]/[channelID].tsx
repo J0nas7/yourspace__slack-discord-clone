@@ -64,8 +64,8 @@ export default function Home(props:any) {
           <Field
             type="text"
             lbl=""
-            placeholder={"Message #"+channelName}
             value={newMessage}
+            placeholder={"Message #"+channelName}
             onChange={(e: string) => setNewMessage(e)}
             disabled={false}
             className={styles["new-message-field"]}

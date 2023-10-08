@@ -13,11 +13,12 @@
  * @param {Object} props.props Remaining props.
  */
 
-//import { IconButton, InputAdornment, TextField } from "@mui/material"
+import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { Block, Text } from "./block_text"
+import TextareaAutosize from 'react-textarea-autosize'
 
 export const Field = ({
-    type, lbl, displayLabel, placeholder, description, value, grow, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
+    type, lbl, displayLabel, innerLabel, hiddenMUILabel, placeholder, description, value, grow, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
 } : {
     type: string,
     lbl: string, 
@@ -28,7 +29,9 @@ export const Field = ({
     endContent?: string, 
     disabled: boolean, 
     error?: string,
-    displayLabel?: boolean, 
+    displayLabel?: boolean,
+    innerLabel?: boolean, 
+    hiddenMUILabel?: boolean
     placeholder?: string, 
     description?: string, 
     grow?: boolean, 
@@ -39,6 +42,7 @@ export const Field = ({
 	const inputProps = {
         type,
 		value,
+        label: `${(innerLabel ? lbl : '')}`,
         id: `field-${ lbl }`,
 		placeholder,
         disabled,
@@ -48,25 +52,39 @@ export const Field = ({
 
 	return (
 		<Block className={'field' + (error ? ' field--error' : '') } theId={className}>
-            { (lbl || displayLabel === true) && (
+            { ((lbl || displayLabel === true) && innerLabel === false) && (
                 <label htmlFor={ `field-${ lbl }` }>
                     { lbl }
                 </label>
             ) }
 			<Block className="field-input">
 				{ grow === true ? (
-                    <Text variant="span">hej</Text>
-					/*<TextareaAutosize
-						{ ...inputProps }
-						minRows={ 1 }
-						onChange={ ( event ) => onChange( event.target.value ) }
-					/>*/
+                    <TextareaAutosize
+                        { ...inputProps }
+                        minRows={1}
+                        maxRows={10}
+                        onChange={(event) => onChange(event.target.value)}
+                    />
 				) : (
                     <Text variant="span" className="input-field-wrap">
-                        <input  
-                            { ...inputProps }
-                            onChange={(event) => onChange(event.target.value)}
-                            //onKeyDown={(event) => onChange(event)}
+                        <TextField 
+                            { ...inputProps } 
+                            onChange={(event:any) => onChange(event.target.value)} 
+                            onKeyDown={onKeyDown ?
+                                (event) => onKeyDown!(event) : 
+                                undefined}
+                            InputProps={endButton ? 
+                                {endAdornment: (
+                                    <InputAdornment position="end">
+                                    <IconButton
+                                        edge="end"
+                                        onClick={() => endButton()}
+                                    >
+                                    {endContent}
+                                    </IconButton>
+                                    </InputAdornment>
+                                )}
+                                : undefined}
                         />
                     </Text>
 				) }

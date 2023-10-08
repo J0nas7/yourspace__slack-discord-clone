@@ -1,5 +1,7 @@
 // External
 import { useEffect, useState } from "react"
+import { Button } from "@mui/material"
+import Link from "next/link"
 
 // Internal
 import { Block, Text, Heading, Field } from "@/components"
@@ -11,19 +13,24 @@ export default function Login() {
 
     const [userEmail, setUserEmail] = useState('')
     const [userPassword, setUserPassword] = useState('')
+    const [showPassword,setShowPassword] = useState<boolean>(false)
 
     const [loginPending, setLoginPending] = useState(false)
 
-    const doLogin = (e : any = '') => {
+    const doLogin = (e: any = '') => {
         if (typeof e.preventDefault === 'function') e.preventDefault()
-        
+
         if (!loginPending) {
             setLoginPending(true)
             const loginDetails = { userEmail, userPassword }
-            
+
             login(userEmail, userPassword)
             setLoginPending(false)
         }
+    }
+
+    const ifEnter = (e: any) => {
+        if (e.key === 'Enter') doLogin()
     }
 
     const isLoggedIn = useTypedSelector(selectIsLoggedIn)
@@ -52,33 +59,45 @@ export default function Login() {
                 <form onSubmit={doLogin}>
                     <Field
                         type="text"
-                        lbl="E-mail:"
+                        lbl="E-mail"
+                        innerLabel={true}
                         value={userEmail}
                         onChange={(e: string) => setUserEmail(e)}
+                        onKeyDown={(e: any) => { ifEnter(e) }}
                         disabled={status === 'resolving'}
-                        autoComplete="email"
+                        autoComplete="username"
                         className="login-field"
                     />
                     <Field
-                        type="password"
-                        lbl="Password:"
+                        type={showPassword ? 'text' : 'password'}
+                        lbl="Kodeord"
+                        innerLabel={true}
                         value={userPassword}
                         onChange={(e: string) => setUserPassword(e)}
+                        onKeyDown={(e: any) => {ifEnter(e)}}
+                        endButton={() => {setShowPassword(!showPassword)}}
+                        endContent={!showPassword ? 'Vis' : 'Skjul'}
                         disabled={status === 'resolving'}
+                        autoComplete="password"
                         className="login-field"
                     />
-                    
                     <Text variant="p">
-                        <button
+                        <Button
                             className={'login-btn button ' + (loginPending ? "pending" : "")}
                             onClick={doLogin}
                             disabled={status === 'resolving'}
                         >
                             <Text variant="span" className="button button-text">Log on</Text>
-                        </button>
+                        </Button>
                     </Text>
                 </form>
             </Block>
+            <Text variant="span" className="guest-link">
+                <Link href="#" className="underline">
+                    Glemt adgangskode, eller problemer med at logge på?
+                </Link>
+            </Text>
+            <Block className="clear-both" />
         </Block>
     )
 }

@@ -55,15 +55,20 @@
 
             .guest-form {
                 margin: 50px 0 30px;
-                
-                input, textarea, select {
+
+                .input-field-wrap, .login-field {
                     width: 100%;
-                    padding: 6px 10px;
                     margin: 10px 0;
-                    border: 1px solid #ddd;
-                    box-sizing: border-box;
-                    display: block;
+
+                    input, textarea, select {
+                        width: 100%;
+                        padding: 6px 10px;
+                        margin: 10px 0;
+                        //border: 1px solid #ddd;
+                        display: block;
+                    }
                 }
+                
                 
                 button {
                     width: 100%;

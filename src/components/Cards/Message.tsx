@@ -6,7 +6,7 @@ import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 //import { useAxios } from '@/hooks'
-import { Block, Text, Modal } from '@/components'
+import { Block, Text, Modal, Field } from '@/components'
 import { MessageDTO } from '@/types/MessageDTO'
 import styles from './Message.module.scss'
 
@@ -23,6 +23,7 @@ const Message = ({
 }: Props) => {
     const router = useRouter()
     const theMessage: MessageDTO = message
+    const [editMsg, setEditMsg] = useState<string>(theMessage.messageContent)
     const [editModal, setEditModal] = useState<boolean>(false)
     const profilePicFolder = ""//apiUrl+"item_images/"
     //const { httpPostWithData } = useAxios()
@@ -73,7 +74,15 @@ const Message = ({
                     closeModal={() => setEditModal(false)}
                     className={styles["edit-message-dialog"] + " m" + theMessage.messageID}
                 >
-                    Lorem
+                    <Field
+                        type="text"
+                        lbl="Edit the message:"
+                        value={editMsg}
+                        onChange={(e: string) => setEditMsg(e)}
+                        disabled={false}
+                        grow={true}
+                        className="message-field"
+                    />
                 </Modal>
             </Block>
         )

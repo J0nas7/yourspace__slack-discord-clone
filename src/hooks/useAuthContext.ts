@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 export const useAuthContext = () => {
     let logonCreds : any = null
-    console.log("hest")
+    
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
         if (typeof window !== "undefined") {

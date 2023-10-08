@@ -95,6 +95,14 @@
                     background-repeat: no-repeat;
                     background-size: 24px;
                     outline: none;
+                    display: block !important;
+
+                    div { border: 0; }
+                    fieldset { display: none; }
+                    input[placeholder="Search"] {
+                        padding: 0;
+                        border: 0;
+                    }
                 }
             }
 

@@ -104,10 +104,14 @@
         display: flex;
         align-items: center;
 
-        .message-add-media {
-            order: 1;
+        .message-add-media, .message-emoticons {
             width: 30px;
             height: 30px;
+            cursor: pointer;
+        }
+
+        .message-add-media {
+            order: 1;
             color: white;
             background-color: #585858;
             border-radius: 50%;
@@ -127,11 +131,11 @@
                 background: none;
                 opacity: 1; // Firefox
             }
+
+            fieldset { display: none; }
         }
         .message-emoticons {
             color: #585858;
-            width: 30px;
-            height: 30px;
             margin-left: auto;
             order: 3;
         }
