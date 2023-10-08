@@ -12,8 +12,7 @@ export default function LayoutController({
 }) {
   const { isLoggedIn, isLoading } = useAuthContext()
   const auth = isLoggedIn // determine if authorized, from localStorage
-
-  console.log("layout controller")
+  
   if (isLoading) return <span>Loading...</span>
   // If authorized, show the PrivateLayout
   // If not authorized, show the GuestLayout

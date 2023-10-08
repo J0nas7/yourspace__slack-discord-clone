@@ -115,7 +115,7 @@ export const useAuth = () => {
         //requestCSRF().then(async csrfResp => {
             // Send login variables to the API for authentication
             try {
-                const data = await httpPostWithData("?Category=Profiles&Action=Login", loginVariables)
+                const data = await httpPostWithData("userLogin", loginVariables)
                 return processLoginResult(data)
             } catch (e) {
                 console.log("useAuth login error", e)

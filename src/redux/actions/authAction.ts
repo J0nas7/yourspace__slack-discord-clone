@@ -10,9 +10,10 @@ export const useAuthActions = () => {
     
     const fetchIsLoggedInStatus = (__reducer: Function) => async (dispatch: Dispatch) => {
         try {
-            const data = await httpGetRequest("?Category=Profiles&Action=CheckLoggedIn")
-            if (data.Result === "IS logged in") {
-                setAuthContext(data.ProfileID)
+            const data = await httpGetRequest("userLoggedInTest")
+            console.log("data", data)
+            if (data.message === "Is logged in") {
+                setAuthContext(data.data)
                 dispatch(__reducer(data))
             }
         } catch (e) {

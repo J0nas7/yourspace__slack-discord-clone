@@ -18,7 +18,7 @@ export const useAuthContext = () => {
                 }
             }
         }
-        return true// false in production!
+        return false
     })
 
     const setAuthContext = (context:string) => {

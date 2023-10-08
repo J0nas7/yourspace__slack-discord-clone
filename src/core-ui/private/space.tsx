@@ -27,6 +27,7 @@ export default function Space() {
                 type="text"
                 lbl="" 
                 placeholder="Search"
+                hiddenMUILabel={true}
                 value={spaceSearch}
                 onChange={(e: string) => setSpaceSearch(e)}
                 disabled={false}

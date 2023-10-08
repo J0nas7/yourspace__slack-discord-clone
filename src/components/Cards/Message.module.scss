@@ -77,11 +77,6 @@
         border-radius: 2px;
         padding: 10px;
     }
-
-    &::backdrop {
-        background-color: black;
-        opacity: .6;
-    }
 }
 
 .channel-new-message {

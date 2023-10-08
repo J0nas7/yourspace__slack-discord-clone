@@ -29,7 +29,7 @@ export const useAxios = () => {
 
     const httpPostWithData = async (apiEndPoint : string, postContent : any = '') => {
         try {
-            const { data: response } = await axios.post(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`, 
+            const { data: response } = await axios.post(`${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`, 
                                                 {
                                                     postContent: JSON.stringify(postContent),
                                                 },
@@ -48,7 +48,7 @@ export const useAxios = () => {
 
     const httpGetRequest = async (apiEndPoint : string) => {
         try {
-            const { data: response } = await axios.get(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`)
+            const { data: response } = await axios.get(`${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`)
             return response
         } catch (e:any) {
             if (e.response && e.response.statusText === "Unauthorized") {

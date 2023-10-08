@@ -17,7 +17,7 @@ export default function Login() {
 
     const [loginPending, setLoginPending] = useState(false)
 
-    const doLogin = (e: any = '') => {
+    const doForgot = (e: any = '') => {
         if (typeof e.preventDefault === 'function') e.preventDefault()
 
         if (!loginPending) {
@@ -30,7 +30,7 @@ export default function Login() {
     }
 
     const ifEnter = (e: any) => {
-        if (e.key === 'Enter') doLogin()
+        if (e.key === 'Enter') doForgot()
     }
 
     const isLoggedIn = useTypedSelector(selectIsLoggedIn)
@@ -48,15 +48,15 @@ export default function Login() {
 
     return (
         <Block className="login">
-            <Heading title="Sign in to your account" />
-            <Text className="teaser-text">Your space to hangout and communicate</Text>
+            <Heading title="Recover your password" />
+            <Text className="teaser-text">Recover the account to your space</Text>
 
             <Block className="guest-form">
                 {errorMsg && status === 'resolved' && (
                     <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
 
-                <form onSubmit={doLogin}>
+                <form onSubmit={doForgot}>
                     <Field
                         type="text"
                         lbl="E-mail"
@@ -68,23 +68,10 @@ export default function Login() {
                         autoComplete="username"
                         className="login-field"
                     />
-                    <Field
-                        type={showPassword ? 'text' : 'password'}
-                        lbl="Password"
-                        innerLabel={true}
-                        value={userPassword}
-                        onChange={(e: string) => setUserPassword(e)}
-                        onKeyDown={(e: any) => {ifEnter(e)}}
-                        endButton={() => {setShowPassword(!showPassword)}}
-                        endContent={!showPassword ? 'Show' : 'Hide'}
-                        disabled={status === 'resolving'}
-                        autoComplete="password"
-                        className="login-field"
-                    />
                     <Text variant="p">
                         <Button
                             className={'login-btn button ' + (loginPending ? "pending" : "")}
-                            onClick={doLogin}
+                            onClick={doForgot}
                             disabled={status === 'resolving'}
                         >
                             <Text variant="span" className="button button-text">Log on</Text>
@@ -94,8 +81,7 @@ export default function Login() {
                 <Block className="clear-both"></Block>
             </Block>
             <Text variant="span" className="guest-link">
-                <Link href="/guest/create" className="link-item">Need an account?</Link>
-                <Link href="/guest/forgot" className="link-item">Forgot your password</Link>
+                <Link href="/guest/login" className="link-item">Remembered your password?</Link>
             </Text>
             <Block className="clear-both" />
         </Block>

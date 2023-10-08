@@ -33,7 +33,7 @@ export const Modal = ({
         >
             <Block className="dialog-inner">
                 <Block className="dialog-top">
-                    <Heading title="Edit the message" variant="h2" className="dialog-title" />
+                    <Heading title={title} variant="h2" className="dialog-title" />
                     <Button className="button dialog-close-button" onClick={closeModal} disabled={false}>
                         <Text variant="span" className="button button-text">X</Text>
                     </Button>

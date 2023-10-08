@@ -26,26 +26,16 @@ const Message = ({
     const theMessage: MessageDTO = message
     const [editMsg, setEditMsg] = useState<string>(theMessage.messageContent)
     const [editModal, setEditModal] = useState<boolean>(false)
+    const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const profilePicFolder = ""//apiUrl+"item_images/"
     //const { httpPostWithData } = useAxios()
 
     const editMessage = () => {
         setEditModal(true)
-        /*if (theMessage.messageID) {
-            router.push("/channel/1/editMessage/"+theMessage.messageID)
-            /*navigate('/order', {
-                orderID: Order.Order_ID,
-            })*
-        }*/
     }
 
     const deleteMessage = () => {
-        if (theMessage.messageID) {
-            router.push("/channel/1/deleteMessage/" + theMessage.messageID)
-            /*navigate('/order', {
-                orderID: Order.Order_ID,
-            })*/
-        }
+        setDeleteModal(true)
     }
 
     if (variant == "in-channel") {
@@ -88,6 +78,17 @@ const Message = ({
                     />
                     <Button className="button button-green dialog-edit-message-submit" onClick={() => alert('hej')} disabled={false}>
                         <Text variant="span" className="button button-text">Save changes</Text>
+                    </Button>
+                </Modal>
+                <Modal
+                    openModal={deleteModal}
+                    closeModal={() => setDeleteModal(false)}
+                    title="Delete the message"
+                    className={styles["delete-message-dialog"] + " m" + theMessage.messageID}
+                >
+                    Are you sure you want to delete this message?
+                    <Button className="button button-red dialog-edit-message-submit" onClick={() => alert('hej')} disabled={false}>
+                        <Text variant="span" className="button button-text">Yes, delete it</Text>
                     </Button>
                 </Modal>
             </Block>

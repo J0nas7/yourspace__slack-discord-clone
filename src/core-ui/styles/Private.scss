@@ -230,6 +230,11 @@
             display: flex;
         }
 
+        &::backdrop {
+            background-color: black;
+            opacity: .6;
+        }
+
         .dialog-inner {
             position: relative;
             width: 100%;

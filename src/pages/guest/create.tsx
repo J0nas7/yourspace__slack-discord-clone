@@ -12,12 +12,13 @@ export default function Login() {
     const { login, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
 
     const [userEmail, setUserEmail] = useState('')
+    const [userScreenName, setUserScreenName] = useState('')
     const [userPassword, setUserPassword] = useState('')
     const [showPassword,setShowPassword] = useState<boolean>(false)
 
     const [loginPending, setLoginPending] = useState(false)
 
-    const doLogin = (e: any = '') => {
+    const doCreate = (e: any = '') => {
         if (typeof e.preventDefault === 'function') e.preventDefault()
 
         if (!loginPending) {
@@ -30,7 +31,7 @@ export default function Login() {
     }
 
     const ifEnter = (e: any) => {
-        if (e.key === 'Enter') doLogin()
+        if (e.key === 'Enter') doCreate()
     }
 
     const isLoggedIn = useTypedSelector(selectIsLoggedIn)
@@ -47,16 +48,16 @@ export default function Login() {
     }, [])
 
     return (
-        <Block className="login">
-            <Heading title="Sign in to your account" />
-            <Text className="teaser-text">Your space to hangout and communicate</Text>
+        <Block className="create">
+            <Heading title="Create a new account" />
+            <Text className="teaser-text">Join your space to hangout and communicate</Text>
 
             <Block className="guest-form">
                 {errorMsg && status === 'resolved' && (
                     <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
 
-                <form onSubmit={doLogin}>
+                <form onSubmit={doCreate}>
                     <Field
                         type="text"
                         lbl="E-mail"
@@ -65,7 +66,16 @@ export default function Login() {
                         onChange={(e: string) => setUserEmail(e)}
                         onKeyDown={(e: any) => { ifEnter(e) }}
                         disabled={status === 'resolving'}
-                        autoComplete="username"
+                        className="login-field"
+                    />
+                    <Field
+                        type="text"
+                        lbl="Screen name"
+                        innerLabel={true}
+                        value={userScreenName}
+                        onChange={(e: string) => setUserScreenName(e)}
+                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        disabled={status === 'resolving'}
                         className="login-field"
                     />
                     <Field
@@ -84,7 +94,7 @@ export default function Login() {
                     <Text variant="p">
                         <Button
                             className={'login-btn button ' + (loginPending ? "pending" : "")}
-                            onClick={doLogin}
+                            onClick={doCreate}
                             disabled={status === 'resolving'}
                         >
                             <Text variant="span" className="button button-text">Log on</Text>
@@ -94,8 +104,7 @@ export default function Login() {
                 <Block className="clear-both"></Block>
             </Block>
             <Text variant="span" className="guest-link">
-                <Link href="/guest/create" className="link-item">Need an account?</Link>
-                <Link href="/guest/forgot" className="link-item">Forgot your password</Link>
+                <Link href="/guest/login" className="link-item">Already have an account?</Link>
             </Text>
             <Block className="clear-both" />
         </Block>

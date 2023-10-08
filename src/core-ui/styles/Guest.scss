@@ -20,7 +20,7 @@
             color: black;
         }
 
-        .login, .forgot, .register, .recover {
+        .login, .forgot, .create, .recover {
             width: 85%;
             height: auto;
             border: 1px #ccc solid;
@@ -93,11 +93,11 @@
                 font-size: .8125rem;
                 display: block;
                 clear: both;
-                margin-top: 20px;
 
-                a {
+                .link-item {
+                    display: block;
+                    margin-bottom: 20px;
                     color: rgb(90,169,230);
-                    text-decoration: underline;
                 }
             }
         }
