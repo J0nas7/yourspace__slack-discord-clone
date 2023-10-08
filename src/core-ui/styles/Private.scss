@@ -27,14 +27,17 @@
         .sidepanel-header {
             width: 100%;
             height: auto;
-            
-            #logo, #logo-text {
+
+            #logo,
+            #logo-text {
                 display: block;
                 float: left;
             }
+
             #logo {
                 margin: 10px;
             }
+
             #logo-text {
                 color: orange;
                 font-family: 'Courier New';
@@ -49,6 +52,7 @@
     .left-side {
         order: 1;
     }
+
     .right-side {
         margin-left: auto;
         order: 2;
@@ -59,7 +63,7 @@
         height: 100vh;
         float: left;
         background-color: var(--spaceBg);
-        
+
         .space-header {
             width: 100%;
             height: var(--headerH);
@@ -91,14 +95,20 @@
                     font-size: 1.1rem;
                     padding-left: 30px;
                     background: none;
-                    background-image: url("../Assets/Images/magnifying-glass-solid.png");
+                    background-image: url("../../Assets/Images/magnifying-glass-solid.png");
                     background-repeat: no-repeat;
                     background-size: 24px;
                     outline: none;
                     display: block !important;
 
-                    div { border: 0; }
-                    fieldset { display: none; }
+                    div {
+                        border: 0;
+                    }
+
+                    fieldset {
+                        display: none;
+                    }
+
                     input[placeholder="Search"] {
                         padding: 0;
                         border: 0;
@@ -106,23 +116,28 @@
                 }
             }
 
-            .channel-format, .channel-info {
+            .channel-format,
+            .channel-info {
                 width: calc(100% - 20px);
                 margin: 10px;
 
-                .channel-format-top, .channel-info-top {
+                .channel-format-top,
+                .channel-info-top {
                     display: flex;
                     font-weight: 700;
                     color: #585858;
                     text-transform: uppercase;
 
-                    .left-side { font-size: .8rem; }
+                    .left-side {
+                        font-size: .8rem;
+                    }
+
                     &.members .channel-info-settings {
                         display: block;
                         width: 15px;
                         height: 15px;
                         background: none;
-                        background-image: url("../Assets/Images/spaceMembersSettings.png");
+                        background-image: url("../../Assets/Images/spaceMembersSettings.png");
                         background-repeat: no-repeat;
                         background-size: 15px;
                     }
@@ -159,7 +174,7 @@
         height: 100vh;
         background-color: var(--channelBg);
         float: right;
-        
+
         .channel-header {
             width: 100%;
             height: var(--headerH);
@@ -178,11 +193,13 @@
                     @include hashtag;
                     margin-right: 10px;
                 }
+
                 .channel-name {
                     font-weight: bold;
                     font-size: .9rem;
                 }
             }
+
             .right-side {
                 background-color: rgb(105, 186, 105);
                 color: white;
@@ -196,6 +213,56 @@
             padding: 10px;
             height: calc(100vh - var(--headerH));
             position: relative;
+        }
+    }
+
+    dialog.dialog-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: calc(-200px / 2);
+        margin-left: calc(-550px / 2);
+        width: 550px;
+        height: 200px;
+        padding: 10px;
+
+        &[open] {
+            display: flex;
+        }
+
+        .dialog-inner {
+            position: relative;
+            width: 100%;
+            padding-bottom: 40px;
+            
+            .dialog-top {
+                display: flex;
+                margin-bottom: 10px;
+
+                h2.dialog-title {
+                    order: 1;
+                    font-size: 1.2rem;
+                }
+
+                .dialog-close-button {
+                    order: 2;
+                    margin-left: auto;
+                    min-width: 0 !important;
+                    width: auto !important;
+                    padding: 0 !important;
+                    color: black;
+                    font-size: 1.2rem;
+                }
+            }
+
+            .dialog-edit-message-submit {
+                float: right;
+                position: absolute;
+                top: auto;
+                bottom: 0;
+                left: auto;
+                right: 0;
+            }
         }
     }
 }

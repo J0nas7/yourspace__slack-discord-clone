@@ -5,7 +5,7 @@ import { useState } from "react"
 
 // Internal
 import { Block, Text } from "@/components"
-import { Sidepanel, Space, Channel } from "./"
+import { Sidepanel, Space, Channel } from ".."
 
 export const PrivateLayout = ({children} : any) => {
     const [myMenuActive, setMyMenuActive] = useState(false)

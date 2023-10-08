@@ -71,13 +71,12 @@
 }
 
 .edit-message-dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin-top: calc(-200px / 2);
-    margin-left: calc(-550px / 2);
-    width: 550px;
-    height: 200px;
+    .message-field, textarea {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        padding: 10px;
+    }
 
     &::backdrop {
         background-color: black;

@@ -9,12 +9,14 @@ import { Text } from '.'
 
 export const Heading = ({
     title,
+    variant = 'h1',
     className = ''
 } : {
     title: string,
-    className?: string
+    variant?: any
+    className?: string,
 }) => {
 	return (
-        <Text variant="h1" className={className}>{title}</Text>
+        <Text variant={variant} className={className}>{title}</Text>
     )
 }

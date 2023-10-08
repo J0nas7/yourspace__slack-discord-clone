@@ -1,12 +1,13 @@
 // External
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 //import { useAxios } from '@/hooks'
-import { Block, Text, Modal, Field } from '@/components'
+import { Block, Text, Heading, Modal, Field } from '@/components'
 import { MessageDTO } from '@/types/MessageDTO'
 import styles from './Message.module.scss'
 
@@ -72,6 +73,7 @@ const Message = ({
                 <Modal
                     openModal={editModal}
                     closeModal={() => setEditModal(false)}
+                    title="Edit the message"
                     className={styles["edit-message-dialog"] + " m" + theMessage.messageID}
                 >
                     <Field
@@ -81,8 +83,12 @@ const Message = ({
                         onChange={(e: string) => setEditMsg(e)}
                         disabled={false}
                         grow={true}
+                        growMin={3}
                         className="message-field"
                     />
+                    <Button className="button button-green dialog-edit-message-submit" onClick={() => alert('hej')} disabled={false}>
+                        <Text variant="span" className="button button-text">Save changes</Text>
+                    </Button>
                 </Modal>
             </Block>
         )

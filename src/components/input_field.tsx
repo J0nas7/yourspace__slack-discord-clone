@@ -18,7 +18,7 @@ import { Block, Text } from "./block_text"
 import TextareaAutosize from 'react-textarea-autosize'
 
 export const Field = ({
-    type, lbl, displayLabel, innerLabel, hiddenMUILabel, placeholder, description, value, grow, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
+    type, lbl, displayLabel, innerLabel, hiddenMUILabel, placeholder, description, value, grow, growMin, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
 } : {
     type: string,
     lbl: string, 
@@ -35,6 +35,7 @@ export const Field = ({
     placeholder?: string, 
     description?: string, 
     grow?: boolean, 
+    growMin?: number, 
     autoComplete?: string, 
     className?: string
     props?: Object
@@ -61,7 +62,7 @@ export const Field = ({
 				{ grow === true ? (
                     <TextareaAutosize
                         { ...inputProps }
-                        minRows={1}
+                        minRows={(growMin ? growMin : 1)}
                         maxRows={10}
                         onChange={(event) => onChange(event.target.value)}
                     />

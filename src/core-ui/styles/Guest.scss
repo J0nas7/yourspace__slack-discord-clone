@@ -6,7 +6,7 @@
     .guest-contents {
         height: 100vh;
         //background: #f0f0f0;
-        background-image: url("../Assets/Images/brickBackground.png");
+        background-image: url("../../Assets/Images/brickBackground.png");
         position: relative;
         display: flex;
         align-items: center;
@@ -28,7 +28,7 @@
             padding: 20px;
             padding-top: 60px;
             background-color: #fff;
-            background-image: url("../Assets/Images/headerLogo.png");
+            background-image: url("../../Assets/Images/headerLogo.png");
             background-repeat: no-repeat;
             background-position-x: center;
             background-position-y: 20px;

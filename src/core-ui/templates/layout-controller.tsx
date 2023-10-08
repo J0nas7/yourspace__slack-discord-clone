@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 // Internal
 import { useAuthContext } from "@/hooks"
-import { GuestLayout, PrivateLayout } from "./"
+import { GuestLayout, PrivateLayout } from ".."
 
 export default function LayoutController({
     children,
