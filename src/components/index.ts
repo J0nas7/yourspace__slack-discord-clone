@@ -1,8 +1,10 @@
-export * from './block_text'
-export * from './heading'
-export * from './input_field'
+export * from './ui/block_text'
+export * from './ui/heading'
+export * from './ui/input_field'
 export * from './modal'
-export * from './form'
-export * from './file-upload'
+export * from './ui/form'
+export * from './ui/file-upload'
+
+export * from './createSpace'
 
 //export { default as Order } from './cards/Order'

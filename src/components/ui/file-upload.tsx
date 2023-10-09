@@ -20,7 +20,7 @@ export const FileUpload = ({
   const fileType = value?.split(".").pop()
   if (value && fileType !== "pdf") {
     return (
-      <Block className="image-pref relative h-20 w-20">
+      <Block className="image-preview">
         <Image
           fill
           src={value}

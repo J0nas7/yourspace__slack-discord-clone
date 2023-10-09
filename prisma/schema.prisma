@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+model Space_Profile {
+    Profile_ID String @id @default(uuid())
+    User_ID String @unique
+    Profile_Name String
+    Profile_ImageUrl String @db.Text
+    Profile_Email String @db.Text
+    Profile_Password String
+
+    Profile_Servers Space_Server[]
+    Profile_Members Space_Member[]
+    Profile_Channels Space_Channel[]
+
+    Profile_CreatedAt DateTime @default(now())
+    Profile_UpdatedAt DateTime @updatedAt
+}
+
+model Space_Server {
+    Server_ID String @id @default(uuid())
+    Server_Name String
+    Server_ImageUrl String @db.Text
+    Server_InviteCode String @db.Text
+
+    Server_ProfileID String
+    Server_Profile Space_Profile @relation(fields: [Server_ProfileID], references: [Profile_ID], onDelete: Cascade)
+
+    Server_Members Space_Member[]
+    Server_Channels Space_Channel[]
+
+    Server_CreatedAt DateTime @default(now())
+    Server_UpdatedAt DateTime @updatedAt
+
+    @@index([Server_ProfileID])
+}
+
+enum MemberRole {
+    ADMIN
+    MODERATOR
+    GUEST
+}
+
+model Space_Member {
+    Member_ID String @id @default(uuid())
+    Member_Role MemberRole @default(GUEST)
+
+    Member_ProfileID String
+    Member_Profile Space_Profile @relation(fields: [Member_ProfileID], references: [Profile_ID], onDelete: Cascade)
+
+    Member_ServerID String
+    Member_Server Space_Server @relation(fields: [Member_ServerID], references: [Server_ID], onDelete: Cascade)
+
+    Member_CreatedAt DateTime @default(now())
+    Member_UpdatedAt DateTime @updatedAt
+
+    @@index([Member_ProfileID])
+    @@index([Member_ServerID])
+}
+
+enum ChannelType {
+    TEXT
+    AUDIO
+    VIDEO
+}
+
+model Space_Channel {
+    Channel_ID String @id @default(uuid())
+    Channel_Name String
+    Channel_Type ChannelType @default(TEXT)
+
+    Channel_ProfileID String
+    Channel_Profile Space_Profile @relation(fields: [Channel_ProfileID], references: [Profile_ID], onDelete: Cascade)
+
+    Channel_ServerID String
+    Channel_Server Space_Server @relation(fields: [Channel_ServerID], references: [Server_ID], onDelete: Cascade)
+    
+    Channel_CreatedAt DateTime @default(now())
+    Channel_UpdatedAt DateTime @updatedAt
+
+    @@index([Channel_ProfileID])
+    @@index([Channel_ServerID])
+}

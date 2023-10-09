@@ -1,5 +1,5 @@
 // Internal
-import { Text } from '.'
+import { Text } from '..'
 
 /**
  * Renders a form field.
