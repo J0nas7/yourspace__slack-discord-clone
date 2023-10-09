@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import { Block, Field, Text } from '@/components'
 import { MessageDTO } from '@/types/MessageDTO'
 import Message from '@/components/Cards/Message'
-import styles from '@/components/Cards/Message.module.scss'
+import styles from '@/core-ui/styles/modules/Message.module.scss'
 
 export default function Home(props:any) {
   const [channelName, setChannelName] = useState<string|string[]|undefined>(props.channelName)

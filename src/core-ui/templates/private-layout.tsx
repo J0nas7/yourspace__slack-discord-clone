@@ -12,12 +12,18 @@ export const PrivateLayout = ({children} : { children: React.ReactNode }) => {
     const toggleMyMenu = () => {
         setMyMenuActive(!myMenuActive)
     }
+
+    const [hasSpace,setHasSpace] = useState<boolean>(false)
     
     return (
         <Block className="private-wrapper">
-            <Sidepanel></Sidepanel>
-            <Space></Space>
-            <Channel>{children}</Channel>
+            <Sidepanel hasSpace={hasSpace}></Sidepanel>
+            { hasSpace === true && (
+                <Block>
+                    <Space></Space>
+                    <Channel>{children}</Channel>
+                </Block>
+            )}
         </Block>
     )
 }

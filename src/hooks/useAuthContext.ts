@@ -18,7 +18,7 @@ export const useAuthContext = () => {
                 }
             }
         }
-        return false
+        return true
     })
 
     const setAuthContext = (context:string) => {

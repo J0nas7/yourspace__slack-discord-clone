@@ -9,7 +9,7 @@ import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 //import { useAxios } from '@/hooks'
 import { Block, Text, Heading, Modal, Field } from '@/components'
 import { MessageDTO } from '@/types/MessageDTO'
-import styles from './Message.module.scss'
+import styles from '@/core-ui/styles/modules/Message.module.scss'
 
 type Variant = 'in-channel'
 type Props = {

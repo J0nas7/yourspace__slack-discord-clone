@@ -220,11 +220,19 @@
         position: fixed;
         top: 50%;
         left: 50%;
-        margin-top: calc(-200px / 2);
-        margin-left: calc(-550px / 2);
         width: 550px;
-        height: 200px;
-        padding: 10px;
+        margin-left: calc(-550px / 2);
+        border-radius: 10px;
+        
+        &.edit-message-dialog, &.delete-message-dialog {
+            height: 200px;
+            margin-top: calc(-200px / 2);
+        }
+
+        &.create-space-dialog {
+            height: 350px;
+            margin-top: calc(-350px / 2);
+        }
 
         &[open] {
             display: flex;
@@ -238,6 +246,7 @@
         .dialog-inner {
             position: relative;
             width: 100%;
+            padding: 10px;
             padding-bottom: 40px;
             
             .dialog-top {
@@ -268,6 +277,31 @@
                 left: auto;
                 right: 0;
             }
+
+            .button-wrapper {
+                width: 100%;
+                height: auto;
+                position: absolute;
+                top: auto;
+                bottom: 0;
+                background-color: #d3d3d3;
+                padding: 15px;
+
+                button {
+                    width: 90%;
+                    margin: 5px 5%;
+                }
+            }
+        }
+    }
+
+    .field.no-fieldset {
+        input {
+            background-color: #d3d3d3;
+            border-radius: 10px;
+        }
+        fieldset {
+            display: none;
         }
     }
 }
