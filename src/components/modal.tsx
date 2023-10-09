@@ -17,7 +17,6 @@ export const Modal = ({
     const ref = useRef<HTMLDialogElement>(null);
 
     useEffect(() => {
-        console.log("modal", openModal)
         if (openModal) {
             ref.current?.showModal();
         } else {
