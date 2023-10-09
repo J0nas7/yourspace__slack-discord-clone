@@ -15,3 +15,6 @@ export const env = process.env.NODE_ENV === 'development' ? dev : prod
 export const paths = {
     API_ROUTE: "/api/"
 }
+
+const UPLOADTHING_SECRET = ""
+const UPLOADTHING_APP_ID = ""

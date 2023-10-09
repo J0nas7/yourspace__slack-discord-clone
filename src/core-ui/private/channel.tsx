@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 // Internal
 import { Block, Text } from '@/components'
 
-export const Channel = ({children} : any) => {
+export const Channel = ({children} : { children: React.ReactNode }) => {
   const [channelName, setChannelName] = useState<string|string[]|undefined>('')
   const router = useRouter()
   

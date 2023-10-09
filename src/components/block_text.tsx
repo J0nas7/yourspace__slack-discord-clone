@@ -27,7 +27,7 @@ type Props = {
     theId?: string
     style?: CSSProperties,
     onClick?: Function
-    children?: any
+    children?: React.ReactNode
 }
 
 const theElement = ({

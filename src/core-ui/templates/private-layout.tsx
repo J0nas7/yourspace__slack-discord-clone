@@ -7,7 +7,7 @@ import { useState } from "react"
 import { Block, Text } from "@/components"
 import { Sidepanel, Space, Channel } from ".."
 
-export const PrivateLayout = ({children} : any) => {
+export const PrivateLayout = ({children} : { children: React.ReactNode }) => {
     const [myMenuActive, setMyMenuActive] = useState(false)
     const toggleMyMenu = () => {
         setMyMenuActive(!myMenuActive)

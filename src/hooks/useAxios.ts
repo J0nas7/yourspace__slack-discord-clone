@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 // Internal
-import { env, paths } from '@/env'
+import { env, paths } from '@/env.local'
 //import { useAuthContext } from '../context'
 
 export const useAxios = () => {

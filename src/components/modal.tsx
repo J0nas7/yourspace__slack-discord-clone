@@ -7,12 +7,12 @@ import { Block, Heading, Text } from "./";
 
 export const Modal = ({
     openModal, closeModal, title, className, children
-}: {
+} : {
     openModal: boolean,
     closeModal: ReactEventHandler,
     title: string,
     className: string,
-    children: any
+    children: React.ReactNode
 }) => {
     const ref = useRef<HTMLDialogElement>(null);
 
