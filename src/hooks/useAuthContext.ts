@@ -1,23 +1,23 @@
 // External
 import { useEffect, useState } from 'react'
 import jwt_decode from "jwt-decode";
-import { getCookie, getCookies, setCookie, deleteCookie } from 'cookies-next'
+import { getCookie, setCookie, deleteCookie } from 'cookies-next'
 
-export const useAuthContext = () => {
+export const useAuthContext = (__templateCheck?: Function) => {
     let logonCreds: any = null
 
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
         if (typeof window !== "undefined") {
-            logonCreds = localStorage.getItem("isLoggedIn")
-            if (logonCreds != null) {
-                //logonCreds = JSON.parse(logonCreds)
-                //if (logonCreds.userID && logonCreds.keyWithSalt) {
-                if ((typeof (logonCreds) === 'number' ||
-                    typeof (logonCreds) === "string" && logonCreds.trim() !== '')
-                    && !isNaN(logonCreds as number)) {
-                    return true
-                }
+            logonCreds = getCookie('accessToken')
+            if (logonCreds != null
+                && (
+                    typeof (logonCreds) === "string" 
+                    && logonCreds.trim() !== ''
+                )
+            ) {
+                console.log("approved", logonCreds)
+                return true
             }
         }
         return false
@@ -55,6 +55,11 @@ export const useAuthContext = () => {
     const removeAuthContext = (token: string) => {
         return deleteCookie(token)
     }
+
+    useEffect(() => {
+        console.log("useAuthContext", isLoggedIn)
+        if (__templateCheck) __templateCheck()
+    }, [isLoggedIn])
 
     useEffect(() => {
         // This will only be called once the component is mounted inside the browser

@@ -37,14 +37,14 @@ export const useAuth = () => {
     const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
 
     const saveLoginSuccess = /*useSafeDispatch( */ (jwtData: any) => {
-        console.log("saveLoginSuccess()", jwtData.authorisation)
         saveTokens(jwtData.authorisation)
         setIsLoggedIn(true)
-        //goHome()
+        goHome()
     }
 
     const goHome = () => {
-        router.push('/')
+        //router.push('/') !!! not hard refreshing
+        window.location.href = "/"
     }
 
     const onError = /*useSafeDispatch(*/ (errors?: any) => {
@@ -68,7 +68,6 @@ export const useAuth = () => {
     }, [loginErrorType])
 
     const processLoginResult = (loginResult: any) => {
-        console.log("processLoginResult()", loginResult)
         setStatus('resolved')
         if (loginResult.success === false) {
             onError(loginResult)
@@ -110,7 +109,6 @@ export const useAuth = () => {
 
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setLoginErrorType({ "data": "" }))
-        console.log("loginVariables", loginVariables)
         
         // Send login variables to the API for authentication
         try {

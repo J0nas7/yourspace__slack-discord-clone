@@ -37,7 +37,8 @@ export const useAxios = () => {
                 {
                     withCredentials: true,
                     headers: {
-                        'Accept': 'application/json'
+                        Accept: 'application/json',
+                        Authorization: "Bearer " + getAuthContext('accessToken')
                     },
                 }
             )
@@ -50,19 +51,20 @@ export const useAxios = () => {
 
     const httpGetRequest = async (apiEndPoint : string) => {
         try {
-            const le = await axios.get(
+            const { data: response } = await axios.get(
                 `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`,
                 {
                     headers: {
+                        Accept: 'application/json',
                         Authorization: "Bearer " + getAuthContext('accessToken')
                     }
                 }
             )
-            console.log("response", le)
-            return le.data
+            return response
         } catch (e:any) {
             if (e.response && e.response.statusText === "Unauthorized") {
                 console.log("httpGetRequest", e)
+                //router.push("/logout")
                 return e.response.statusText
             }
             return false
