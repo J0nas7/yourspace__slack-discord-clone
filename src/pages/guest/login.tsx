@@ -22,8 +22,6 @@ export default function Login() {
 
         if (!loginPending) {
             setLoginPending(true)
-            const loginDetails = { userEmail, userPassword }
-
             handleLoginSubmit(userEmail, userPassword)
             setLoginPending(false)
         }

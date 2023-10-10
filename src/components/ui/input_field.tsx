@@ -18,7 +18,7 @@ import { Block, Text } from "./block_text"
 import TextareaAutosize from 'react-textarea-autosize'
 
 export const Field = ({
-    type, lbl, displayLabel, innerLabel, hiddenMUILabel, placeholder, description, value, grow, growMin, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
+    type, lbl, displayLabel, innerLabel, hiddenMUILabel, placeholder, description, required, value, grow, growMin, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
 } : {
     type: string,
     lbl: string, 
@@ -29,6 +29,7 @@ export const Field = ({
     endContent?: string, 
     disabled: boolean, 
     error?: string,
+    required?: boolean
     displayLabel?: boolean,
     innerLabel?: boolean, 
     hiddenMUILabel?: boolean
@@ -43,11 +44,12 @@ export const Field = ({
 	const inputProps = {
         type,
 		value,
+        className,
         label: `${(innerLabel ? lbl : '')}`,
         id: `field-${ lbl }`,
 		placeholder,
         disabled,
-        className,
+        required,
         ...props,
 	}
 

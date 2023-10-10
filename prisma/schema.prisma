@@ -12,36 +12,38 @@ datasource db {
 }
 
 model Space_Profile {
-  Profile_ID       Int    @id @default(autoincrement())
-  Profile_Name     String
-  Profile_Email    String @db.Text
-  Profile_Password String
-  Profile_ImageUrl String @db.Text
+  Profile_ID          Int    @id @default(autoincrement())
+  Profile_RealName    String
+  Profile_DisplayName String
+  Profile_Email       String @db.Text
+  Profile_Password    String
+  Profile_ImageUrl    String @db.Text
 
-  Profile_Servers  Space_Server[]
+  Profile_Spaces   Space_Space[]
   Profile_Members  Space_Member[]
   Profile_Channels Space_Channel[]
 
+  Profile_Birthday  DateTime 
   Profile_CreatedAt DateTime @default(now())
   Profile_UpdatedAt DateTime @updatedAt
 }
 
-model Space_Server {
-  Server_ID         Int    @id @default(autoincrement())
-  Server_Name       String @unique
-  Server_ImageUrl   String @db.Text
-  Server_InviteCode String @db.Text
+model Space_Space {
+  Space_ID         Int    @id @default(autoincrement())
+  Space_Name       String @unique
+  Space_ImageUrl   String @db.Text
+  Space_InviteCode String @db.Text
 
-  Server_ProfileID Int
-  Server_Profile   Space_Profile @relation(fields: [Server_ProfileID], references: [Profile_ID], onDelete: Cascade)
+  Space_ProfileID Int
+  Space_Profile   Space_Profile @relation(fields: [Space_ProfileID], references: [Profile_ID], onDelete: Cascade)
 
-  Server_Members  Space_Member[]
-  Server_Channels Space_Channel[]
+  Space_Members  Space_Member[]
+  Space_Channels Space_Channel[]
 
-  Server_CreatedAt DateTime @default(now())
-  Server_UpdatedAt DateTime @updatedAt
+  Space_CreatedAt DateTime @default(now())
+  Space_UpdatedAt DateTime @updatedAt
 
-  @@index([Server_ProfileID])
+  @@index([Space_ProfileID])
 }
 
 enum MemberRole {
@@ -57,8 +59,8 @@ model Space_Member {
   Member_ProfileID Int
   Member_Profile   Space_Profile @relation(fields: [Member_ProfileID], references: [Profile_ID], onDelete: Cascade)
 
-  Member_ServerID Int
-  Member_Server   Space_Server @relation(fields: [Member_ServerID], references: [Server_ID], onDelete: Cascade)
+  Member_SpaceID Int
+  Member_Space   Space_Space @relation(fields: [Member_SpaceID], references: [Space_ID], onDelete: Cascade)
 
   Member_Messages       Space_Message[]
   Member_DirectMessages Space_Direct_Messages[]
@@ -70,7 +72,7 @@ model Space_Member {
   Member_UpdatedAt DateTime @updatedAt
 
   @@index([Member_ProfileID])
-  @@index([Member_ServerID])
+  @@index([Member_SpaceID])
 }
 
 enum ChannelType {
@@ -87,8 +89,8 @@ model Space_Channel {
   Channel_ProfileID Int
   Channel_Profile   Space_Profile @relation(fields: [Channel_ProfileID], references: [Profile_ID], onDelete: Cascade)
 
-  Channel_ServerID Int
-  Channel_Server   Space_Server @relation(fields: [Channel_ServerID], references: [Server_ID], onDelete: Cascade)
+  Channel_SpaceID Int
+  Channel_Space   Space_Space @relation(fields: [Channel_SpaceID], references: [Space_ID], onDelete: Cascade)
 
   Channel_Messages Space_Message[]
 
@@ -96,7 +98,7 @@ model Space_Channel {
   Channel_UpdatedAt DateTime @updatedAt
 
   @@index([Channel_ProfileID])
-  @@index([Channel_ServerID])
+  @@index([Channel_SpaceID])
 }
 
 model Space_Message {
