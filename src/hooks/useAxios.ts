@@ -29,6 +29,18 @@ export const useAxios = () => {
 
     const httpPostWithData = async (apiEndPoint : string, postContent : any = '') => {
         try {
+            let postHeaders
+            console.log("getAuthContext('accessToken')", getAuthContext('accessToken'))
+            if (getAuthContext('accessToken')) {
+                postHeaders = {
+                    Accept: 'application/json',
+                    Authorization: "Bearer " + getAuthContext('accessToken')
+                }
+            } else {
+                postHeaders = {
+                    Accept: 'application/json'
+                }
+            }
             const { data: response } = await axios.post(
                 `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`, 
                 {
@@ -36,10 +48,7 @@ export const useAxios = () => {
                 },
                 {
                     withCredentials: true,
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: "Bearer " + getAuthContext('accessToken')
-                    },
+                    headers: postHeaders,
                 }
             )
             return response

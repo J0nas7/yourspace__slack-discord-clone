@@ -16,7 +16,6 @@ export const useAuthContext = (__templateCheck?: Function) => {
                     && logonCreds.trim() !== ''
                 )
             ) {
-                console.log("approved", logonCreds)
                 return true
             }
         }
@@ -30,7 +29,6 @@ export const useAuthContext = (__templateCheck?: Function) => {
 
     const saveTokens = (token: any) => {
         if (token.accessToken) {
-            console.log("saveTokens()", token)
             setCookie("accessToken", token.accessToken, {
                 httpOnly: false,//true
                 secure: process.env.NODE_ENV !== "development",
@@ -57,7 +55,6 @@ export const useAuthContext = (__templateCheck?: Function) => {
     }
 
     useEffect(() => {
-        console.log("useAuthContext", isLoggedIn)
         if (__templateCheck) __templateCheck()
     }, [isLoggedIn])
 

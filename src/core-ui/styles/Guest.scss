@@ -83,6 +83,16 @@
                     font-size: .8125rem;
                     margin-bottom: 20px;
                 }
+
+                .birthday-wrapper, .birthday-inner {
+                    height: 75px;
+
+                    .birthday-inner {
+                        display: flex;
+                        gap: 15px;
+                        align-items: center;
+                    }
+                }
             }
 
             .guest-link {

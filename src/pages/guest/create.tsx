@@ -8,25 +8,29 @@ import { Block, Text, Heading, Field } from "@/components"
 import { useAuth } from "@/hooks"
 import { selectIsLoggedIn, useTypedSelector } from "@/redux"
 
-export default function Login() {
-    const { login, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
+export default function Create() {
+    const { handleCreateSubmit, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
 
-    const [userEmail, setUserEmail] = useState('')
-    const [userScreenName, setUserScreenName] = useState('')
-    const [userPassword, setUserPassword] = useState('')
-    const [showPassword,setShowPassword] = useState<boolean>(false)
+    const [userRealName, setUserRealName] = useState<string>('')
+    const [userDisplayName, setUserDisplayName] = useState<string>('')
+    const [userEmail, setUserEmail] = useState<string>('')
+    const [userDD, setUserDD] = useState<string>('')
+    const [userMM, setUserMM] = useState<string>('')
+    const [userYYYY, setUserYYYY] = useState<string>('')
 
-    const [loginPending, setLoginPending] = useState(false)
+    const [userPassword, setUserPassword] = useState<string>('')
+    const [userPassword2, setUserPassword2] = useState<string>('')
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+
+    const [createPending, setCreatePending] = useState(false)
 
     const doCreate = (e: any = '') => {
         if (typeof e.preventDefault === 'function') e.preventDefault()
 
-        if (!loginPending) {
-            setLoginPending(true)
-            const loginDetails = { userEmail, userPassword }
-
-            login(userEmail, userPassword)
-            setLoginPending(false)
+        if (!createPending) {
+            setCreatePending(true)
+            handleCreateSubmit(userRealName, userDisplayName, userEmail, userPassword, userPassword2, userDD, userMM, userYYYY)
+            setCreatePending(false)
         }
     }
 
@@ -60,20 +64,31 @@ export default function Login() {
                 <form onSubmit={doCreate}>
                     <Field
                         type="text"
-                        lbl="E-mail"
+                        lbl="Your name"
                         innerLabel={true}
-                        value={userEmail}
-                        onChange={(e: string) => setUserEmail(e)}
+                        value={userRealName}
+                        onChange={(e: string) => setUserRealName(e)}
+                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        disabled={status === 'resolving'}
+                        className="login-field"
+                        required={true}
+                    />
+                    <Field
+                        type="text"
+                        lbl="Display name"
+                        innerLabel={true}
+                        value={userDisplayName}
+                        onChange={(e: string) => setUserDisplayName(e)}
                         onKeyDown={(e: any) => { ifEnter(e) }}
                         disabled={status === 'resolving'}
                         className="login-field"
                     />
                     <Field
                         type="text"
-                        lbl="Screen name"
+                        lbl="E-mail"
                         innerLabel={true}
-                        value={userScreenName}
-                        onChange={(e: string) => setUserScreenName(e)}
+                        value={userEmail}
+                        onChange={(e: string) => setUserEmail(e)}
                         onKeyDown={(e: any) => { ifEnter(e) }}
                         disabled={status === 'resolving'}
                         className="login-field"
@@ -84,20 +99,63 @@ export default function Login() {
                         innerLabel={true}
                         value={userPassword}
                         onChange={(e: string) => setUserPassword(e)}
-                        onKeyDown={(e: any) => {ifEnter(e)}}
-                        endButton={() => {setShowPassword(!showPassword)}}
+                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        endButton={() => { setShowPassword(!showPassword) }}
                         endContent={!showPassword ? 'Show' : 'Hide'}
                         disabled={status === 'resolving'}
-                        autoComplete="password"
                         className="login-field"
                     />
-                    <Text variant="p">
+                    <Field
+                        type={showPassword ? 'text' : 'password'}
+                        lbl="Repeat password"
+                        innerLabel={true}
+                        value={userPassword2}
+                        onChange={(e: string) => setUserPassword2(e)}
+                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        disabled={status === 'resolving'}
+                        className="login-field"
+                    />
+                    <Block className="birthday-wrapper">
+                        <Block className="birthday-inner">
+                            <Field
+                                type={'text'}
+                                lbl="DD"
+                                innerLabel={true}
+                                value={userDD}
+                                onChange={(e: string) => setUserDD(e)}
+                                onKeyDown={(e: any) => { ifEnter(e) }}
+                                disabled={status === 'resolving'}
+                                className="login-field"
+                            />
+                            <Field
+                                type={'text'}
+                                lbl="MM"
+                                innerLabel={true}
+                                value={userMM}
+                                onChange={(e: string) => setUserMM(e)}
+                                onKeyDown={(e: any) => { ifEnter(e) }}
+                                disabled={status === 'resolving'}
+                                className="login-field"
+                            />
+                            <Field
+                                type={'text'}
+                                lbl="YYYY"
+                                innerLabel={true}
+                                value={userYYYY}
+                                onChange={(e: string) => setUserYYYY(e)}
+                                onKeyDown={(e: any) => { ifEnter(e) }}
+                                disabled={status === 'resolving'}
+                                className="login-field"
+                            />
+                        </Block>
+                    </Block>
+                    <Text variant="p" className="clear-both">
                         <Button
-                            className={'login-btn button ' + (loginPending ? "pending" : "")}
+                            className={'create-btn button button-green ' + (createPending || status === 'resolving' ? "pending" : "")}
                             onClick={doCreate}
                             disabled={status === 'resolving'}
                         >
-                            <Text variant="span" className="button button-text">Log on</Text>
+                            <Text variant="span" className="button button-text">Create account</Text>
                         </Button>
                     </Text>
                 </form>
