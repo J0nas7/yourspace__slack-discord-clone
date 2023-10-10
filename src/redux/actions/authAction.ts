@@ -6,14 +6,14 @@ import { useAuthContext, useAxios } from '@/hooks'
 
 export const useAuthActions = () => {
     const { httpGetRequest, httpPostWithData } = useAxios()
-    const { setAuthContext } = useAuthContext()
+    const { saveTokens } = useAuthContext()
     
     const fetchIsLoggedInStatus = (__reducer: Function) => async (dispatch: Dispatch) => {
         try {
             const data = await httpGetRequest("userLoggedInTest")
             console.log("data", data)
             if (data.message === "Is logged in") {
-                setAuthContext(data.data)
+                saveTokens(data.data)
                 dispatch(__reducer(data))
             }
         } catch (e) {

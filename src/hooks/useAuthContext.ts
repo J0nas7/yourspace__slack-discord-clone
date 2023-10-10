@@ -1,9 +1,11 @@
 // External
 import { useEffect, useState } from 'react'
+import jwt_decode from "jwt-decode";
+import { getCookie, getCookies, setCookie, deleteCookie } from 'cookies-next'
 
 export const useAuthContext = () => {
-    let logonCreds : any = null
-    
+    let logonCreds: any = null
+
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
         if (typeof window !== "undefined") {
@@ -11,24 +13,47 @@ export const useAuthContext = () => {
             if (logonCreds != null) {
                 //logonCreds = JSON.parse(logonCreds)
                 //if (logonCreds.userID && logonCreds.keyWithSalt) {
-                if ((typeof(logonCreds) === 'number' || 
-                    typeof(logonCreds) === "string" && logonCreds.trim() !== '')
+                if ((typeof (logonCreds) === 'number' ||
+                    typeof (logonCreds) === "string" && logonCreds.trim() !== '')
                     && !isNaN(logonCreds as number)) {
                     return true
                 }
             }
         }
-        return true
+        return false
     })
 
-    const setAuthContext = (context:string) => {
-        localStorage.setItem("isLoggedIn", context)
+    type jwtTokens = {
+        accessToken: string,
+        refreshToken: string
     }
-    const getAuthContext = () => {
-        return localStorage.getItem("isLoggedIn")
+
+    const saveTokens = (token: any) => {
+        if (token.accessToken) {
+            console.log("saveTokens()", token)
+            setCookie("accessToken", token.accessToken, {
+                httpOnly: false,//true
+                secure: process.env.NODE_ENV !== "development",
+                maxAge: 60 * 6 * 24,
+                sameSite: false,//"strict",
+                path: '/',
+            })
+        }
+        if (token.refreshToken) {
+            setCookie('refreshToken', token.refreshToken, {
+                httpOnly: false,//true
+                secure: process.env.NODE_ENV !== "development",
+                maxAge: 60 * 6 * 24,
+                sameSite: false,//"strict",
+                path: '/',
+            })
+        }
     }
-    const removeAuthContext = () => {
-        return localStorage.removeItem("isLoggedIn")
+    const getAuthContext = (token: string) => {
+        return getCookie(token)
+    }
+    const removeAuthContext = (token: string) => {
+        return deleteCookie(token)
     }
 
     useEffect(() => {
@@ -41,7 +66,18 @@ export const useAuthContext = () => {
         setIsLoggedIn,
         isLoading,
         logonCreds,
-        setAuthContext,
+        saveTokens,
+        getAuthContext,
         removeAuthContext
+    }
+}
+
+export async function getServerSideProps(ctx: any) {
+    const channelName = ctx.query.channelName + "WWW"
+
+    return {
+        props: {
+            channelName
+        }
     }
 }

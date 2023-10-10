@@ -5,48 +5,49 @@ import { useRouter } from "next/navigation";
 // Internal
 import { useAxios, useAuthContext } from './'
 import {
-    useAppDispatch, 
-    useTypedSelector, 
-    useAuthActions, 
-    setLoggedIn, 
-    setLoggedOut, 
-    setLoginErrorType, 
-    selectLoginErrorType 
+    useAppDispatch,
+    useTypedSelector,
+    useAuthActions,
+    setLoggedIn,
+    setLoggedOut,
+    setLoginErrorType,
+    selectLoginErrorType
 } from '../redux'
 
-const errorCodes : any = {
+const errorCodes: any = {
     wrong_credentials: 'Incorrect credentials. Please try again.',
-	invalid_username: 'Invalid username or email address. Please check it and try again.',
-	invalid_email: 'Invalid email address. Please check it and try again.',
-	incorrect_password: 'Incorrect password. Please try again, or reset your password.',
-	empty_username: 'Please provide your username.',
-	empty_password: 'Please provide your password.',
+    invalid_username: 'Invalid username or email address. Please check it and try again.',
+    invalid_email: 'Invalid email address. Please check it and try again.',
+    incorrect_password: 'Incorrect password. Please try again, or reset your password.',
+    empty_username: 'Please provide your username.',
+    empty_password: 'Please provide your password.',
     "Login Attempt Failed": 'Incorrect credentials. Please try again.',
     "Empty request": 'Name or password not provided.',
 }
 
 export const useAuth = () => {
     const router = useRouter()
-    const { isLoggedIn, setIsLoggedIn, setAuthContext, removeAuthContext } = useAuthContext()
+    const { isLoggedIn, setIsLoggedIn, saveTokens, removeAuthContext } = useAuthContext()
     const { httpPostWithData, requestCSRF } = useAxios()
-    const [errorMsg,setErrorMsg] = useState<any>(null)
-    const [status,setStatus] = useState<any>(null)
+    const [errorMsg, setErrorMsg] = useState<any>(null)
+    const [status, setStatus] = useState<any>(null)
 
     const dispatch = useAppDispatch()
     const loginErrorType = useTypedSelector(selectLoginErrorType)
     const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
 
-    const saveLoginSuccess = /*useSafeDispatch( */ (ProfileID : string) => {
-        setAuthContext(ProfileID)
+    const saveLoginSuccess = /*useSafeDispatch( */ (jwtData: any) => {
+        console.log("saveLoginSuccess()", jwtData.authorisation)
+        saveTokens(jwtData.authorisation)
         setIsLoggedIn(true)
-        goHome()
+        //goHome()
     }
 
     const goHome = () => {
         router.push('/')
     }
 
-    const onError = /*useSafeDispatch(*/ (errors? : any) => {
+    const onError = /*useSafeDispatch(*/ (errors?: any) => {
         if (loginErrorType) {
             const theErrorMsg = loginErrorType//errors.message
             setErrorMsg(
@@ -55,24 +56,24 @@ export const useAuth = () => {
             )
         } else if (errors) {
             dispatch(setLoginErrorType({
-                "data": errors.Result
+                "data": errors.message
             }))
         } else if (loginErrorType === "") {
             setErrorMsg(null)
         }
-	} //);
+    } //);
     useEffect(() => {
         onError()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loginErrorType])
 
-    const processLoginResult = (loginResult : any) => {
-        console.log("THE LOGIN RESULT", loginResult)
+    const processLoginResult = (loginResult: any) => {
+        console.log("processLoginResult()", loginResult)
         setStatus('resolved')
-        if (loginResult.Result === "Failed") {
+        if (loginResult.success === false) {
             onError(loginResult)
-        } else if (loginResult.Result === "Login success") {
-            saveLoginSuccess(loginResult.ProfileID)
+        } else if (loginResult.success === true) {
+            saveLoginSuccess(loginResult)
             return true
         }
         return false
@@ -87,14 +88,14 @@ export const useAuth = () => {
         })*/
     }
 
-    const login = async (usernameInput : string, passwordInput : string) : Promise<boolean> => {
+    const handleLoginSubmit = async (usernameInput: string, passwordInput: string): Promise<boolean> => {
         setStatus('resolving')
         const loginVariables = {
-            "email": usernameInput, 
-            "password": passwordInput,
+            "Profile_Email": usernameInput,
+            "Profile_Password": passwordInput,
             //"token_name": usernameInput, 
         }
-        
+
         // If name/email or password is empty
         if (!usernameInput || !passwordInput) {
             const data = {
@@ -106,44 +107,43 @@ export const useAuth = () => {
             processLoginResult(data)
             return false
         }
-        
+
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setLoginErrorType({ "data": "" }))
-        
         console.log("loginVariables", loginVariables)
-        // Request a new server-side Laravel Sanctum CSRF cookie
-        //requestCSRF().then(async csrfResp => {
-            // Send login variables to the API for authentication
-            try {
-                const data = await httpPostWithData("userLogin", loginVariables)
-                return processLoginResult(data)
-            } catch (e) {
-                console.log("useAuth login error", e)
-            }
-        //})
+        
+        // Send login variables to the API for authentication
+        try {
+            const data = await httpPostWithData("userLogin", loginVariables)
+            return processLoginResult(data)
+        } catch (e) {
+            console.log("useAuth login error", e)
+        }
+        
         return false
-	}
+    }
 
     const logout = () => {
         setStatus('resolving')
         dispatch(adminDoLogout(setLoggedOut))
-        removeAuthContext()
+        removeAuthContext("accessToken")
+        removeAuthContext("refreshToken")
         setStatus('resolved')
         //navigate("/login")
         return true
-	}
+    }
 
     return {
-		login,
-		logout,
+        handleLoginSubmit,
+        logout,
         saveLoginSuccess,
         isLoggedInTest,
-		isLoggedIn,
-		errorMsg,
-		status,
+        isLoggedIn,
+        errorMsg,
+        status,
         goHome,
-		/*refetchViewer,
-		loadingViewer,
-		viewer,*/
-	}
+        /*refetchViewer,
+        loadingViewer,
+        viewer,*/
+    }
 }

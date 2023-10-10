@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks"
 import { selectIsLoggedIn, useTypedSelector } from "@/redux"
 
 export default function Login() {
-    const { login, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
+    const { handleLoginSubmit, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
 
     const [userEmail, setUserEmail] = useState('')
     const [userPassword, setUserPassword] = useState('')
@@ -24,7 +24,7 @@ export default function Login() {
             setLoginPending(true)
             const loginDetails = { userEmail, userPassword }
 
-            login(userEmail, userPassword)
+            handleLoginSubmit(userEmail, userPassword)
             setLoginPending(false)
         }
     }
@@ -83,7 +83,7 @@ export default function Login() {
                     />
                     <Text variant="p">
                         <Button
-                            className={'login-btn button ' + (loginPending ? "pending" : "")}
+                            className={'login-btn button button-green ' + (loginPending || status === 'resolving' ? "pending" : "")}
                             onClick={doLogin}
                             disabled={status === 'resolving'}
                         >

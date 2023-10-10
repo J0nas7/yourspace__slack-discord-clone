@@ -13,13 +13,38 @@
     box-sizing: border-box;
 }
 
+@mixin button {
+    width: 100%;
+    height: 34px;
+    font-size: 1rem;
+    border: 0;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+@mixin button-green {
+    background-color: rgb(76, 207, 150) !important;
+    color: white !important;
+}
+
 button {
+    @include button;
+
     &.button-green {
-        background-color: rgb(103, 176, 103);
-        color: white;
+        @include button-green;
     }
     &.button-red {
         background-color: rgb(176, 108, 103);
         color: white;
+    }
+    &.pending {
+        background-image: url("../../Assets/Images/button.gif");
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-size: 34px;
+
+        .button-text {
+            display: none;
+        }
     }
 }

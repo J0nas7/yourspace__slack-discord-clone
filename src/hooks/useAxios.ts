@@ -3,10 +3,10 @@ import axios from 'axios'
 
 // Internal
 import { env, paths } from '@/env.local'
-//import { useAuthContext } from '../context'
+import { useAuthContext } from './'
 
 export const useAxios = () => {
-    //const { authID, authKey } = useAuthContext()
+    const { getAuthContext } = useAuthContext()
 
     axios.defaults.withCredentials = true
 
@@ -29,16 +29,18 @@ export const useAxios = () => {
 
     const httpPostWithData = async (apiEndPoint : string, postContent : any = '') => {
         try {
-            const { data: response } = await axios.post(`${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`, 
-                                                {
-                                                    postContent: JSON.stringify(postContent),
-                                                },
-                                                {
-                                                    withCredentials: true,
-                                                    headers: {
-                                                        'Accept': 'application/json'
-                                                    },
-                                                })
+            const { data: response } = await axios.post(
+                `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`, 
+                {
+                    postContent: JSON.stringify(postContent),
+                },
+                {
+                    withCredentials: true,
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                }
+            )
             return response
         } catch(e:any) {
             if (e.response) console.log("httpPostWithData", e)
@@ -48,8 +50,16 @@ export const useAxios = () => {
 
     const httpGetRequest = async (apiEndPoint : string) => {
         try {
-            const { data: response } = await axios.get(`${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`)
-            return response
+            const le = await axios.get(
+                `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + getAuthContext('accessToken')
+                    }
+                }
+            )
+            console.log("response", le)
+            return le.data
         } catch (e:any) {
             if (e.response && e.response.statusText === "Unauthorized") {
                 console.log("httpGetRequest", e)
