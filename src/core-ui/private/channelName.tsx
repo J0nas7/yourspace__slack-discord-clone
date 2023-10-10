@@ -11,9 +11,7 @@ import { MessageDTO } from '@/types/MessageDTO'
 import Message from '@/components/Cards/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
-export const ChannelName = (props: any) => {
-  const [channelName, setChannelName] = useState<string | string[] | undefined>(props.channelName)
-
+export const ChannelName = ({ channelName }: { channelName: string }) => {
   const [newMessage, setNewMessage] = useState<string>('')
   const messages: MessageDTO[] = [
     {
@@ -75,14 +73,4 @@ export const ChannelName = (props: any) => {
       </Block>
     </Block>
   )
-}
-
-export async function getServerSideProps(ctx: any) {
-  const channelName = ctx.query.channelName + "WWW"
-
-  return {
-    props: {
-      channelName
-    }
-  }
 }

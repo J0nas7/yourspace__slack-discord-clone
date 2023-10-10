@@ -4,15 +4,9 @@ import { useRouter } from 'next/router'
 
 // Internal
 import { Block, Text } from '@/components'
+import { ChannelName } from '@/core-ui'
 
-export const Channel = ({children} : { children: React.ReactNode }) => {
-  const [channelName, setChannelName] = useState<string|string[]|undefined>('')
-  const router = useRouter()
-  
-  useEffect(() => {
-    setChannelName(router.query.channelName+"FFF")
-  }, [])
-
+export const Channel = ({channelName} : { channelName: string }) => {
   return (
     <Block className="channel-wrapper">
         <Block className="channel-header">
@@ -23,7 +17,7 @@ export const Channel = ({children} : { children: React.ReactNode }) => {
             <Block className="right-side">Live: Real-time updates</Block>
         </Block>
         <Block className="channel-content">
-            {children}
+          <ChannelName channelName={channelName} />
         </Block>
     </Block>
   )

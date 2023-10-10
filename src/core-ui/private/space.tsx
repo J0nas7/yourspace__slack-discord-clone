@@ -7,7 +7,7 @@ import { faEllipsis, faPlus, faGear } from '@fortawesome/free-solid-svg-icons'
 import { Block, Text, Field } from '@/components'
 import { ChannelList } from "../"
 
-export default function Space() {
+export default function Space({ spaceName }: {spaceName: string}) {
   const [spaceSearch,setSpaceSearch] = useState<string>('')
   const tempChannelsList:any = ["reactFTW", "Laravel for Leif", "CSS = Can't See Sharp"]
 
@@ -15,7 +15,7 @@ export default function Space() {
     <Block className="space-wrapper">
         <Block className="space-header">
           <Block className="left-side">
-            <Text className="space-title">Brogrammerse</Text>
+            <Text className="space-title">{spaceName}</Text>
           </Block>
           <Block className="right-side">
             <FontAwesomeIcon icon={faEllipsis} />

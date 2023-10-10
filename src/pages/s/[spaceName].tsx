@@ -12,11 +12,11 @@ import { MessageDTO } from '@/types/MessageDTO'
 import Message from '@/components/Cards/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
-export default function ChannelID(props: any) {
-    const [spaceName, setSpaceName] = useState<string|string[]|undefined>(props.spaceName)
+export default function SpaceName(props: any) {
+    const [spaceName, setSpaceName] = useState<string>(props.spaceName)
 
     return (
-        <Space></Space>
+        <Space spaceName={spaceName}></Space>
     )
 }
 
