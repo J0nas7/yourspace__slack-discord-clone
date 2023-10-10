@@ -13,7 +13,7 @@ export const PrivateLayout = ({children} : { children: React.ReactNode }) => {
         setMyMenuActive(!myMenuActive)
     }
 
-    const [hasSpace,setHasSpace] = useState<boolean>(false)
+    const [hasSpace,setHasSpace] = useState<boolean>(true)
     
     return (
         <Block className="private-wrapper">
