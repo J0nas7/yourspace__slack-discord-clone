@@ -11,8 +11,8 @@ import { MessageDTO } from '@/types/MessageDTO'
 import Message from '@/components/Cards/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
-export default function Home(props:any) {
-  const [channelName, setChannelName] = useState<string|string[]|undefined>(props.channelName)
+export const ChannelName = (props: any) => {
+  const [channelName, setChannelName] = useState<string | string[] | undefined>(props.channelName)
 
   const [newMessage, setNewMessage] = useState<string>('')
   const messages: MessageDTO[] = [
@@ -65,7 +65,7 @@ export default function Home(props:any) {
             type="text"
             lbl=""
             value={newMessage}
-            placeholder={"Message #"+channelName}
+            placeholder={"Message #" + channelName}
             onChange={(e: string) => setNewMessage(e)}
             disabled={false}
             className={styles["new-message-field"]}
@@ -77,8 +77,8 @@ export default function Home(props:any) {
   )
 }
 
-export async function getServerSideProps(ctx:any) {
-  const channelName = ctx.query.channelName+"WWW"
+export async function getServerSideProps(ctx: any) {
+  const channelName = ctx.query.channelName + "WWW"
 
   return {
     props: {

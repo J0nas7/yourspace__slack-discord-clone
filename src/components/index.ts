@@ -5,6 +5,4 @@ export * from './modal'
 export * from './ui/form'
 export * from './ui/file-upload'
 
-export * from './createSpace'
-
 //export { default as Order } from './cards/Order'

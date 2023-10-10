@@ -54,7 +54,7 @@ export const Field = ({
 	}
 
 	return (
-		<Block className={'field ' + className + (error ? ' field--error' : '') } theId={className}>
+		<Block className={'custom-field-container field ' + className + (error ? ' field--error' : '') } theId={className}>
             { ((lbl || displayLabel === true) && !innerLabel) && (
                 <label htmlFor={ `field-${ lbl }` }>
                     { lbl }

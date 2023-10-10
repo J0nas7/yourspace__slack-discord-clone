@@ -15,7 +15,7 @@ export default function Space() {
     <Block className="space-wrapper">
         <Block className="space-header">
           <Block className="left-side">
-            <Text className="space-title">Brogrammers</Text>
+            <Text className="space-title">Brogrammerse</Text>
           </Block>
           <Block className="right-side">
             <FontAwesomeIcon icon={faEllipsis} />

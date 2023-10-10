@@ -34,9 +34,14 @@ button {
         @include button-green;
     }
     &.button-red {
-        background-color: rgb(176, 108, 103);
-        color: white;
+        background-color: rgb(176, 108, 103) !important;
+        color: white !important;
     }
+    &.button-blue {
+        background-color: rgb(103, 139, 176) !important;
+        color: white !important;
+    }
+
     &.pending {
         background-image: url("../../Assets/Images/button.gif");
         background-repeat: no-repeat;

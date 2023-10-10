@@ -6,13 +6,17 @@ import { Button } from '@mui/material'
 import { Block, Modal, Text, Form, Field, FileUpload } from '@/components'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
 
-export const CreateSpace = ({ hasSpace }: { hasSpace: boolean }) => {
-    const [createSpaceModal, setCreateSpaceModal] = useState<boolean>(!hasSpace)
+export default function Space() {
+    const [createSpaceModal, setCreateSpaceModal] = useState<boolean>(true)
     const [editSpaceName, setEditSpaceName] = useState<string>('')
     const [spaceImage, setSpaceImage] = useState<string>('')
 
     const onCreate = () => {
         console.log(editSpaceName, spaceImage)
+    }
+
+    const onSkip = () => {
+        setCreateSpaceModal(false)
     }
 
     return (
@@ -45,9 +49,12 @@ export const CreateSpace = ({ hasSpace }: { hasSpace: boolean }) => {
                     grow={false}
                     className={styles["create-space-name"] + " no-fieldset"}
                 />
-                <Block className="button-wrapper">
+                <Block className={styles["button-wrapper"]+ " button-wrapper"}>
                     <Button className="button button-green" onClick={onCreate} disabled={false}>
                         <Text variant="span" className="button button-text">Create space</Text>
+                    </Button>
+                    <Button className="button button-blue" onClick={onSkip} disabled={false}>
+                        <Text variant="span" className="button button-text">Skip step</Text>
                     </Button>
                 </Block>
             </Form>
