@@ -223,15 +223,18 @@
         width: 550px;
         margin-left: calc(-550px / 2);
         border-radius: 10px;
+
+        --messageDialogH: 200px;
+        --createSpaceDialogH: 620px;
         
         &.edit-message-dialog, &.delete-message-dialog {
-            height: 200px;
-            margin-top: calc(-200px / 2);
+            height: var(--messageDialogH);
+            margin-top: calc((0px - var(--messageDialogH)) / 2);
         }
 
         &.create-space-dialog {
-            height: 560px;
-            margin-top: calc(-560px / 2);
+            height: var(--createSpaceDialogH);
+            margin-top: calc((0px - var(--createSpaceDialogH)) / 2);
         }
 
         &[open] {
