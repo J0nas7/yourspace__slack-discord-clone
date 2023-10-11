@@ -28,68 +28,67 @@ const errorCodes: any = {
 }
 
 export const useAuth = () => {
-    const router = useRouter()
-    const { isLoggedIn, setIsLoggedIn, saveTokens, removeAuthContext } = useAuthContext()
-    const { httpPostWithData, requestCSRF } = useAxios()
+    // Instant variables
     const [errorMsg, setErrorMsg] = useState<any>(null)
     const [status, setStatus] = useState<any>(null)
-
+    
+    // Hooks and Redux
     const dispatch = useAppDispatch()
     const loginErrorType = useTypedSelector(selectLoginErrorType)
     const createErrorType = useTypedSelector(selectCreateErrorType)
     const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
+    const { isLoggedIn, setIsLoggedIn, saveTokens, removeAuthContext } = useAuthContext()
+    const { httpPostWithData } = useAxios()
 
-    const saveLoginSuccess = /*useSafeDispatch( */ (jwtData: any) => {
+    const saveLoginSuccess = (jwtData: any) => {
         saveTokens(jwtData.authorisation)
         setIsLoggedIn(true)
-        goHome()
+        goHome(jwtData.memberOfSpaces)
     }
 
-    const goHome = () => {
+    const goHome = (anyMember?: any) => {
         //router.push('/') !!! not hard refreshing
-        window.location.href = "/"
+        if (anyMember === 0) { // Not a member of any spaces, redirect to create space
+            window.location.href = "/create/space"
+        } else { // Member of a space, redirect to frontpage of app
+            window.location.href = "/"
+        }
     }
 
-    const onError = /*useSafeDispatch(*/ (errors?: any) => {
-        if (loginErrorType) {
-            const theErrorMsg = errors?.message || loginErrorType
+    const onError = (fromAction: string, errors?: any) => {
+        if (loginErrorType || createErrorType) {
+            const theErrorMsg = errors?.message || loginErrorType || createErrorType
             setErrorMsg(
                 errorCodes[theErrorMsg] || theErrorMsg
             )
         } else if (errors) {
-            dispatch(setLoginErrorType({
-                "data": errors.message
-            }))
-        } else if (loginErrorType === "") {
+            if (fromAction === "login") {
+                dispatch(setLoginErrorType({
+                    "data": errors.message
+                }))
+            } else if (fromAction === "create") {
+                dispatch(setCreateErrorType({
+                    "data": errors.message
+                }))
+            }
+        } else if (loginErrorType === "" && createErrorType === "") {
             setErrorMsg(null)
         }
-    } //);
-    useEffect(() => {
-        onError()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loginErrorType])
-
-    const processCreateResult = (createResult: any) => {
-        setStatus('resolved')
-        console.log("processCreateResult()", createResult)
-        
-        if (createResult.success === false) {
-            onError(createResult)
-        } else if (createResult.success === true) {
-            saveLoginSuccess(createResult)
-            return true
-        }
-        return false
     }
+    useEffect(() => {
+        onError("")
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loginErrorType, createErrorType])
 
-    const processLoginResult = (loginResult: any) => {
+    const processResult = (fromAction: string, theResult: any) => {
         setStatus('resolved')
-        if (loginResult.success === false) {
-            onError(loginResult)
-        } else if (loginResult.success === true) {
-            saveLoginSuccess(loginResult)
+
+        if (theResult.success === true) {
+            saveLoginSuccess(theResult)
             return true
         }
+
+        onError(fromAction, theResult)
         return false
     }
 
@@ -107,18 +106,18 @@ export const useAuth = () => {
                                         inputDD: string, inputMM: string, inputYYYY: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
+        let error = false
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setCreateErrorType({ "data": "" }))
 
         // If credentials are empty
-        if (!realNameInput || !displayNameInput || !emailInput || !passwordInput || !password2Input || !inputDD || !inputMM || !inputYYYY) {
+        if (!error && (!realNameInput || !displayNameInput || !emailInput || !passwordInput || !password2Input || !inputDD || !inputMM || !inputYYYY)) {
             errorData = {
                 "success": false,
                 "message": "Missing neccesary credentials.",
                 "data": false
             }
-            processCreateResult(errorData)
-            return false
+            error = true
         }
 
         // If birthday credentials has wrong length
@@ -128,8 +127,7 @@ export const useAuth = () => {
                 "message": "Wrong length in birthday.",
                 "data": false
             }
-            processCreateResult(errorData)
-            return false
+            error = true
         }
         
         // Convert birthday strings to numbers
@@ -144,8 +142,7 @@ export const useAuth = () => {
                 "message": "Wrong format in birthday.",
                 "data": false
             }
-            processCreateResult(errorData)
-            return false
+            error = true
         }
         
         // If passwords does not match
@@ -155,8 +152,6 @@ export const useAuth = () => {
                 "message": "Passwords does not match.",
                 "data": false
             }
-            processCreateResult(errorData)
-            return false
         }
         
         // If email is not valid format
@@ -166,8 +161,7 @@ export const useAuth = () => {
                 "message": "E-mail is not valid.",
                 "data": false
             }
-            processCreateResult(errorData)
-            return false
+            error = true
         }
 
         // Variables to send to backend API
@@ -184,18 +178,28 @@ export const useAuth = () => {
         
         // Send create variables to the API for creation
         try {
-            const data = await httpPostWithData("userCreate", createVariables)
-            return processCreateResult(data)
+            if (!error) {
+                const data = await httpPostWithData("userCreate", createVariables)
+                return processResult("create", data)
+            }
         } catch (e) {
-            console.log("useAuth create error", e)
+            console.log("useAuth create user error", e)
+            errorData = {
+                "success": false,
+                "message": "A server error occured. Try again.",
+                "data": false
+            }
+            error = true
         }
         
+        processResult("create", errorData)
         return false
     }
 
     const handleLoginSubmit = async (emailInput: string, passwordInput: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
+        let error = false
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setLoginErrorType({ "data": "" }))
 
@@ -206,8 +210,7 @@ export const useAuth = () => {
                 "message": "Missing neccesary credentials.",
                 "data": false
             }
-            processLoginResult(errorData)
-            return false
+            error = true
         }
         
         const loginVariables = {
@@ -216,12 +219,21 @@ export const useAuth = () => {
         }
         // Send login variables to the API for authentication
         try {
-            const data = await httpPostWithData("userLogin", loginVariables)
-            return processLoginResult(data)
+            if (!error) {
+                const data = await httpPostWithData("userLogin", loginVariables)
+                return processResult("login", data)
+            }
         } catch (e) {
             console.log("useAuth login error", e)
+            errorData = {
+                "success": false,
+                "message": "A server error occured. Try again.",
+                "data": false
+            }
+            error = true
         }
         
+        processResult("login", errorData)
         return false
     }
 

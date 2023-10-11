@@ -91,25 +91,10 @@ export const useAxios = () => {
         });
     }*/
 
-    const getLaravelSanctumCSRF = async () => {
-        await axios.get(`${env.url.API_URL}/sanctum/csrf-cookie`).then(response => {
-            console.log(response)
-            console.log(response.data.token)
-            //axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-        });
-    }
-
-    const requestCSRF = async () => {
-        return axios.get(`${env.url.API_URL}/sanctum/csrf-cookie`)
-    }
-
     return {
         postWithData,
         getRequest,
         httpPostWithData,
         httpGetRequest,
-        requestCSRF,
-        getLaravelSanctumCSRF,
-        //getLaravelSanctumToken,
     }
 }
