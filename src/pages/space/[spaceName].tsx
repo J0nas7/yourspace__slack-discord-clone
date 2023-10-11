@@ -12,16 +12,26 @@ import { MessageDTO } from '@/types/MessageDTO'
 import Message from '@/components/Cards/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
+// Redux
+import {
+    useAppDispatch,
+    setSpaceName
+} from '@/redux'
+
 export default function SpaceName(props: any) {
-    const [spaceName, setSpaceName] = useState<string>(props.spaceName)
+    // Redux
+    const dispatch = useAppDispatch()
+    dispatch(setSpaceName({
+        "data": props.spaceName
+    }))
 
     return (
-        <Space spaceName={spaceName}></Space>
+        <Space></Space>
     )
 }
 
 export async function getServerSideProps(ctx: any) {
-    const spaceName = ctx.query.spaceName + "sss"
+    const spaceName = ctx.query.spaceName
 
     return {
         props: {

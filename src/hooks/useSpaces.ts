@@ -7,29 +7,64 @@ import { useAxios } from './'
 import {
     useAppDispatch,
     useTypedSelector,
+    // Create space
+    selectCreateErrorType,
     setCreateErrorType,
-    selectCreateErrorType
+    // Page: /space/
+    selectSpaceName,
+    setTextChannelsList,
+    selectTextChannelsList
 } from '../redux'
+import { CONSTANTS } from "@/data/CONSTANTS"
 
 export const useSpaces = () => {
     // Instant variables
     const [status, setStatus] = useState<string>('')
-    const [errorMsg,setErrorMsg] = useState<string>('')
-    
-    // Hooks and Redux
+    const [errorMsg, setErrorMsg] = useState<string>('')
+
+    // Hooks
+    const { httpPostWithData, httpGetRequest } = useAxios()
+    const router = useRouter()
+
+    // Redux
     const dispatch = useAppDispatch()
     const createErrorType = useTypedSelector(selectCreateErrorType)
-    const { httpPostWithData } = useAxios()
-    const router = useRouter()
+    const spaceName = useTypedSelector(selectSpaceName)
+    const textChannelsList = useTypedSelector(selectTextChannelsList)
 
     const errorCodes: any = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
 
+    const getChannelsList = async (spaceName: string, channelFormat: string) => {
+        if (spaceName) {
+            // Request channel lists from the unique space name
+            // Variables to send to backend API
+            const getChannelsVariables = {
+                "Space_Name": spaceName,
+                "Channel_Format": channelFormat
+            }
+
+            // Send get variables to the API for array request
+            try {
+                const data = await httpPostWithData("getChannelsList", getChannelsVariables)
+                if (data.data.length) {
+                    if (channelFormat == "text") {
+                        dispatch(setTextChannelsList({
+                            "data": data.data
+                        }))
+                    }
+                }
+            } catch (e) {
+                console.log("useAuth create error", e)
+            }
+        }
+    }
+
     const afterSuccess = (theResult: any) => {
         const spaceName = theResult.data.Space_Name
         const spaceID = theResult.data.Space_ID
-        router.push('/s/'+spaceName)
+        router.push(CONSTANTS.SPACE_URL + spaceName)
     }
 
     // Handle error dispatch and set state of them correspondingly
@@ -101,6 +136,9 @@ export const useSpaces = () => {
     }
 
     return {
+        spaceName,
+        textChannelsList,
+        getChannelsList,
         handleCreateSubmit,
         errorMsg,
         status

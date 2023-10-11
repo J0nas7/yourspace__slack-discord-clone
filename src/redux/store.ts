@@ -3,14 +3,12 @@ import { configureStore, PreloadedState } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
 
 // Internal
-/*import pageReducer from './reducers/pageSlice'
-import ordersReducer from './reducers/ordersSlice'*/
 import authReducer from './reducers/authSlice'
+import spaceReducer from './reducers/spaceSlice'
 
 const rootReducer = combineReducers({
-    /*page: pageReducer,
-    orders: ordersReducer,*/
-    auth: authReducer
+    auth: authReducer,
+    space: spaceReducer
 })
 
 export const appReducer = (state:any, action:any) => {

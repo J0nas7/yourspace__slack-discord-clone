@@ -1,15 +1,25 @@
 // External
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsis, faPlus, faGear } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text, Field } from '@/components'
 import { ChannelList } from "../"
+import { useSpaces } from '@/hooks'
 
-export default function Space({ spaceName }: {spaceName: string}) {
+export default function Space() {
+  // Internal variables
   const [spaceSearch,setSpaceSearch] = useState<string>('')
-  const tempChannelsList:any = ["reactFTW", "Laravel for Leif", "CSS = Can't See Sharp"]
+
+  // Hooks
+  const { spaceName, getChannelsList, textChannelsList } = useSpaces()
+
+  useEffect(() => {
+    getChannelsList(spaceName, "text")
+    getChannelsList(spaceName, "audio")
+    getChannelsList(spaceName, "video")
+  }, [])
 
   return (
     <Block className="space-wrapper">
@@ -34,9 +44,9 @@ export default function Space({ spaceName }: {spaceName: string}) {
                 className="space-search-field"
             />
           </Block>
-          <ChannelList format="Text">{tempChannelsList}</ChannelList>
-          <ChannelList format="Audio">{tempChannelsList}</ChannelList>
-          <ChannelList format="Video">{tempChannelsList}</ChannelList>
+          <ChannelList format="Text" channelsList={textChannelsList} />
+          <ChannelList format="Audio" channelsList="" />
+          <ChannelList format="Video" channelsList="" />
           
           <Block className="channel-info members">
             <Block className="channel-info-top members">

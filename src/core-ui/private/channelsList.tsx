@@ -1,20 +1,15 @@
 // External
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from '@/components'
 
-type Props = {
+export const ChannelList = ({ format, channelsList }: {
     format: string
-    children: any
-}
-
-export const ChannelList = ({
-    format, children
-} : Props) => {
-    const channelsList = children
+    channelsList: any
+}) => {
 
     return (
         <Block className="channel-format">
@@ -23,8 +18,8 @@ export const ChannelList = ({
                 <FontAwesomeIcon icon={faPlus} className="channel-new-channel right-side" />
             </Block>
             <Block className="channel-format-list">
-                {channelsList && channelsList.map((channelName:string, i:string) =>
-                    <Block variant="span" className="channel-format-list-item" key={i}>{channelName}</Block>
+                {channelsList && channelsList.map((channel: any, i: string) =>
+                    <Block variant="span" className="channel-format-list-item" key={i}>{channel.Channel_Name}</Block>
                 )}
             </Block>
         </Block>
