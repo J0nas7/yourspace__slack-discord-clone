@@ -6,31 +6,13 @@ import { env, paths } from '@/env.local'
 import { useAuthContext } from './'
 
 export const useAxios = () => {
-    const { getAuthContext } = useAuthContext()
+    const { getAuthContext, removeTokens } = useAuthContext()
 
     axios.defaults.withCredentials = true
 
-    const postWithData = async (apiEndPoint : string, postContent : any = '') => {
-        //await getLaravelSanctumToken()
-        return axios
-            .post(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`, 
-            {
-                postContent: JSON.stringify(postContent),
-                /*authID: authID,
-                authKey: authKey*/
-            },
-            {
-                withCredentials: true,
-                headers: {
-                    'Accept': 'application/json'
-                },
-            })
-    }
-
-    const httpPostWithData = async (apiEndPoint : string, postContent : any = '') => {
+    const httpPostWithData = async (apiEndPoint: string, postContent: any = '') => {
         try {
             let postHeaders
-            console.log("getAuthContext('accessToken')", getAuthContext('accessToken'))
             if (getAuthContext('accessToken')) {
                 postHeaders = {
                     Accept: 'application/json',
@@ -42,7 +24,7 @@ export const useAxios = () => {
                 }
             }
             const { data: response } = await axios.post(
-                `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`, 
+                `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`,
                 {
                     postContent: JSON.stringify(postContent),
                 },
@@ -52,13 +34,17 @@ export const useAxios = () => {
                 }
             )
             return response
-        } catch(e:any) {
-            if (e.response) console.log("httpPostWithData", e)
+        } catch (e: any) {
+            if (e.response && (e.response.statusText === "UserOnly Unauthorized" || e.response.data.message === "Token has expired")) {
+                /*removeTokens()
+                window.location.href = '/'*/
+            }
+            console.log("httpPostWithData", e)
             return false
         }
     }
 
-    const httpGetRequest = async (apiEndPoint : string) => {
+    const httpGetRequest = async (apiEndPoint: string) => {
         try {
             const { data: response } = await axios.get(
                 `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`,
@@ -70,30 +56,17 @@ export const useAxios = () => {
                 }
             )
             return response
-        } catch (e:any) {
-            if (e.response && e.response.statusText === "Unauthorized") {
-                console.log("httpGetRequest", e)
-                //router.push("/logout")
-                return e.response.statusText
+        } catch (e: any) {
+            if (e.response && (e.response.statusText === "UserOnly Unauthorized" || e.response.data.message === "Token has expired")) {
+                removeTokens()
+                window.location.href = '/'
             }
+            console.log("httpGetRequest", e)
             return false
         }
     }
 
-    const getRequest = async (apiEndPoint : string) => {
-        return axios.get(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`)
-    }
-
-    /*const getLaravelSanctumToken = async () => {
-        await axios.post(`${env.url.API_URL+paths.API_ROUTE}/tokens/create`).then(response => {
-            console.log(response)
-            //axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-        });
-    }*/
-
     return {
-        postWithData,
-        getRequest,
         httpPostWithData,
         httpGetRequest,
     }

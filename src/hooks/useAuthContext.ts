@@ -27,6 +27,11 @@ export const useAuthContext = (__templateCheck?: Function) => {
         refreshToken: string
     }
 
+    const removeTokens = () => {
+        deleteCookie("accessToken")
+        deleteCookie("refreshToken")
+    }
+
     const saveTokens = (token: any) => {
         if (token.accessToken) {
             setCookie("accessToken", token.accessToken, {
@@ -68,6 +73,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
         setIsLoggedIn,
         isLoading,
         logonCreds,
+        removeTokens,
         saveTokens,
         getAuthContext,
         removeAuthContext
