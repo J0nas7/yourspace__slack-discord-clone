@@ -3,16 +3,21 @@ import { useState } from 'react'
 import { Button } from '@mui/material'
 
 // Internal
+import { useSpaces } from "@/hooks"
 import { Block, Modal, Text, Form, Field, FileUpload } from '@/components'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
 
 export default function Space() {
+    // Internal variables
     const [createSpaceModal, setCreateSpaceModal] = useState<boolean>(true)
     const [editSpaceName, setEditSpaceName] = useState<string>('')
     const [spaceImage, setSpaceImage] = useState<string>('')
 
+    // Hooks
+    const { handleCreateSubmit, errorMsg, status } = useSpaces()
+
     const onCreate = () => {
-        console.log(editSpaceName, spaceImage)
+        handleCreateSubmit(editSpaceName, spaceImage)
     }
 
     const onSkip = () => {
@@ -37,6 +42,7 @@ export default function Space() {
                         onChange={setSpaceImage}
                     />
                 </Block>
+                <Text variant="p" className={styles["optional-image"]}>Optional image</Text>
                 <Field
                     type="text"
                     lbl="Space name"
@@ -49,6 +55,9 @@ export default function Space() {
                     grow={false}
                     className={styles["create-space-name"] + " no-fieldset"}
                 />
+                {errorMsg && status === 'resolved' && (
+                    <Text className="error-notice" variant="p">{errorMsg}</Text>
+                )}
                 <Block className={styles["button-wrapper"]+ " button-wrapper"}>
                     <Button className="button button-green" onClick={onCreate} disabled={false}>
                         <Text variant="span" className="button button-text">Create space</Text>
