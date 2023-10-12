@@ -106,11 +106,11 @@ export const useAuthContext = (__templateCheck?: Function) => {
 
     useEffect(() => {
         // This will only be called once the component is mounted inside the browser
-        if (localStorage.getItem("tempAccessToken")) {
+        /*if (localStorage.getItem("tempAccessToken")) {
             alert("Localstorage updated")
             setAuthContext("accessToken", localStorage.getItem("tempAccessToken")!)
             localStorage.removeItem("tempAccessToken")
-        }
+        }*/
 
         if (getAuthContext("accessToken")) dispatch(setAccessToken({ "data": getAuthContext("accessToken") }))
         if (getAuthContext("refreshToken")) dispatch(setRefreshToken({ "data": getAuthContext("refreshToken") }))

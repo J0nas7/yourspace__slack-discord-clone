@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 
 // Internal
 import { useAxios, useAuthContext } from './'
+import { CONSTANTS } from "@/data/CONSTANTS"
+import { jwtTokensDTO } from '@/types/AuthDTO'
 import {
     useAppDispatch,
     useTypedSelector,
-    
+
     useAuthActions,
 
     setLoggedIn,
@@ -16,11 +18,10 @@ import {
     setRefreshToken,
     setLoginErrorType,
     setCreateErrorType,
-    
+
     selectLoginErrorType,
     selectCreateErrorType
 } from '../redux'
-import { jwtTokensDTO } from '@/types/AuthDTO'
 
 const errorCodes: any = {
     wrong_credentials: 'Incorrect credentials. Please try again.',
@@ -37,14 +38,14 @@ export const useAuth = () => {
     // Instant variables
     const [errorMsg, setErrorMsg] = useState<any>(null)
     const [status, setStatus] = useState<any>(null)
-    
+
     // Hooks and Redux
     const dispatch = useAppDispatch()
     const loginErrorType = useTypedSelector(selectLoginErrorType)
     const createErrorType = useTypedSelector(selectCreateErrorType)
     const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
     const { isLoggedIn, setIsLoggedIn, removeTokens } = useAuthContext()
-    const { httpPostWithData } = useAxios()
+    const { httpPostWithData, httpGetRequest } = useAxios()
 
     // Methods
     const saveLoginSuccess = (jwtData: jwtTokensDTO, memberOfSpaces: any) => {
@@ -109,18 +110,25 @@ export const useAuth = () => {
         })*/
     }
 
-    const logout = () => {
+    const logout = async () => {
         setStatus('resolving')
-        dispatch(adminDoLogout(setLoggedOut))
-        removeTokens()
+        // Send login variables to the API for authentication
+        try {
+            const data = await httpGetRequest("userLogout")
+            dispatch(adminDoLogout(setLoggedOut))
+            removeTokens()
+            window.location.href = CONSTANTS.LOGIN_URL
+        } catch (e) {
+            console.log("useAuth logout error", e)
+        }
         setStatus('resolved')
-        //navigate("/login")
-        return true
+        return
     }
 
-    const handleCreateSubmit = async (  realNameInput: string, displayNameInput: string, emailInput: string, 
-                                        passwordInput: string, password2Input: string, 
-                                        inputDD: string, inputMM: string, inputYYYY: string): Promise<boolean> => {
+    const handleCreateSubmit = async (realNameInput: string, displayNameInput: string, emailInput: string,
+        passwordInput: string, password2Input: string,
+        inputDD: string, inputMM: string, inputYYYY: string): Promise<boolean> => {
+
         setStatus('resolving')
         let errorData
         let error = false
@@ -146,7 +154,7 @@ export const useAuth = () => {
             }
             error = true
         }
-        
+
         // Convert birthday strings to numbers
         const inputDDint = parseInt(inputDD)
         const inputMMint = parseInt(inputMM)
@@ -161,7 +169,7 @@ export const useAuth = () => {
             }
             error = true
         }
-        
+
         // If passwords does not match
         if (passwordInput !== password2Input) {
             errorData = {
@@ -170,7 +178,7 @@ export const useAuth = () => {
                 "data": false
             }
         }
-        
+
         // If email is not valid format
         if (!emailInput.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
             errorData = {
@@ -192,7 +200,7 @@ export const useAuth = () => {
             "Profile_BirthdayMM": inputMMint,
             "Profile_BirthdayYYYY": inputYYYYint
         }
-        
+
         // Send create variables to the API for creation
         try {
             if (!error) {
@@ -208,7 +216,7 @@ export const useAuth = () => {
             }
             error = true
         }
-        
+
         processResult("create", errorData)
         return false
     }
@@ -229,14 +237,14 @@ export const useAuth = () => {
             }
             error = true
         }
-        
+
         const loginVariables = {
             "Profile_Email": emailInput,
             "Profile_Password": passwordInput
         }
         // Send login variables to the API for authentication
         try {
-            if (!error) {
+            if (!error) {
                 const data = await httpPostWithData("userLogin", loginVariables)
                 return processResult("login", data)
             }
@@ -249,7 +257,7 @@ export const useAuth = () => {
             }
             error = true
         }
-        
+
         processResult("login", errorData)
         return false
     }

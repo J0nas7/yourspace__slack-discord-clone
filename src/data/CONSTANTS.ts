@@ -1,3 +1,5 @@
 export const CONSTANTS = {
-    'SPACE_URL': '/space/'
+    'LOGIN_URL': '/guest/login',
+
+    'SPACE_URL': '/space/',
 }
