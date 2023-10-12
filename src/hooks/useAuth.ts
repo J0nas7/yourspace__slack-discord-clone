@@ -7,14 +7,20 @@ import { useAxios, useAuthContext } from './'
 import {
     useAppDispatch,
     useTypedSelector,
+    
     useAuthActions,
+
     setLoggedIn,
     setLoggedOut,
+    setAccessToken,
+    setRefreshToken,
     setLoginErrorType,
     setCreateErrorType,
+    
     selectLoginErrorType,
     selectCreateErrorType
 } from '../redux'
+import { jwtTokensDTO } from '@/types/AuthDTO'
 
 const errorCodes: any = {
     wrong_credentials: 'Incorrect credentials. Please try again.',
@@ -37,13 +43,15 @@ export const useAuth = () => {
     const loginErrorType = useTypedSelector(selectLoginErrorType)
     const createErrorType = useTypedSelector(selectCreateErrorType)
     const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
-    const { isLoggedIn, setIsLoggedIn, saveTokens, removeAuthContext } = useAuthContext()
+    const { isLoggedIn, setIsLoggedIn, removeTokens } = useAuthContext()
     const { httpPostWithData } = useAxios()
 
-    const saveLoginSuccess = (jwtData: any) => {
-        saveTokens(jwtData.authorisation)
+    // Methods
+    const saveLoginSuccess = (jwtData: jwtTokensDTO, memberOfSpaces: any) => {
+        dispatch(setAccessToken({ "data": jwtData.accessToken }))
+        dispatch(setRefreshToken({ "data": jwtData.refreshToken }))
         setIsLoggedIn(true)
-        goHome(jwtData.memberOfSpaces)
+        goHome(memberOfSpaces)
     }
 
     const goHome = (anyMember?: any) => {
@@ -84,7 +92,7 @@ export const useAuth = () => {
         setStatus('resolved')
 
         if (theResult.success === true) {
-            saveLoginSuccess(theResult)
+            saveLoginSuccess(theResult.authorisation, theResult.memberOfSpaces)
             return true
         }
 
@@ -99,6 +107,15 @@ export const useAuth = () => {
                 onLoginSuccess(ProfileID)
             }
         })*/
+    }
+
+    const logout = () => {
+        setStatus('resolving')
+        dispatch(adminDoLogout(setLoggedOut))
+        removeTokens()
+        setStatus('resolved')
+        //navigate("/login")
+        return true
     }
 
     const handleCreateSubmit = async (  realNameInput: string, displayNameInput: string, emailInput: string, 
@@ -237,19 +254,7 @@ export const useAuth = () => {
         return false
     }
 
-    const logout = () => {
-        setStatus('resolving')
-        dispatch(adminDoLogout(setLoggedOut))
-        removeAuthContext("accessToken")
-        removeAuthContext("refreshToken")
-        setStatus('resolved')
-        //navigate("/login")
-        return true
-    }
-
     return {
-        handleLoginSubmit,
-        handleCreateSubmit,
         logout,
         saveLoginSuccess,
         isLoggedInTest,
@@ -257,8 +262,7 @@ export const useAuth = () => {
         errorMsg,
         status,
         goHome,
-        /*refetchViewer,
-        loadingViewer,
-        viewer,*/
+        handleLoginSubmit,
+        handleCreateSubmit,
     }
 }

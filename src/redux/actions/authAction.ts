@@ -2,22 +2,32 @@
 import { Dispatch } from 'redux'
 
 // Internal
-import { useAuthContext, useAxios } from '@/hooks'
+import { useAxios } from '@/hooks'
 
 export const useAuthActions = () => {
     const { httpGetRequest, httpPostWithData } = useAxios()
-    const { saveTokens } = useAuthContext()
     
     const fetchIsLoggedInStatus = (__reducer: Function) => async (dispatch: Dispatch) => {
         try {
             const data = await httpGetRequest("userLoggedInTest")
-            console.log("data", data)
             if (data.message === "Is logged in") {
-                saveTokens(data.data)
                 dispatch(__reducer(data))
             }
         } catch (e) {
             console.log("fetchIsLoggedInStatus", e)
+        }
+    }
+
+    const fetchRefreshJWTtoken = (__reducer: Function) => async (dispatch: Dispatch) => {
+        try {
+            const data = await httpGetRequest("refreshJWT", "refreshToken")
+            console.log("refreshJWT", data)
+            return
+            if (data.success && data.authorisation.newAccessToken) {
+                dispatch(__reducer(data.authorisation.newAccessToken))
+            }
+        } catch (e) {
+            console.log("fetchRefreshJWTtoken", e)
         }
     }
 
@@ -41,6 +51,7 @@ export const useAuthActions = () => {
 
     return {
         fetchIsLoggedInStatus,
+        fetchRefreshJWTtoken,
         adminDoLogin,
         adminDoLogout
     }

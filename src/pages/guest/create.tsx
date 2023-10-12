@@ -47,10 +47,6 @@ export default function Create() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoggedIn])
 
-    useEffect(() => {
-        isLoggedInTest()
-    }, [])
-
     return (
         <Block className="create">
             <Heading title="Create a new account" />

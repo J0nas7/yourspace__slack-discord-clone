@@ -14,6 +14,7 @@ export default function LayoutController({
 
   // If authorized, show the PrivateLayout
   // If not authorized, show the GuestLayout
+  
   return (
     <div className="page-wrapper">
       {
