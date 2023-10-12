@@ -7,17 +7,23 @@ import { RootState } from '../store'
 export interface AuthState {
     isLoggedIn: boolean
     adminLoggedIn: string,
+    accessToken: string,
+    refreshToken: string,
     loginErrorType: string,
     createErrorType: string,
-    loginResponse: Object
+    loginResponse: Object,
+    axiosGet: string,
 }
 
 const initialState = {
     isLoggedIn: false,
     adminLoggedIn: '',
+    accessToken: '',
+    refreshToken: '',
     loginErrorType: '',
     createErrorType: '',
-    loginResponse: {}
+    loginResponse: {},
+    axiosGet: '',
 } as AuthState
 
 export const authSlice = createSlice({
@@ -30,6 +36,12 @@ export const authSlice = createSlice({
         setLoggedOut: (state:AuthState, action:PayloadAction<any>) => {
             state.isLoggedIn = !action.payload.data
         },
+        setAccessToken: (state:AuthState, action:PayloadAction<any>) => {
+            state.accessToken = action.payload.data
+        },
+        setRefreshToken: (state:AuthState, action:PayloadAction<any>) => {
+            state.refreshToken = action.payload.data
+        },
         setLoginErrorType: (state:AuthState, action:PayloadAction<any>) => {
             state.loginErrorType = action.payload.data
         },
@@ -39,15 +51,21 @@ export const authSlice = createSlice({
         setCreateErrorType: (state:AuthState, action:PayloadAction<any>) => {
             state.createErrorType = action.payload.data
         },
+        setAxiosGet: (state:AuthState, action:PayloadAction<any>) => {
+            state.axiosGet = action.payload.data
+        },
     },
 })
 
 const { actions } = authSlice
-export const { setLoggedIn, setLoggedOut, setLoginErrorType, setCreateErrorType, setLoginResponse } = actions
+export const { setLoggedIn, setLoggedOut, setAccessToken, setRefreshToken, setLoginErrorType, setCreateErrorType, setLoginResponse, setAxiosGet } = actions
 
 export default authSlice.reducer
 
 export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn
+export const selectAccessToken = (state: RootState) => state.auth.accessToken
+export const selectRefreshToken = (state: RootState) => state.auth.refreshToken
 export const selectLoginErrorType = (state: RootState) => state.auth.loginErrorType
 export const selectLoginResponse = (state: RootState) => state.auth.loginResponse
 export const selectCreateErrorType = (state: RootState) => state.auth.createErrorType
+export const selectAxiosGet = (state: RootState) => state.auth.axiosGet

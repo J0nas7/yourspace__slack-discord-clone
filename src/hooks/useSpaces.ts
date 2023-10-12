@@ -12,8 +12,8 @@ import {
     setCreateErrorType,
     // Page: /space/
     selectSpaceName,
-    setTextChannelsList,
-    selectTextChannelsList
+    setChannelsList,
+    selectChannelsList
 } from '../redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
 
@@ -30,7 +30,7 @@ export const useSpaces = () => {
     const dispatch = useAppDispatch()
     const createErrorType = useTypedSelector(selectCreateErrorType)
     const spaceName = useTypedSelector(selectSpaceName)
-    const textChannelsList = useTypedSelector(selectTextChannelsList)
+    const channelsList = useTypedSelector(selectChannelsList)
 
     const errorCodes: any = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
@@ -48,12 +48,11 @@ export const useSpaces = () => {
             // Send get variables to the API for array request
             try {
                 const data = await httpPostWithData("getChannelsList", getChannelsVariables)
-                if (data.data.length) {
-                    if (channelFormat == "text") {
-                        dispatch(setTextChannelsList({
-                            "data": data.data
-                        }))
-                    }
+                if (data.data && data.data.length) {
+                    dispatch(setChannelsList({
+                        "format": channelFormat,
+                        "data": data.data
+                    }))
                 }
             } catch (e) {
                 console.log("useAuth create error", e)
@@ -69,7 +68,6 @@ export const useSpaces = () => {
 
     // Handle error dispatch and set state of them correspondingly
     const onError = (fromAction: string, errors?: any) => {
-        console.log("onError")
         if (createErrorType) {
             const theErrorMsg = errors?.message || createErrorType
             console.log(theErrorMsg)
@@ -137,7 +135,7 @@ export const useSpaces = () => {
 
     return {
         spaceName,
-        textChannelsList,
+        channelsList,
         getChannelsList,
         handleCreateSubmit,
         errorMsg,

@@ -13,7 +13,7 @@ export default function Space() {
   const [spaceSearch,setSpaceSearch] = useState<string>('')
 
   // Hooks
-  const { spaceName, getChannelsList, textChannelsList } = useSpaces()
+  const { spaceName, getChannelsList, channelsList } = useSpaces()
 
   useEffect(() => {
     getChannelsList(spaceName, "text")
@@ -44,7 +44,7 @@ export default function Space() {
                 className="space-search-field"
             />
           </Block>
-          <ChannelList format="Text" channelsList={textChannelsList} />
+          <ChannelList format="Text" channelsList={channelsList['text']} />
           <ChannelList format="Audio" channelsList="" />
           <ChannelList format="Video" channelsList="" />
           
