@@ -13,7 +13,7 @@ import styles from '@/core-ui/styles/modules/Message.module.scss'
 
 type Variant = 'in-channel'
 type Props = {
-    variant: string
+    variant: Variant
     message: MessageDTO
     className?: string
     theId?: string
