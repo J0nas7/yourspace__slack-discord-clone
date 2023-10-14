@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 // Internal
 import { Block, Field, Text } from '@/components'
-import { MessageDTO } from '@/types/MessageDTO'
+import { MessageDTO } from '@/types/'
 import Message from '@/components/Cards/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
