@@ -3,16 +3,22 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Internal
 import { RootState } from '../store'
+import { SpaceDTO } from '@/types'
 
 type channelListObject = {[key: string]: []}
 
 export interface SpaceState {
-    spaceName: string,
+    theSpace: SpaceDTO,
     channelsList: channelListObject
 }
 
+const emptySpace: SpaceDTO = {
+    Space_ID: 0,
+    Space_Name: ""
+}
+
 const initialState = {
-    spaceName: '',
+    theSpace: emptySpace,
     channelsList: {
         'text': [],
         'audio': [],
@@ -24,8 +30,8 @@ export const spaceSlice = createSlice({
     name: 'space',
     initialState,
     reducers: {
-        setSpaceName: (state: SpaceState, action:PayloadAction<any>) => {
-            state.spaceName = action.payload.data
+        setTheSpace: (state: SpaceState, action:PayloadAction<any>) => {
+            state.theSpace = action.payload.data
         },
         setChannelsList: (state:SpaceState, action:PayloadAction<any>) => {
             const channelFormat: string = action.payload.format
@@ -35,9 +41,9 @@ export const spaceSlice = createSlice({
 })
 
 const { actions } = spaceSlice
-export const { setSpaceName, setChannelsList } = actions
+export const { setTheSpace, setChannelsList } = actions
 
 export default spaceSlice.reducer
 
-export const selectSpaceName = (state: RootState) => state.space.spaceName
+export const selectTheSpace = (state: RootState) => state.space.theSpace
 export const selectChannelsList = (state: RootState) => state.space.channelsList

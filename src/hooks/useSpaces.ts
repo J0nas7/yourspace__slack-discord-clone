@@ -11,16 +11,21 @@ import {
     selectCreateErrorType,
     setCreateErrorType,
     // Page: /space/
-    selectSpaceName,
+    setTheSpace,
+    selectTheSpace,
     setChannelsList,
     selectChannelsList
 } from '../redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
 
-export const useSpaces = () => {
-    // Instant variables
+export const useSpaces = (tempSpaceName: string) => {
+    // Internal variables
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
+    const [spacesList, setSpacesList] = useState<Array<Object>>()
+    const errorCodes: { [key: string]: string } = {
+        wrong_credentials: 'Incorrect credentials. Please try again.'
+    }
 
     // Hooks
     const { httpPostWithData, httpGetRequest } = useAxios()
@@ -29,23 +34,57 @@ export const useSpaces = () => {
     // Redux
     const dispatch = useAppDispatch()
     const createErrorType = useTypedSelector(selectCreateErrorType)
-    const spaceName = useTypedSelector(selectSpaceName)
+    const theSpace = useTypedSelector(selectTheSpace)
     const channelsList = useTypedSelector(selectChannelsList)
 
-    const errorCodes: any = {
-        wrong_credentials: 'Incorrect credentials. Please try again.'
+    // Methods
+    const getSpacesList = async () => {
+        // Send request to the API for spaces array
+        try {
+            const data = await httpGetRequest("getSpacesList")
+            if (data.data && data.data.length) {
+                setSpacesList(data.data)
+                /*dispatch(setSpacesList({
+                    "data": data.data
+                }))*/
+            }
+        } catch (e) {
+            console.log("useAuth create error", e)
+        }
     }
 
-    const getChannelsList = async (spaceName: string, channelFormat: string) => {
-        if (spaceName) {
+    const getTheSpace = async () => {
+        // Request the space from the unique space name
+        // Variables to send to backend API
+        const getSpaceVariables = {
+            "Space_Name": tempSpaceName
+        }
+
+        // Request space from the unique space name
+        try {
+            const data = await httpPostWithData("getTheSpace", getSpaceVariables)
+            if (data.data) {
+                dispatch(setTheSpace({
+                    "data": data.data
+                }))
+                return data.data.Space_Name
+            }
+        } catch (e) {
+            console.log("useSpaces getTheSpace error", e)
+        }
+        return
+    }
+
+    const getChannelsList = async (channelFormat: string) => {
+        if (channelFormat) {
             // Request channel lists from the unique space name
             // Variables to send to backend API
             const getChannelsVariables = {
-                "Space_Name": spaceName,
+                "Space_Name": theSpace.Space_Name,
                 "Channel_Format": channelFormat
             }
 
-            // Send get variables to the API for array request
+            // Send request to the API for channel list
             try {
                 const data = await httpPostWithData("getChannelsList", getChannelsVariables)
                 if (data.data && data.data.length) {
@@ -55,7 +94,7 @@ export const useSpaces = () => {
                     }))
                 }
             } catch (e) {
-                console.log("useAuth create error", e)
+                console.log("useSpaces getChannelsList error", e)
             }
         }
     }
@@ -128,13 +167,16 @@ export const useSpaces = () => {
             const data = await httpPostWithData("createNewSpace", createVariables)
             return processResult('create', data)
         } catch (e) {
-            console.log("useAuth create error", e)
+            console.log("useSpaces create error", e)
         }
         return true
     }
 
     return {
-        spaceName,
+        theSpace,
+        getTheSpace,
+        spacesList,
+        getSpacesList,
         channelsList,
         getChannelsList,
         handleCreateSubmit,
