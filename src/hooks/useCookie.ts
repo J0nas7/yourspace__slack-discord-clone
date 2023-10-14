@@ -1,7 +1,19 @@
 // External
-import { getCookie, setCookie, deleteCookie } from 'cookies-next'
+import { getCookie, setCookie, deleteCookie, getCookies } from 'cookies-next'
 
 export const useCookie = () => {
+    const getTheCookie = (name: string) => {
+        return getCookie(name)
+    }
+
+    const deleteTheCookie = (name: string) => {
+        return deleteCookie(name)
+    }
+
+    const getAllTheCookies = () => {
+        return getCookies()
+    }
+
     const setTheCookie = (name: string, value: string) => {
         setCookie(name, value, {
             httpOnly: false,//true
@@ -12,12 +24,9 @@ export const useCookie = () => {
         })
     }
 
-    const getTheCookie = (name: string) => {
-        return getCookie(name)
-    }
-
     return {
-        setTheCookie,
         getTheCookie,
+        setTheCookie,
+        deleteTheCookie,
     }
 }

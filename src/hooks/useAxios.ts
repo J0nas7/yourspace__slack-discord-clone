@@ -5,37 +5,28 @@ import axios from 'axios'
 import { env, paths } from '@/env.local'
 import { useAuthContext, useCookie } from './'
 import {
-    useAppDispatch,
     useTypedSelector,
-
-    useAuthActions,
-
-    setAccessToken,
-
-    selectAccessToken,
-    selectRefreshToken,
+    selectTheSpace,
 } from '@/redux'
-import { useState } from 'react'
+import { CONSTANTS } from '@/data/CONSTANTS'
 
 export const useAxios = () => {
     // Redux
-    const accessToken = useTypedSelector(selectAccessToken)
-    const refreshToken = useTypedSelector(selectRefreshToken)
+    //const theSpace = useTypedSelector(selectTheSpace)
     
     // Hooks
-    const { setTheCookie, getTheCookie } = useCookie()
-
-    // Internal variables
-    const tokens: { [key: string]: string } = { "accessToken": accessToken, "refreshToken": refreshToken }
+    const { setTheCookie } = useCookie()
+    const { getCurrentToken } = useAuthContext()
 
     // Axios stuff
     axios.defaults.withCredentials = true
 
     const axiosAction = async (actionType: string, apiEndPoint: string, tokenName: string, postContent: any = '') => {
+        //console.log("axios", theSpace, getCurrentToken("accessToken")!.slice(0, 5))
         let axiosUrl = `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`
         let headers: any = {
             Accept: 'application/json',
-            Authorization: (tokens[tokenName] ? "Bearer "+(tokens[tokenName]) : tokenName)
+            Authorization: "Bearer "+getCurrentToken(tokenName)
         }
         let config = {
             withCredentials: true,
@@ -62,9 +53,18 @@ export const useAxios = () => {
         }
     }
 
-    const handleError = async (e: any, actionType: string, apiEndPoint: string, tokenName: string, postContent: any) => {
+    type ErrorProps = {
+        errorContext: any
+        actionType: string
+        apiEndPoint: string
+        tokenName: string
+        postContent?: any
+    }
+
+    const refreshJWTAndTryAgain = async ({ errorContext, actionType, apiEndPoint, tokenName, postContent } : ErrorProps) => {
         // If need for JWT refresh token
-        if (e.response && (e.response.data.error === "UserOnly Unauthorized" || e.response.data.message === "Token has expired")) {
+        let newE
+        if (errorContext.response && (errorContext.response.data.error === "UserOnly Unauthorized" || errorContext.response.data.message === "Token has expired")) {
             try {
                 // Request a new JWT access token
                 const getToken = await axiosAction("get", "refreshJWT", "refreshToken")
@@ -74,38 +74,65 @@ export const useAxios = () => {
                     try {
                         setTheCookie("accessToken", newToken)
                         const { data: tryAgain } = await axiosAction(actionType, apiEndPoint, newToken, postContent)
+                        console.log("useAxios refreshJWTAndTryAgain() success", tryAgain)
                         return tryAgain
                     } catch (e: any) {
+                        newE = e
                         console.log("tryAgain E", e)
                     }
+                } else {
+                    return false
                 }
             } catch (e: any) {
+                newE = e
                 console.log("getToken E", e)
             }
         }
         
-        return e
+        return newE
+    }
+
+    const handleError = async ({ errorContext, actionType, apiEndPoint, tokenName, postContent } : ErrorProps) => {
+        if (errorContext.response) console.log(actionType+" send", errorContext)
+
+        if (errorContext.response?.data?.error && tokenName === "accessToken") {
+            const refreshProps = { errorContext, actionType, apiEndPoint, tokenName, postContent }
+            const send = await refreshJWTAndTryAgain(refreshProps)
+            
+            console.log("handleError send", send)
+            if (send.response?.data || !send) {
+                window.location.href = CONSTANTS.LOGOUT_URL
+                return false
+            }
+            return send
+        }
     }
 
     const httpPostWithData = async (apiEndPoint: string, postContent: any = '', tokenName: string = 'accessToken') => {
-        let send = await axiosAction("post", apiEndPoint, tokenName, postContent)
-        console.log("POST SEND", send)
-
+        const actionType = "post"
+        let send = await axiosAction(actionType, apiEndPoint, tokenName, postContent)
+        
         if (send.response?.data?.error && tokenName === "accessToken") {
-            send = await handleError(send, "post", apiEndPoint, tokenName, postContent)
-            return false
+            const errorContext = send
+            const errorProps = { errorContext, actionType, apiEndPoint, tokenName, postContent }
+            send = await handleError(errorProps)
+            
+            if (send.response?.data || !send) return false
         }
         return send
     }
 
     const httpGetRequest = async (apiEndPoint: string, tokenName: string = 'accessToken') => {
-        const send = await axiosAction("get", apiEndPoint, tokenName)
-        console.log("GET SEND", send)
+        const actionType = "get"
+        let send = await axiosAction(actionType, apiEndPoint, tokenName)
+        
+        if (send.response?.data?.error && tokenName === "accessToken") {
+            const errorContext = send
+            const errorProps = { errorContext, actionType, apiEndPoint, tokenName }
+            send = await handleError(errorProps)
 
-        /*if (send.response?.data?.error && tokenName === "accessToken") {
-            await jwtAxiosError(send)
-            return false
-        }*/
+            if (send.response?.data || !send) return false
+        }
         return send
     }
 

@@ -1,14 +1,11 @@
 // External
 import { useEffect, useState } from 'react'
-import jwt_decode from "jwt-decode";
-import { getCookie, setCookie, deleteCookie } from 'cookies-next'
+import jwt_decode from "jwt-decode"
 
 // Internal
 import {
     useAppDispatch,
     useTypedSelector,
-
-    useAuthActions,
 
     setAccessToken,
     setRefreshToken,
@@ -17,49 +14,43 @@ import {
     selectRefreshToken,
 } from '@/redux'
 import { jwtTokensDTO } from '@/types/AuthDTO'
+import { useCookie } from '@/hooks'
 
 export const useAuthContext = (__templateCheck?: Function) => {
     // Redux
     const dispatch = useAppDispatch()
-    const { fetchRefreshJWTtoken } = useAuthActions()
+    const accessToken = useTypedSelector(selectAccessToken)
+    const refreshToken = useTypedSelector(selectRefreshToken)
+    const tokensFromRedux: { [key: string]: string } = { "accessToken": accessToken, "refreshToken": refreshToken }
+
+    // Hooks
+    const { getTheCookie, setTheCookie, deleteTheCookie } = useCookie()
 
     /**
      * Methods
      */
     // Getters and setters
     const getAuthContext = (token: string) => {
-        return getCookie(token)
+        return getTheCookie(token)
     }
     const setAuthContext = (name: string, token: string) => {
-        return setCookie(name, token, {
-            httpOnly: false,//true
-            secure: process.env.NODE_ENV !== "development",
-            maxAge: 60 * 60 * 24,
-            sameSite: false,//"strict",
-            path: '/',
-        })
+        return setTheCookie(name, token)
     }
-    const removeAuthContext = (token: string) => {
-        return deleteCookie(token)
+    const deleteAuthContext = (token: string) => {
+        return deleteTheCookie(token)
     }
     const removeTokens = () => {
-        removeAuthContext("accessToken")
-        removeAuthContext("refreshToken")
+        deleteAuthContext("accessToken")
+        deleteAuthContext("refreshToken")
     }
 
     // Logical
-    const refreshAccessToken = () => {
-        console.log("refreshAccessToken()")
-        dispatch(fetchRefreshJWTtoken(setAccessToken))
-    }
-
-    const tokenInvalid = () => {
-        if (getAuthContext("refreshToken")) {
-            refreshAccessToken()
-        } else {
-            removeTokens()
-            window.location.href = '/'
+    const getCurrentToken = (tokenName: string) => {
+        if (tokenName) {
+            if (tokensFromRedux[tokenName]) return tokensFromRedux[tokenName]
+            if (getTheCookie(tokenName)) return getTheCookie(tokenName)
         }
+        return tokenName
     }
 
     const saveTokens = (token: jwtTokensDTO) => {
@@ -68,8 +59,6 @@ export const useAuthContext = (__templateCheck?: Function) => {
     }
 
     // Internal variables
-    const accessToken = useTypedSelector(selectAccessToken)
-    const refreshToken = useTypedSelector(selectRefreshToken)
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
         if (typeof window !== "undefined") {
@@ -88,9 +77,6 @@ export const useAuthContext = (__templateCheck?: Function) => {
 
     // Listeners
     useEffect(() => {
-        /*if (refreshToken && accessToken == "RESET") {
-            tokenInvalid()
-        } else {*/
         if (accessToken) {
             const decodedJWT: any = jwt_decode(accessToken)
             //(decodedJWT.exp * 1000)
@@ -123,7 +109,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
         isLoading,
         removeTokens,
         getAuthContext,
+        getCurrentToken,
         saveTokens,
-        refreshAccessToken,
     }
 }

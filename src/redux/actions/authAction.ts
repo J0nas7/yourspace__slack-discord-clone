@@ -18,19 +18,6 @@ export const useAuthActions = () => {
         }
     }
 
-    const fetchRefreshJWTtoken = (__reducer: Function) => async (dispatch: Dispatch) => {
-        try {
-            const data = await httpGetRequest("refreshJWT", "refreshToken")
-            console.log("refreshJWT", data)
-            return
-            if (data.success && data.authorisation.newAccessToken) {
-                dispatch(__reducer(data.authorisation.newAccessToken))
-            }
-        } catch (e) {
-            console.log("fetchRefreshJWTtoken", e)
-        }
-    }
-
     const adminDoLogin = (loginVariables : Object, __reducer: Function) => async (dispatch: Dispatch) => {
         try {
             const data = await httpPostWithData("adminLogin", loginVariables)
@@ -51,7 +38,6 @@ export const useAuthActions = () => {
 
     return {
         fetchIsLoggedInStatus,
-        fetchRefreshJWTtoken,
         adminDoLogin,
         adminDoLogout
     }
