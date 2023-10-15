@@ -1,6 +1,6 @@
 // External
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 // Internal
 import { useAxios } from './'
@@ -18,18 +18,25 @@ import {
 } from '../redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
 
-export const useSpaces = (tempSpaceName: string) => {
+export const useSpaces = () => {
+    // Hooks
+    const { httpPostWithData, httpGetRequest } = useAxios()
+    const router = useRouter()
+
     // Internal variables
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [spacesList, setSpacesList] = useState<Array<Object>>()
+    const tempSpaceName: string = router.query.spaceName?.toString()!
+    const [channelsListToRender, setChannelsListToRender] = useState<{[key: string]: []}>({
+        'text': [],
+        'audio': [],
+        'video': [],
+    })
     const errorCodes: { [key: string]: string } = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
 
-    // Hooks
-    const { httpPostWithData, httpGetRequest } = useAxios()
-    const router = useRouter()
 
     // Redux
     const dispatch = useAppDispatch()
@@ -76,7 +83,7 @@ export const useSpaces = (tempSpaceName: string) => {
     }
 
     const getChannelsList = async (channelFormat: string) => {
-        if (channelFormat) {
+        if (channelFormat && theSpace.Space_Name) {
             // Request channel lists from the unique space name
             // Variables to send to backend API
             const getChannelsVariables = {
@@ -178,6 +185,8 @@ export const useSpaces = (tempSpaceName: string) => {
         spacesList,
         getSpacesList,
         channelsList,
+        channelsListToRender,
+        setChannelsListToRender,
         getChannelsList,
         handleCreateSubmit,
         errorMsg,

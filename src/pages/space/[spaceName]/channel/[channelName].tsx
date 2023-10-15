@@ -13,12 +13,10 @@ import Message from '@/components/Cards/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
 export default function channelName(props: any) {
-    const spaceName: string = props.spaceName
-    const channelName: string = props.channelName
+    const channelName: string = "test"//props.channelName
 
     return (
         <>
-            <Space tempSpaceName={spaceName}></Space>
             <Channel channelName={channelName}></Channel>
         </>
     )

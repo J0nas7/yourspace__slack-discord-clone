@@ -16,13 +16,9 @@ export default function Space() {
     // Hooks
     const { handleCreateSubmit, errorMsg, status } = useSpaces("")
 
-    const onCreate = () => {
-        handleCreateSubmit(editSpaceName, spaceImage)
-    }
+    const onCreate = () => handleCreateSubmit(editSpaceName, spaceImage)
 
-    const onSkip = () => {
-        setCreateSpaceModal(false)
-    }
+    const onSkip = () => setCreateSpaceModal(false)
 
     return (
         <Modal

@@ -22,7 +22,8 @@ export const ChannelList = ({ format, channelsList }: {
     const listItemLinkHandler = (newName: string) => {
         let newLink =   CONSTANTS.SPACE_URL + router.query.spaceName + 
                         CONSTANTS.CHANNEL_URL + newName
-        return newLink
+        router.push(newLink)
+        //return newLink
     }
 
     return (
@@ -40,7 +41,7 @@ export const ChannelList = ({ format, channelsList }: {
                                 className={"channel-format-list-item"+(routerChannelName === channel.Channel_Name ? " active" : "")}
                                 key={i}
                             >
-                                <Link href={listItemLinkHandler(channel.Channel_Name)}>{channel.Channel_Name}</Link>
+                                <Text onClick={() => listItemLinkHandler(channel.Channel_Name)}>{channel.Channel_Name}</Text>
                             </Block>
                         )}
                     </>

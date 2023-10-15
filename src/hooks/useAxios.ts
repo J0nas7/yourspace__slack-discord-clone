@@ -22,6 +22,7 @@ export const useAxios = () => {
     axios.defaults.withCredentials = true
 
     const axiosAction = async (actionType: string, apiEndPoint: string, tokenName: string, postContent: any = '') => {
+        console.log("API: "+apiEndPoint, postContent)
         //console.log("axios", theSpace, getCurrentToken("accessToken")!.slice(0, 5))
         let axiosUrl = `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`
         let headers: any = {
@@ -101,7 +102,7 @@ export const useAxios = () => {
             
             console.log("handleError send", send)
             if (send.response?.data || !send) {
-                window.location.href = CONSTANTS.LOGOUT_URL
+                //window.location.href = CONSTANTS.LOGOUT_URL
                 return false
             }
             return send

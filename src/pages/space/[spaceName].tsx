@@ -6,7 +6,7 @@ export default function SpaceName(props: any) {
     const spaceName: string = props.spaceName
 
     return (
-        <Space tempSpaceName={spaceName}></Space>
+        <></>
     )
 }
 

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsis, faPlus, faGear } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // Internal
 import { Block, Text, Field, Space as SpaceCard } from '@/components'
@@ -10,18 +11,21 @@ import { ChannelList } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
 
-export default function Space({ tempSpaceName }: { tempSpaceName: string }) {
-  // Internal variables
-  const [spaceSearch, setSpaceSearch] = useState<string>('')
-
+export default function Space() {
   // Hooks
-  const { theSpace, getTheSpace, channelsList, getChannelsList } = useSpaces(tempSpaceName)
+  const router = useRouter()
+  const { theSpace, getTheSpace, channelsList, getChannelsList, channelsListToRender, setChannelsListToRender } = useSpaces()
 
+  // Internal variables
+  const tempSpaceName: string = router.query.spaceName?.toString()!
+  const [spaceSearch, setSpaceSearch] = useState<string>('')
+  const routerChannelName = router.query.channelName
   const tempSpace: SpaceDTO = {
     Space_ID: 0,
     Space_Name: tempSpaceName,
   }
 
+  // Methods
   const initSpace = () => getTheSpace()
 
   const getAllChannels = () => {
@@ -31,12 +35,17 @@ export default function Space({ tempSpaceName }: { tempSpaceName: string }) {
   }
 
   useEffect(() => {
+    console.log("TÆSK", theSpace)
     initSpace()
-  }, [tempSpaceName])
+  }, [tempSpaceName, routerChannelName])
 
   useEffect(() => {
     getAllChannels()
   }, [theSpace])
+
+  useEffect(() => {
+    setChannelsListToRender(channelsList)
+  }, [channelsList])
 
   return (
     <Block className="space-wrapper">
@@ -63,9 +72,9 @@ export default function Space({ tempSpaceName }: { tempSpaceName: string }) {
             className="space-search-field"
           />
         </Block>
-        <ChannelList format="Text" channelsList={channelsList['text']} />
-        <ChannelList format="Audio" channelsList={channelsList['audio']} />
-        <ChannelList format="Video" channelsList={channelsList['video']} />
+        <ChannelList format="Text" channelsList={channelsListToRender['text']} />
+        <ChannelList format="Audio" channelsList={channelsListToRender['audio']} />
+        <ChannelList format="Video" channelsList={channelsListToRender['video']} />
 
         <Block className="channel-info members">
           <Block className="channel-info-top members">
