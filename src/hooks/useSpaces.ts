@@ -28,15 +28,10 @@ export const useSpaces = () => {
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [spacesList, setSpacesList] = useState<Array<Object>>()
     const tempSpaceName: string = router.query.spaceName?.toString()!
-    const [channelsListToRender, setChannelsListToRender] = useState<{[key: string]: []}>({
-        'text': [],
-        'audio': [],
-        'video': [],
-    })
+    const routerChannelName = router.query.channelName
     const errorCodes: { [key: string]: string } = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
-
 
     // Redux
     const dispatch = useAppDispatch()
@@ -59,6 +54,10 @@ export const useSpaces = () => {
             console.log("useAuth create error", e)
         }
     }
+
+    useEffect(() => {
+        console.log("useSpaces.ts")
+    }, [])
 
     const getTheSpace = async () => {
         // Request the space from the unique space name
@@ -185,8 +184,6 @@ export const useSpaces = () => {
         spacesList,
         getSpacesList,
         channelsList,
-        channelsListToRender,
-        setChannelsListToRender,
         getChannelsList,
         handleCreateSubmit,
         errorMsg,

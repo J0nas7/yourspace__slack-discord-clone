@@ -7,27 +7,26 @@ import { useChannels } from "@/hooks"
 import { Block, Modal, Text, Form, Field, FileUpload } from '@/components'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
 
-export default function Channel() {
-    // Internal variables
-    const [channelModal, setChannelModal] = useState<boolean>(true)
-    const [channelName, setChannelName] = useState<string>('')
-    const [channelFormat, setChannelFormat] = useState<string>('')
+type Props = {
+    defaultFormat: string,
+    showCreateModal: boolean,
+    setShowCreateModal: Function,
+}
 
+export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModal}:  Props) => {
     // Hooks
     const { handleCreateSubmit, errorMsg, status } = useChannels("")
 
-    const onCreate = () => {
-        handleCreateSubmit(channelName, channelFormat)
-    }
-
-    const onCancel = () => {
-        setChannelModal(false)
-    }
+    // Internal variables
+    const [channelName, setChannelName] = useState<string>('')
+    const [channelFormat, setChannelFormat] = useState<string>('')
+    const onCreate = () => handleCreateSubmit(channelName, channelFormat)
+    const onCancel = () => setShowCreateModal(false)
 
     return (
         <Modal
-            openModal={channelModal}
-            closeModal={() => setChannelModal(false)}
+            openModal={showCreateModal}
+            closeModal={() => setShowCreateModal(false)}
             title="Create a channel"
             className="create-channel-dialog"
         >
@@ -41,12 +40,13 @@ export default function Channel() {
                     displayLabel={true}
                     innerLabel={false}
                     placeholder="Enter channel name"
-                    value={channelFormat}
-                    onChange={(e: string) => setChannelFormat(e)}
+                    value={channelName}
+                    onChange={(e: string) => setChannelName(e)}
                     disabled={false}
                     grow={false}
                     className={styles["create-channel-name"] + " no-fieldset"}
                 />
+                FORMAT: {defaultFormat}
                 {errorMsg && status === 'resolved' && (
                     <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}

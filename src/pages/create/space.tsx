@@ -14,7 +14,7 @@ export default function Space() {
     const [spaceImage, setSpaceImage] = useState<string>('')
 
     // Hooks
-    const { handleCreateSubmit, errorMsg, status } = useSpaces("")
+    const { handleCreateSubmit, errorMsg, status } = useSpaces()
 
     const onCreate = () => handleCreateSubmit(editSpaceName, spaceImage)
 
