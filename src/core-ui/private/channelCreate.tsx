@@ -19,7 +19,7 @@ export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModa
 
     // Internal variables
     const [channelName, setChannelName] = useState<string>('')
-    const [channelFormat, setChannelFormat] = useState<string>('')
+    const [channelFormat, setChannelFormat] = useState<string>(defaultFormat)
     const onCreate = () => handleCreateSubmit(channelName, channelFormat)
     const onCancel = () => setShowCreateModal(false)
 

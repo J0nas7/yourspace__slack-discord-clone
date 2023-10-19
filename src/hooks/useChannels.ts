@@ -32,6 +32,7 @@ export const useChannels = (tempChannelName: string) => {
     const dispatch = useAppDispatch()
     const createErrorType = useTypedSelector(selectCreateErrorType)
 
+    // Methods
     const afterSuccess = (theResult: any) => {
         const channelName = theResult.data.Channel_Name
         router.push(
@@ -81,7 +82,7 @@ export const useChannels = (tempChannelName: string) => {
         dispatch(setCreateErrorType({ "data": "" }))
 
         // If credentials are empty
-        if (!channelName) {
+        if (!channelName || !channelFormat) {
             errorData = {
                 "success": false,
                 "message": "Missing neccesary credentials.",
