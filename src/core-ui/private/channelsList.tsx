@@ -10,10 +10,13 @@ import { Block, Text } from '@/components'
 import { ChannelCreate } from '@/core-ui'
 import { CONSTANTS } from '@/data/CONSTANTS'
 
-export const ChannelList = ({ format, channelsList }: {
+type Props = {
     format: string
     channelsList: any
-}) => {
+    resetChannels: Function
+}
+
+export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
     // Hooks
     const router = useRouter()
 
@@ -26,7 +29,7 @@ export const ChannelList = ({ format, channelsList }: {
     const listItemLinkHandler = (newName: string) => {
         let newLink = CONSTANTS.SPACE_URL + router.query.spaceName +
             CONSTANTS.CHANNEL_URL + newName
-        
+
         //router.push(newLink)
         router.push(
             { pathname: newLink },
@@ -35,10 +38,6 @@ export const ChannelList = ({ format, channelsList }: {
         )
         //return newLink
     }
-
-    useEffect(() => {
-        console.log("showCreateChannel", showCreateModal)
-    }, [showCreateModal])
 
     return (
         <Block className="channel-format">
@@ -64,7 +63,7 @@ export const ChannelList = ({ format, channelsList }: {
                     <Text variant="span" className="spinner-loader" />
                 )}
             </Block>
-            <ChannelCreate defaultFormat={format} showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} />
+            <ChannelCreate defaultFormat={format} showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} resetChannels={resetChannels} />
         </Block>
     )
 }

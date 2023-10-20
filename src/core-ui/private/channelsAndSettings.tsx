@@ -24,10 +24,16 @@ export const ChannelsAndSettings = () => {
 
     // Methods
     const initSpace = () => getTheSpace()
-    const getAllChannels = () => {
+    const getAllChannels = (reset: boolean = false) => {
+        if (reset) setChannelsListToRender(emptyChannels)
         getChannelsList("text")
         getChannelsList("audio")
         getChannelsList("video")
+    }
+
+    const resetChannels = () => {
+        setChannelsListToRender(emptyChannels)
+        getAllChannels()
     }
 
     useEffect(() => {
@@ -46,13 +52,13 @@ export const ChannelsAndSettings = () => {
 
     return (
         <>
-            <ChannelList format="Text" channelsList={channelsListToRender['text']} />
-            <ChannelList format="Audio" channelsList={channelsListToRender['audio']} />
-            <ChannelList format="Video" channelsList={channelsListToRender['video']} />
+            <ChannelList format="Text" channelsList={channelsListToRender['text']} resetChannels={resetChannels} />
+            <ChannelList format="Audio" channelsList={channelsListToRender['audio']} resetChannels={resetChannels} />
+            <ChannelList format="Video" channelsList={channelsListToRender['video']} resetChannels={resetChannels} />
 
             <Block className="channel-info members">
                 <Block className="channel-info-top members">
-                    <Text variant="span" className="channel-info-name left-side">MEMBERS OF
+                    <Text variant="span" className="channel-info-name left-side" onClick={resetChannels}>MEMBERS OF
                         <SpaceCard variant='name' withLabel={false} space={theSpace}></SpaceCard></Text>
                     <Text variant="span" className="channel-info-settings right-side" />
                 </Block>

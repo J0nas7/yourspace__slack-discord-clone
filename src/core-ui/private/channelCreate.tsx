@@ -11,16 +11,24 @@ type Props = {
     defaultFormat: string,
     showCreateModal: boolean,
     setShowCreateModal: Function,
+    resetChannels: Function,
 }
 
-export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModal}:  Props) => {
+export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModal, resetChannels}:  Props) => {
     // Hooks
     const { handleCreateSubmit, errorMsg, status } = useChannels("")
 
     // Internal variables
     const [channelName, setChannelName] = useState<string>('')
     const [channelFormat, setChannelFormat] = useState<string>(defaultFormat)
-    const onCreate = () => handleCreateSubmit(channelName, channelFormat)
+
+    // Methods
+    const onSuccess = () => {
+        setShowCreateModal(false)
+        setChannelName('')
+        resetChannels()
+    }
+    const onCreate = () => handleCreateSubmit(channelName, channelFormat, onSuccess)
     const onCancel = () => setShowCreateModal(false)
 
     return (

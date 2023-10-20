@@ -33,12 +33,11 @@ export const useChannels = (tempChannelName: string) => {
     const createErrorType = useTypedSelector(selectCreateErrorType)
 
     // Methods
-    const afterSuccess = (theResult: any) => {
+    const afterSuccess = (theResult: any, onSuccess?: Function) => {
         const channelName = theResult.data.Channel_Name
-        router.push(
-            CONSTANTS.SPACE_URL + router.query.spaceName + 
-            CONSTANTS.CHANNEL_URL + channelName
-        )
+        onSuccess!()
+        router.push(CONSTANTS.SPACE_URL + router.query.spaceName +
+            CONSTANTS.CHANNEL_URL + channelName)
     }
 
     // Handle error dispatch and set state of them correspondingly
@@ -62,20 +61,20 @@ export const useChannels = (tempChannelName: string) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [createErrorType])
 
-    const processResult = (fromAction: string, theResult: any) => {
+    const processResult = (fromAction: string, theResult: any, onSuccess?: Function) => {
         setStatus('resolved')
         console.log("channel processResult()", theResult)
 
         if (theResult.success === true) {
-            afterSuccess(theResult)
+            afterSuccess(theResult, onSuccess)
             return true
         }
 
         onError(fromAction, theResult)
         return false
     }
-    
-    const handleCreateSubmit = async (channelName: string, channelFormat: string): Promise<boolean> => {
+
+    const handleCreateSubmit = async (channelName: string, channelFormat: string, onSuccess: Function): Promise<boolean> => {
         setStatus('resolving')
         let errorData
         // Resetting the errorType triggers another dispatch that resets the error
@@ -101,13 +100,13 @@ export const useChannels = (tempChannelName: string) => {
         // Send create variables to the API for creation
         try {
             const data = await httpPostWithData("createNewChannel", createVariables)
-            return processResult('create', data)
+            return processResult('create', data, onSuccess)
         } catch (e) {
             console.log("useChannels create error", e)
         }
         return true
     }
-    
+
     return {
         handleCreateSubmit,
         status,
