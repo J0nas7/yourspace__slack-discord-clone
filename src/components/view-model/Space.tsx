@@ -12,7 +12,7 @@ import { Block, Text, Heading, Modal, Field } from '@/components'
 import { SpaceDTO } from '@/types/'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
 
-type Variant = 'name'
+type Variant = 'name' | 'sidepanel'
 type Props = {
     variant: Variant
     withLabel: boolean
@@ -27,9 +27,18 @@ const Space = ({
     const router = useRouter()
     const theSpace: SpaceDTO = space
 
+    const logoText = (theSpace.Space_ImageUrl ? false : theSpace.Space_Name.slice(0,4))
+
     if (variant === "name") {
         return (
             <Link href={"/space/" + theSpace.Space_Name} className={(withLabel ? 'with-label' : '')}>
+                {theSpace.Space_Name}
+            </Link>
+        )
+    } else if (variant === "sidepanel") {
+        return (
+            <Link href={"/space/" + theSpace.Space_Name} className={(withLabel ? 'with-label' : '')}>
+                {logoText && (<Text variant="span" className="space-logotext">{logoText}</Text>)}
                 <Text variant="span" className="space-label">
                     <Text variant="span" className="inner-label">
                         {theSpace.Space_Name}

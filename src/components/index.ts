@@ -5,5 +5,6 @@ export * from './modal'
 export * from './ui/form'
 export * from './ui/file-upload'
 
-export { default as Message } from './Cards/Message'
-export { default as Space } from './Cards/Space'
+export { default as Message } from './view-model/Message'
+export { default as Space } from './view-model/Space'
+export { default as Channel } from './view-model/Channel'
