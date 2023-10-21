@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 // Internal
 import { Block, Field, Text } from '@/components'
 import { MessageDTO } from '@/types/'
-import Message from '@/components/Cards/Message'
+import Message from '@/components/view-model/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
 export const ChannelName = ({ channelName }: { channelName: string }) => {

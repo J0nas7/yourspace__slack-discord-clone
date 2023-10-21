@@ -6,7 +6,13 @@ import { useRouter } from 'next/router'
 import { Block, Text } from '@/components'
 import { ChannelName } from '@/core-ui'
 
-export const Channel = ({channelName} : { channelName: string }) => {
+export const Channel = () => {
+  // Hooks
+  const router = useRouter()
+
+  // Internal variables
+  const channelName: string = router.query.channelName?.toString()!
+
   return (
     <Block className="channel-wrapper">
         <Block className="channel-header">

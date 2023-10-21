@@ -35,7 +35,7 @@ export const useChannels = (tempChannelName: string) => {
     // Methods
     const afterSuccess = (theResult: any, onSuccess?: Function) => {
         const channelName = theResult.data.Channel_Name
-        onSuccess!()
+        if (onSuccess) onSuccess()
         router.push(CONSTANTS.SPACE_URL + router.query.spaceName +
             CONSTANTS.CHANNEL_URL + channelName)
     }
@@ -74,6 +74,40 @@ export const useChannels = (tempChannelName: string) => {
         return false
     }
 
+    const handleEditSubmit = async (channelName: string, oldChannelName: string, onSuccess: Function): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!channelName) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            processResult('edit', errorData)
+            return false
+        }
+
+        // Variables to send to backend API
+        const editVariables = {
+            "Space_Name": router.query.spaceName,
+            "Channel_Name": channelName,
+            "Old_Channel_Name": oldChannelName
+        }
+
+        // Send edit variables to the API for editing
+        try {
+            const data = await httpPostWithData("editChannel", editVariables)
+            return processResult('edit', data, onSuccess)
+        } catch (e) {
+            console.log("useChannels edit error", e)
+        }
+        return true
+    }
+
     const handleCreateSubmit = async (channelName: string, channelFormat: string, onSuccess: Function): Promise<boolean> => {
         setStatus('resolving')
         let errorData
@@ -108,6 +142,7 @@ export const useChannels = (tempChannelName: string) => {
     }
 
     return {
+        handleEditSubmit,
         handleCreateSubmit,
         status,
         errorMsg,

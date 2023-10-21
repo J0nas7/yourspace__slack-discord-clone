@@ -1,12 +1,12 @@
 // External
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text } from '@/components'
+import { Block, Text, Modal, Channel as ChannelCard } from '@/components'
 import { ChannelCreate } from '@/core-ui'
 import { CONSTANTS } from '@/data/CONSTANTS'
 
@@ -23,21 +23,6 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
     // Internal variables
     const [showCreateModal, setShowCreateModal] = useState<boolean>(false)
     const channelsListToRender: Array<any> = channelsList
-    const routerChannelName = router.query.channelName
-
-    // Methods
-    const listItemLinkHandler = (newName: string) => {
-        let newLink = CONSTANTS.SPACE_URL + router.query.spaceName +
-            CONSTANTS.CHANNEL_URL + newName
-
-        //router.push(newLink)
-        router.push(
-            { pathname: newLink },
-            undefined,
-            { shallow: true }
-        )
-        //return newLink
-    }
 
     return (
         <Block className="channel-format">
@@ -49,14 +34,12 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
                 {channelsListToRender.length ? (
                     <>
                         {channelsListToRender.map((channel, i) =>
-                            <Block
-                                variant="span"
-                                className={"channel-format-list-item" + (routerChannelName === channel.Channel_Name ? " active" : "")}
-                                onClick={() => listItemLinkHandler(channel.Channel_Name)}
+                            <ChannelCard
+                                variant="space-channel-format-list-item" 
+                                channel={channel} 
+                                resetChannels={resetChannels}
                                 key={i}
-                            >
-                                <Text variant="span">{channel.Channel_Name}</Text>
-                            </Block>
+                            />
                         )}
                     </>
                 ) : (

@@ -58,8 +58,9 @@ export const ChannelsAndSettings = () => {
 
             <Block className="channel-info members">
                 <Block className="channel-info-top members">
-                    <Text variant="span" className="channel-info-name left-side" onClick={resetChannels}>MEMBERS OF
-                        <SpaceCard variant='name' withLabel={false} space={theSpace}></SpaceCard></Text>
+                    <Text variant="span" className="channel-info-name left-side" onClick={resetChannels}>
+                        MEMBERS OF <SpaceCard variant='name' withLabel={false} space={theSpace}></SpaceCard>
+                    </Text>
                     <Text variant="span" className="channel-info-settings right-side" />
                 </Block>
             </Block>

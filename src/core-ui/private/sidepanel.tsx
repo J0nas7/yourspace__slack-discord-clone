@@ -11,7 +11,7 @@ import { Space } from '@/components/'
 
 export default function Sidepanel() {
   // Hooks
-  const { getSpacesList, spacesList } = useSpaces("")
+  const { getSpacesList, spacesList } = useSpaces()
 
   useEffect(() => {
     getSpacesList()
@@ -33,7 +33,7 @@ export default function Sidepanel() {
       </Block>
       <Block className="sidepanel-spaces-list">
         {spacesList && spacesList.map((space:any, i) =>
-          <Space variant='name' withLabel={true} space={space} key={i}></Space>
+          <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
         )}
       </Block>
     </Block>

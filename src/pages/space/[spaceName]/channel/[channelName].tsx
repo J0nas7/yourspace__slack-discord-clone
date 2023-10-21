@@ -9,27 +9,11 @@ import { useRouter } from 'next/router'
 import { Block, Field, Text } from '@/components'
 import { Space, Channel } from '@/core-ui'
 import { MessageDTO } from '@/types/'
-import Message from '@/components/Cards/Message'
+import Message from '@/components/view-model/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 
-export default function channelName(props: any) {
-    const channelName: string = "test"//props.channelName
-
+export default function channelName() {
     return (
-        <>
-            <Channel channelName={channelName}></Channel>
-        </>
+        <Channel />
     )
-}
-
-export async function getServerSideProps(ctx: any) {
-    const spaceName = ctx.query.spaceName
-    const channelName = ctx.query.channelName
-
-    return {
-        props: {
-            spaceName,
-            channelName
-        }
-    }
 }

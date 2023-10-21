@@ -35,12 +35,12 @@ export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModa
         <Modal
             openModal={showCreateModal}
             closeModal={() => setShowCreateModal(false)}
-            title="Create a channel"
+            title={"Create a "+channelFormat.toLowerCase()+" channel"}
             className="create-channel-dialog"
         >
             <Form onSubmit={onCreate} className={styles["create-channel-form"]}>
                 <Text variant="p" className={styles["create-channel-teaser"]}>
-                    Give your channel a name.<br />Assign it to a format.
+                    Give your new channel a name.
                 </Text>
                 <Field
                     type="text"
@@ -54,7 +54,7 @@ export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModa
                     grow={false}
                     className={styles["create-channel-name"] + " no-fieldset"}
                 />
-                FORMAT: {defaultFormat}
+                Channel format: {defaultFormat}
                 {errorMsg && status === 'resolved' && (
                     <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
