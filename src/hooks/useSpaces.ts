@@ -55,10 +55,6 @@ export const useSpaces = () => {
         }
     }
 
-    useEffect(() => {
-        console.log("useSpaces.ts")
-    }, [])
-
     const getTheSpace = async () => {
         // Request the space from the unique space name
         // Variables to send to backend API

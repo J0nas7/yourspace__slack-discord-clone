@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 
 // Internal
@@ -76,7 +76,7 @@ const Channel = ({
                 </Text>
                 <Block variant="span" className="channel-format-list-item-actions">
                     <FontAwesomeIcon icon={faPen} className="channel-format-list-item-action" onClick={() => setShowEditModal(true)} />
-                    <FontAwesomeIcon icon={faTrash} className="channel-format-list-item-action" onClick={() => setShowDeleteModal(true)} />
+                    <FontAwesomeIcon icon={faTrashCan} className="channel-format-list-item-action" onClick={() => setShowDeleteModal(true)} />
                 </Block>
                 <ChannelCard variant="EDIT" channel={channel} showModal={showEditModal} setShowModal={setShowEditModal} resetChannels={resetChannels} />
                 <ChannelCard variant="DELETE" channel={channel} showModal={showDeleteModal} setShowModal={setShowDeleteModal} resetChannels={resetChannels} />

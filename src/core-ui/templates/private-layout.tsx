@@ -19,10 +19,6 @@ export const PrivateLayout = ({children} : { children: React.ReactNode }) => {
         setMyMenuActive(!myMenuActive)
     }
 
-    useEffect(() => {
-        console.log("private-layout")
-    }, [])
-
     return (
         <Block className="private-wrapper">
             <Sidepanel></Sidepanel>

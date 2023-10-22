@@ -6,13 +6,13 @@ import { faSmile } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Field, Text } from '@/components'
+import { Block, Field, Text, ChatInput } from '@/components'
 import { MessageDTO } from '@/types/'
 import Message from '@/components/view-model/Message'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
+import { useSocket } from "@/components/providers/socket-provider"
 
 export const ChannelName = ({ channelName }: { channelName: string }) => {
-  const [newMessage, setNewMessage] = useState<string>('')
   const messages: MessageDTO[] = [
     {
       messageID: 1,
@@ -44,33 +44,33 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     }
   ]
 
+  const { socket } = useSocket()
+  const [renderMessages,setRenderMessages] = useState<any>('Loading...')
+
+  useEffect(() => {
+    if (!socket) return
+
+    socket.emit('sendChatToServer', " dolor sit amet")
+    
+    socket.on('sendChatToClient', (message: string) => {
+      setRenderMessages(renderMessages + message)
+    })
+  }, [socket])
+
   return (
     <Block className="channel-inner-content">
-      <Block className={styles["channel-messages"]}>
-        <Block className="reverse-messages">
-          {messages && messages.map((message, i) =>
-            <Message variant="in-channel" className="channel-message" message={message} key={i} />
-          )}
-          {messages && messages.map((message, i) =>
-            <Message variant="in-channel" className="channel-message" message={message} key={i} />
-          )}
-        </Block>
+      <Block className={styles["channel-stream"]}>
+        {renderMessages}
       </Block>
-      <Block className={styles["channel-new-message"]}>
-        <Block className={styles["new-message-tools"]}>
-          <Block className={styles["message-add-media"]}>+</Block>
-          <Field
-            type="text"
-            lbl=""
-            value={newMessage}
-            placeholder={"Message #" + channelName}
-            onChange={(e: string) => setNewMessage(e)}
-            disabled={false}
-            className={styles["new-message-field"]}
-          />
-          <FontAwesomeIcon icon={faSmile} className={styles["message-emoticons"]} />
-        </Block>
-      </Block>
+      <ChatInput
+        name={channelName}
+        type="channel"
+        apiUrl="/api/socket/messages"
+        query={{
+          channelID: 1,
+          serverID: 4
+        }}
+      />
     </Block>
   )
 }

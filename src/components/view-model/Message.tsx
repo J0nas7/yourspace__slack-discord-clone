@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 //import { useAxios } from '@/hooks'
@@ -50,7 +50,7 @@ const Message = ({
                         </Block>
                         <Block className={"right-side " + styles["message-actions"]}>
                             <FontAwesomeIcon icon={faPen} className={styles["message-action"]} onClick={() => editMessage()} />
-                            <FontAwesomeIcon icon={faTrash} className={styles["message-action"]} onClick={() => deleteMessage()} />
+                            <FontAwesomeIcon icon={faTrashCan} className={styles["message-action"]} onClick={() => deleteMessage()} />
                         </Block>
                     </Block>
                     <Block className={styles["message-content"]}>
