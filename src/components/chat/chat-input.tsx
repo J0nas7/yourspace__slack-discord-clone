@@ -1,5 +1,5 @@
 // External
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/router"
 import { useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSmile } from "@fortawesome/free-solid-svg-icons"
@@ -7,6 +7,7 @@ import { faSmile } from "@fortawesome/free-solid-svg-icons"
 // Internal
 import { Block, Field, Form } from "@/components"
 import styles from '@/core-ui/styles/modules/Message.module.scss'
+import { useAxios } from "@/hooks"
 
 interface ChatInputProps {
     apiUrl: string
@@ -23,15 +24,24 @@ export const ChatInput = ({
 }: ChatInputProps) => {
     // Hooks
     const router = useRouter()
+    const { socketEmit } = useAxios()
 
     // Internal variables
+    const spaceName = router.query.spaceName
+    const channelName = router.query.channelName
     const [newMessage, setNewMessage] = useState<string>('')
 
     // Methods
     const onSubmit = (e: any = '') => {
         e.preventDefault()
+        const messageData = {
+            Message_Content: newMessage,
+            Channel_Name: channelName,
+            Space_Name: spaceName
+        }
+
         // Send to API
-        console.log(newMessage)
+        socketEmit('sendChatToServer', messageData)
         setNewMessage('')
     }
 
@@ -48,6 +58,7 @@ export const ChatInput = ({
                         onChange={(e: string) => setNewMessage(e)}
                         disabled={false}
                         className={styles["new-message-field"]}
+                        autoComplete="off"
                     />
                     <FontAwesomeIcon icon={faSmile} className={styles["message-emoticons"]} />
                 </Block>

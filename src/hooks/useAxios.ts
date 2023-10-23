@@ -9,6 +9,7 @@ import {
     selectTheSpace,
 } from '@/redux'
 import { CONSTANTS } from '@/data/CONSTANTS'
+import { useSocket } from '@/components/providers/socket-provider'
 
 export const useAxios = () => {
     // Redux
@@ -17,6 +18,27 @@ export const useAxios = () => {
     // Hooks
     const { setTheCookie } = useCookie()
     const { getCurrentToken } = useAuthContext()
+    const { socket } = useSocket()
+
+    // Socket.io stuff
+    const socketEmit = async (apiEndPoint: string, postContent: any = '') => {
+        if (!socket) return
+        let headers: any = {
+            Accept: 'application/json',
+            Authorization: "Bearer "+getCurrentToken("accessToken")
+        }
+        let config = {
+            withCredentials: true,
+            headers: headers,
+        }
+        const postAndConfig = {
+            post: {
+                postContent: JSON.stringify(postContent)
+            },
+            config: config
+        }
+        socket.emit(apiEndPoint, postAndConfig)
+    }
 
     // Axios stuff
     axios.defaults.withCredentials = true
@@ -141,5 +163,6 @@ export const useAxios = () => {
     return {
         httpPostWithData,
         httpGetRequest,
+        socketEmit,
     }
 }

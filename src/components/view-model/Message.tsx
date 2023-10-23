@@ -1,6 +1,6 @@
 // External
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
@@ -22,31 +22,42 @@ type Props = {
 const Message = ({
     variant = 'in-channel', message, className, theId
 }: Props) => {
+    // Hooks
     const router = useRouter()
+
+    // Internal variables
+    const now = new Date()
     const theMessage: MessageDTO = message
-    const [editMsg, setEditMsg] = useState<string>(theMessage.messageContent)
+    const [editMsg, setEditMsg] = useState<string>(theMessage.Message_Content)
     const [editModal, setEditModal] = useState<boolean>(false)
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
+    const msgCreated = new Date(theMessage.Message_CreatedAt)
     const profilePicFolder = ""//apiUrl+"item_images/"
     //const { httpPostWithData } = useAxios()
-
-    const editMessage = () => {
-        setEditModal(true)
-    }
-
-    const deleteMessage = () => {
-        setDeleteModal(true)
-    }
+    
+    let timeAgo = Math.floor((now.getTime() - msgCreated.getTime())/1000)
+    let theDay = "today at "
+    if (timeAgo > 86399 || msgCreated.getDate() !== now.getDate()) theDay = "yesterday at "
+    if (timeAgo > 172799) theDay = msgCreated.getDate()+"/"+(msgCreated.getMonth()+1)+", "
+    const timestamp = msgCreated.toLocaleTimeString('da-DK', {hour: '2-digit', minute:'2-digit'})
+    
+    // Methods
+    const editMessage = () => setEditModal(true)
+    const deleteMessage = () => setDeleteModal(true)
 
     if (variant == "in-channel") {
         return (
             <Block className={styles["message-item"]}>
-                <img className={styles["profile-picture"]} width="100px" src={profilePicFolder + theMessage.userName} />
+                <img className={styles["profile-picture"]} width="100px" src={profilePicFolder + theMessage.Message_MemberID} />
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
                         <Block className="left-side">
-                            <Text variant="span" className={styles["message-username"]}>{theMessage.userName}</Text>
-                            <Text variant="span" className={styles["message-datestamp"]}>{theMessage.messageDate.getFullYear()}</Text>
+                            <Text variant="span" className={styles["message-username"]}>{theMessage.Profile_DisplayName}</Text>
+                            { msgCreated && timeAgo && (
+                                <Text variant="span" className={styles["message-datestamp"]}>
+                                    {theDay+timestamp} ({theMessage.Message_ID})
+                                </Text>
+                            )}
                         </Block>
                         <Block className={"right-side " + styles["message-actions"]}>
                             <FontAwesomeIcon icon={faPen} className={styles["message-action"]} onClick={() => editMessage()} />
@@ -54,17 +65,14 @@ const Message = ({
                         </Block>
                     </Block>
                     <Block className={styles["message-content"]}>
-                        {theMessage.messageContent}
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultres eros. vel ultrices eros.
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultrices eros. vel ultrices eros.
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec aliquet lacus, vel ultrices eros. vel ultrices eros. vel ultrices eros.
+                        {theMessage.Message_Content}
                     </Block>
                 </Block>
                 <Modal
                     openModal={editModal}
                     closeModal={() => setEditModal(false)}
                     title="Edit the message"
-                    className={styles["edit-message-dialog"] + " m" + theMessage.messageID}
+                    className={styles["edit-message-dialog"] + " m" + theMessage.Message_MemberID}
                 >
                     <Field
                         type="text"
@@ -84,7 +92,7 @@ const Message = ({
                     openModal={deleteModal}
                     closeModal={() => setDeleteModal(false)}
                     title="Delete the message"
-                    className={styles["delete-message-dialog"] + " m" + theMessage.messageID}
+                    className={styles["delete-message-dialog"] + " m" + theMessage.Message_MemberID}
                 >
                     Are you sure you want to delete this message?
                     <Button className="button button-red dialog-edit-message-submit" onClick={() => alert('hej')} disabled={false}>

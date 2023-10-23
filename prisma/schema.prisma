@@ -115,8 +115,8 @@ model Space_Message {
 
   deleted Boolean @default(false)
 
-  Channel_CreatedAt DateTime @default(now())
-  Channel_UpdatedAt DateTime @updatedAt
+  Message_CreatedAt DateTime @default(now())
+  Message_UpdatedAt DateTime @updatedAt
 
   @@index([Message_MemberID])
   @@index([Message_ChannelID])
