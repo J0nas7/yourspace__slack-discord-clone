@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 // Internal
 import { Block, Field, Text, ChatInput, Message as MessageCard } from '@/components'
-import { MessageDTO } from '@/types/'
+import { MessageDTO, ProfileDTO } from '@/types/'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { useSocket } from "@/components/providers/socket-provider"
 import { useAxios } from '@/hooks'
@@ -16,12 +16,13 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   // Hooks
   const { socket } = useSocket()
   const router = useRouter()
-  const { httpPostWithData } = useAxios()
+  const { httpPostWithData, httpGetRequest } = useAxios()
 
   // Internal variables
   const spaceName = router.query.spaceName
   const [messages, setMessages] = useState<MessageDTO[]>([])
   const [messagesToRender, setMessagesToRender] = useState<MessageDTO[]>([])
+  const [currentProfile,setCurrentProfile] = useState<ProfileDTO>()
 
   // Methods
   const loadFirstMessages = async () => {
@@ -54,6 +55,19 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     setMessagesToRender(messages)
   }, [messages])
 
+  const getCurrentProfile = async () => {
+    const getUserDataVariables = {
+      "Space_Name": spaceName
+    }
+    // Send request to the API for user data
+    const profileData = await httpPostWithData("userData", getUserDataVariables)
+    console.log(profileData.data)
+    if (profileData.data) setCurrentProfile(profileData.data)
+  }
+  useEffect(() => {
+    getCurrentProfile()
+  }, [spaceName])
+
   socket?.on('sendChatToClient', (message: MessageDTO) => {
     if (message.Channel_Name == channelName) setMessagesToRender([...messagesToRender, message])
   })
@@ -62,8 +76,8 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     <Block className="channel-inner-content">
       <Block className={styles["channel-messages"]}>
         <Block className="reverse-messages">
-          {messagesToRender && messagesToRender.map((message, i) =>
-            <MessageCard variant="in-channel" className="channel-message" message={message} key={i} />
+          {currentProfile && messagesToRender && messagesToRender.map((message, i) =>
+            <MessageCard variant="in-channel" className="channel-message" message={message} currentProfile={currentProfile} key={i} />
           )}
         </Block>
       </Block>
