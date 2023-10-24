@@ -17,7 +17,7 @@ export const useAxios = () => {
     
     // Hooks
     const { setTheCookie } = useCookie()
-    const { getCurrentToken } = useAuthContext()
+    const { getCurrentToken, getAuthContext, deleteAuthContext } = useAuthContext()
     const { socket } = useSocket()
 
     // Socket.io stuff
@@ -124,8 +124,12 @@ export const useAxios = () => {
             
             console.log("handleError send", send)
             if (send.response?.data || !send) {
-                //window.location.href = CONSTANTS.LOGOUT_URL
-                alert("Axios logout warning")
+                if (getAuthContext("accessToken")) {
+                    alert("Your login session has expired. You will be logged out.")
+                }
+                deleteAuthContext("accessToken")
+                deleteAuthContext("refreshToken")
+                window.location.href = CONSTANTS.LOGOUT_URL
                 return false
             }
             return send

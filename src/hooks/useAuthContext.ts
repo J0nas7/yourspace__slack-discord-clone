@@ -48,7 +48,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
     const getCurrentToken = (tokenName: string) => {
         if (tokenName) {
             if (tokensFromRedux[tokenName]) return tokensFromRedux[tokenName]
-            if (getTheCookie(tokenName)) return getTheCookie(tokenName)
+            if (getAuthContext(tokenName)) return getAuthContext(tokenName)
         }
         return tokenName
     }
@@ -110,6 +110,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
         removeTokens,
         getAuthContext,
         getCurrentToken,
+        deleteAuthContext,
         saveTokens,
     }
 }
