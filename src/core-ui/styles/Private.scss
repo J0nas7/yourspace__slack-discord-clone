@@ -75,7 +75,7 @@
                     height: 25px;
                     top: 12.5px;
                     padding-left: 60px;
-                    
+
                     .inner-label {
                         top: 0;
                         left: 0;
@@ -107,6 +107,7 @@
     }
 
     .space-wrapper {
+        position: relative;
         width: calc(25% - 60px);
         height: 100vh;
         float: left;
@@ -156,7 +157,7 @@
                     &:hover {
                         background-color: #9c9ea0;
                     }
-                    
+
                     svg {
                         margin-right: 10px;
                     }
@@ -234,7 +235,7 @@
                     }
                 }
             }
-            
+
             .channel-format-list {
                 .spinner-loader {
                     width: 20px;
@@ -294,6 +295,23 @@
                 }
             }
         }
+
+        .space-member-context {
+            position: absolute;
+            top: auto;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #dadce1;
+
+            .member-context-details {
+                width: 90%;
+                height: 40px;
+            }
+        }
     }
 
     .channel-wrapper {
@@ -329,14 +347,17 @@
 
             .right-side {
                 .connection {
-                    color: white;
-                    padding: 5px;
-                    font-size: .9rem;
-
                     &.connection-live {
+                        width: 15px;
+                        height: 15px;
+                        border-radius: 100%;
                         background-color: rgb(105, 186, 105);
                     }
+
                     &.connection-error {
+                        color: white;
+                        padding: 5px;
+                        font-size: .9rem;
                         background-color: rgb(195, 135, 61);
                     }
                 }
@@ -361,8 +382,9 @@
 
         --messageDialogH: 200px;
         --createSpaceDialogH: 620px;
-        
-        &.edit-message-dialog, &.delete-message-dialog {
+
+        &.edit-message-dialog,
+        &.delete-message-dialog {
             height: var(--messageDialogH);
             margin-top: calc((0px - var(--messageDialogH)) / 2);
         }
@@ -386,7 +408,7 @@
             width: 100%;
             padding: 10px;
             padding-bottom: 40px;
-            
+
             .dialog-top {
                 display: flex;
                 margin-bottom: 10px;
@@ -452,6 +474,7 @@
             background-color: #d3d3d3;
             border-radius: 10px;
         }
+
         fieldset {
             display: none;
         }

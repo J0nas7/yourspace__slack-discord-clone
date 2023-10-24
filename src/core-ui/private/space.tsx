@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text, Field, Space as SpaceCard } from '@/components'
+import { Block, Text, Field, Space as SpaceCard, Profile as ProfileCard } from '@/components'
 import { ChannelsAndSettings } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
@@ -72,6 +72,9 @@ export default function Space() {
           />
         </Block>
         <ChannelsAndSettings />
+      </Block>
+      <Block className="space-member-context">
+        <ProfileCard variant="space-bottom" className="member-context-details" />
       </Block>
     </Block>
   )

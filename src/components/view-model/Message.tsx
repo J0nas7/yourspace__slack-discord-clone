@@ -24,36 +24,43 @@ const Message = ({
 }: Props) => {
     // Hooks
     const router = useRouter()
+    //const { httpPostWithData } = useAxios()
 
     // Internal variables
-    const now = new Date()
     const theMessage: MessageDTO = message
     const [editMsg, setEditMsg] = useState<string>(theMessage.Message_Content)
     const [editModal, setEditModal] = useState<boolean>(false)
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
-    const msgCreated = new Date(theMessage.Message_CreatedAt)
+    const [theDay,setTheDay] = useState<string>('')
+    const [timestamp,setTimestamp] = useState<string>('')
     const profilePicFolder = ""//apiUrl+"item_images/"
-    //const { httpPostWithData } = useAxios()
-    
-    let timeAgo = Math.floor((now.getTime() - msgCreated.getTime())/1000)
-    let theDay = "today at "
-    if (timeAgo > 86399 || msgCreated.getDate() !== now.getDate()) theDay = "yesterday at "
-    if (timeAgo > 172799) theDay = msgCreated.getDate()+"/"+(msgCreated.getMonth()+1)+", "
-    const timestamp = msgCreated.toLocaleTimeString('da-DK', {hour: '2-digit', minute:'2-digit'})
     
     // Methods
     const editMessage = () => setEditModal(true)
     const deleteMessage = () => setDeleteModal(true)
+    const setDateAndTime = () => {
+        const now = new Date()
+        const msgCreated = new Date(theMessage.Message_CreatedAt)
+        let timeAgo = Math.floor((now.getTime() - msgCreated.getTime())/1000)
+        setTheDay("today at ")
+        if (timeAgo > 86399 || msgCreated.getDate() !== now.getDate()) setTheDay("yesterday at ")
+        if (timeAgo > 172799) setTheDay(msgCreated.getDate()+"/"+(msgCreated.getMonth()+1)+", ")
+        setTimestamp(msgCreated.toLocaleTimeString('da-DK', {hour: '2-digit', minute:'2-digit'}))
+    }
+    
+    useEffect(() => {
+        setDateAndTime()
+    }, [theMessage.Message_CreatedAt])
 
     if (variant == "in-channel") {
         return (
             <Block className={styles["message-item"]}>
-                <img className={styles["profile-picture"]} width="100px" src={profilePicFolder + theMessage.Message_MemberID} />
+                <img alt="" className={styles["profile-picture"]} width="100px" src={profilePicFolder + theMessage.Message_MemberID} />
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
                         <Block className="left-side">
                             <Text variant="span" className={styles["message-username"]}>{theMessage.Profile_DisplayName}</Text>
-                            { msgCreated && timeAgo && (
+                            { theDay && timestamp && (
                                 <Text variant="span" className={styles["message-datestamp"]}>
                                     {theDay+timestamp} ({theMessage.Message_ID})
                                 </Text>
