@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 // Internal
-import { env, paths } from '../env'
+import { env, paths } from '@/env.local'
 
 //const { postWithData } = useLaravelAPI()
 

@@ -1,12 +1,14 @@
-.guest_wrapper {
+@import "Global.styles.scss";
+
+.guest-wrapper {
     width: 100%;
     height: 100vh;
     position: relative;
 
-    .contents {
+    .guest-contents {
         height: 100vh;
         //background: #f0f0f0;
-        background-image: url("../Assets/Images/brickBackground.png");
+        background-image: url("../../Assets/Images/brickBackground.png");
         position: relative;
         display: flex;
         align-items: center;
@@ -20,7 +22,7 @@
             color: black;
         }
 
-        .login, .forgot, .register, .recover {
+        .login, .logout, .forgot, .create, .recover {
             width: 85%;
             height: auto;
             border: 1px #ccc solid;
@@ -28,7 +30,7 @@
             padding: 20px;
             padding-top: 60px;
             background-color: #fff;
-            background-image: url("../Assets/Images/headerLogo.png");
+            background-image: url("../../Assets/Images/headerLogo.png");
             background-repeat: no-repeat;
             background-position-x: center;
             background-position-y: 20px;
@@ -47,58 +49,66 @@
                 margin: 15px 0;
             }
 
-            .teaserTxt {
+            .teaser-text {
                 color: rgba(0, 0, 0, .87);
                 font-size: .8125rem;
                 font-weight: 300;
             }
 
-            .guestForm {
-                margin: 50px 0 30px;
-                
-                input, textarea, select {
+            .guest-form {
+                margin: 40px 0;
+
+                .input-field-wrap, .login-field {
                     width: 100%;
-                    padding: 6px 10px;
                     margin: 10px 0;
-                    border: 1px solid #ddd;
-                    box-sizing: border-box;
-                    display: block;
+
+                    input, textarea, select {
+                        width: 100%;
+                        padding: 6px 10px;
+                        margin: 10px 0;
+                        //border: 1px solid #ddd;
+                        display: block;
+                    }
+
+                    .MuiInputAdornment-root.MuiInputAdornment-positionEnd {
+                        button {
+                            @include button;
+                            @include button-green;
+                        }
+                    }
                 }
                 
-                button {
-                    width: 100%;
-                    height: 34px;
-                    background-color: rgb(90, 230, 169);
-                    color: #fff;
-                    font-size: 1rem;
-                    border: 0;
-                    padding: 8px;
-                    border-radius: 4px;
-                    cursor: pointer;
+                .error-notice {
+                    margin-bottom: 20px;
                 }
 
-                .error_notice {
-                    color: #ff0000;
-                    font-size: .8125rem;
+                .birthday-wrapper, .birthday-inner {
+                    height: 75px;
+
+                    .birthday-inner {
+                        display: flex;
+                        gap: 15px;
+                        align-items: center;
+                    }
                 }
             }
 
-            .guestLink {
+            .guest-link {
                 color: rgba(0, 0, 0, .87);
                 font-size: .8125rem;
                 display: block;
                 clear: both;
-                margin-top: 20px;
 
-                a {
+                .link-item {
+                    display: block;
+                    margin-bottom: 20px;
                     color: rgb(90,169,230);
-                    text-decoration: underline;
                 }
             }
         }
     }
 
-    .teaserCard {
+    .teaser-card {
         display: none;
         position: absolute;
         width: 50%;
@@ -114,7 +124,7 @@
             justify-content: center;
         }
 
-        #teaserImg {
+        #teaser-img {
             width: 95%;
             height: auto;
         }

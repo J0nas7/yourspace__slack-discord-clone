@@ -6,12 +6,15 @@ const prod = {
 }
 const dev = {
     url: {
-        API_URL: "http://localhost",
+        API_URL: "http://localhost:8000",
         APP_URL: "http://localhost:3000"
     }
 }
 export const env = process.env.NODE_ENV === 'development' ? dev : prod
 
 export const paths = {
-    API_ROUTE: ""
+    API_ROUTE: "/api/"
 }
+
+const UPLOADTHING_SECRET = ""
+const UPLOADTHING_APP_ID = ""

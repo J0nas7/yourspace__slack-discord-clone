@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Space_Profile {
+  Profile_ID          Int    @id @default(autoincrement())
+  Profile_RealName    String
+  Profile_DisplayName String
+  Profile_Email       String @db.Text
+  Profile_Password    String
+  Profile_ImageUrl    String @db.Text
+
+  Profile_Spaces   Space_Space[]
+  Profile_Members  Space_Member[]
+  Profile_Channels Space_Channel[]
+
+  Profile_Birthday  DateTime 
+  Profile_CreatedAt DateTime @default(now())
+  Profile_UpdatedAt DateTime @updatedAt
+}
+
+model Space_Space {
+  Space_ID         Int    @id @default(autoincrement())
+  Space_Name       String @unique
+  Space_ImageUrl   String @db.Text
+  Space_InviteCode String @db.Text
+
+  Space_ProfileID Int
+  Space_Profile   Space_Profile @relation(fields: [Space_ProfileID], references: [Profile_ID], onDelete: Cascade)
+
+  Space_Members  Space_Member[]
+  Space_Channels Space_Channel[]
+
+  Space_CreatedAt DateTime @default(now())
+  Space_UpdatedAt DateTime @updatedAt
+
+  @@index([Space_ProfileID])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Space_Member {
+  Member_ID   Int        @id @default(autoincrement())
+  Member_Role MemberRole @default(GUEST)
+
+  Member_ProfileID Int
+  Member_Profile   Space_Profile @relation(fields: [Member_ProfileID], references: [Profile_ID], onDelete: Cascade)
+
+  Member_SpaceID Int
+  Member_Space   Space_Space @relation(fields: [Member_SpaceID], references: [Space_ID], onDelete: Cascade)
+
+  Member_Messages       Space_Message[]
+  Member_DirectMessages Space_Direct_Messages[]
+
+  Member_ConversationsInitiated Space_Conversation[] @relation("MemberOne")
+  Member_ConversationsReceived  Space_Conversation[] @relation("MemberTwo")
+
+  Member_CreatedAt DateTime @default(now())
+  Member_UpdatedAt DateTime @updatedAt
+
+  @@index([Member_ProfileID])
+  @@index([Member_SpaceID])
+}
+
+enum ChannelType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Space_Channel {
+  Channel_ID   Int         @id @default(autoincrement())
+  Channel_Name String
+  Channel_Type ChannelType @default(TEXT)
+
+  Channel_ProfileID Int
+  Channel_Profile   Space_Profile @relation(fields: [Channel_ProfileID], references: [Profile_ID], onDelete: Cascade)
+
+  Channel_SpaceID Int
+  Channel_Space   Space_Space @relation(fields: [Channel_SpaceID], references: [Space_ID], onDelete: Cascade)
+
+  Channel_Messages Space_Message[]
+
+  Channel_CreatedAt DateTime @default(now())
+  Channel_UpdatedAt DateTime @updatedAt
+
+  @@index([Channel_ProfileID])
+  @@index([Channel_SpaceID])
+}
+
+model Space_Message {
+  Message_ID      Int    @id @default(autoincrement())
+  Message_Content String @db.Text
+
+  Message_FileUrl String? @db.Text
+
+  Message_MemberID Int
+  Message_Member   Space_Member @relation(fields: [Message_MemberID], references: [Member_ID], onDelete: Cascade)
+
+  Message_ChannelID Int
+  Message_Channel   Space_Channel @relation(fields: [Message_ChannelID], references: [Channel_ID], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+
+  Message_CreatedAt DateTime @default(now())
+  Message_UpdatedAt DateTime @updatedAt
+
+  @@index([Message_MemberID])
+  @@index([Message_ChannelID])
+}
+
+model Space_Conversation {
+  Conversation_ID Int @id @default(autoincrement())
+
+  Conversation_MemberOne_ID Int
+  Conversation_MemberOne    Space_Member @relation("MemberOne", fields: [Conversation_MemberOne_ID], references: [Member_ID], onDelete: Cascade)
+
+  Conversation_MemberTwo_ID Int
+  Conversation_MemberTwo    Space_Member @relation("MemberTwo", fields: [Conversation_MemberTwo_ID], references: [Member_ID], onDelete: Cascade)
+
+  Conversation_DirectMessages Space_Direct_Messages[]
+
+  @@unique([Conversation_MemberOne_ID, Conversation_MemberTwo_ID])
+  @@index([Conversation_MemberOne_ID])
+  @@index([Conversation_MemberTwo_ID])
+}
+
+model Space_Direct_Messages {
+  DM_ID      Int     @id @default(autoincrement())
+  DM_Content String  @db.Text
+  DM_FileUrl String? @db.Text
+
+  DM_MemberID Int
+  DM_Member   Space_Member @relation(fields: [DM_MemberID], references: [Member_ID], onDelete: Cascade)
+
+  DM_ConversationID Int
+  DM_Conversation   Space_Conversation @relation(fields: [DM_ConversationID], references: [Conversation_ID], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+
+  DM_CreatedAt DateTime @default(now())
+  DM_UpdatedAt DateTime @updatedAt
+
+  @@index([DM_MemberID])
+  @@index([DM_ConversationID])
+}

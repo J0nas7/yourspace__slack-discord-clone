@@ -1,37 +1,36 @@
-// External
-import { useEffect, useState } from "react"
-
 // Internal
 import { useAuthContext } from "@/hooks"
-import { GuestLayout, PrivateLayout } from "./"
+import { GuestLayout, PrivateLayout } from ".."
+import { OnlyPublicRoutes } from "../public-routes"
 
 export default function LayoutController({
-    children,
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode
 }) {
   const { isLoggedIn, isLoading } = useAuthContext()
-  const auth = isLoggedIn // determine if authorized, from localStorage
-
-  console.log("layout controller")
+  
   if (isLoading) return <span>Loading...</span>
+
   // If authorized, show the PrivateLayout
   // If not authorized, show the GuestLayout
+  
   return (
     <div className="page-wrapper">
-        {
-          auth ?
-            (
-              <PrivateLayout>
-                {children}
-              </PrivateLayout>
-            ) : (
+      {
+        isLoggedIn ?
+          (
+            <PrivateLayout>
+              {children}
+            </PrivateLayout>
+          ) : (
+            <OnlyPublicRoutes>
               <GuestLayout>
                 {children}
               </GuestLayout>
-            )
-        }
+            </OnlyPublicRoutes>
+          )
+      }
     </div>
   )
 }
-  

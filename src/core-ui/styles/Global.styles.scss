@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, html {
+    top: 0;
+    left: 0;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+@mixin button {
+    width: 100%;
+    height: 34px;
+    font-size: 1rem;
+    border: 0;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+@mixin button-green {
+    background-color: rgb(76, 207, 150) !important;
+    color: white !important;
+}
+
+button {
+    @include button;
+
+    &.button-green {
+        @include button-green;
+    }
+    &.button-red {
+        background-color: rgb(176, 108, 103) !important;
+        color: white !important;
+    }
+    &.button-blue {
+        background-color: rgb(103, 139, 176) !important;
+        color: white !important;
+    }
+
+    &.pending {
+        background-image: url("../../Assets/Images/button.gif");
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-size: 34px;
+
+        .button-text {
+            display: none;
+        }
+    }
+}
+
+.error-notice {
+    color: #ff0000;
+    font-size: .8125rem;
+}

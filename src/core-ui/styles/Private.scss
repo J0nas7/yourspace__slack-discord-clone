@@ -1,0 +1,459 @@
+@mixin hashtag {
+    color: #424242;
+    font-style: italic;
+    font-size: 1.5rem;
+}
+
+.page-wrapper {
+    width: 100%;
+    height: auto;
+    --spaceBg: #edeff1;
+    --channelBg: #fcfcfc;
+    --headerH: 60px;
+
+    .card-wrapper h1 {
+        margin: 10px;
+        font-family: 'Courier New';
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .sidepanel-wrapper {
+        width: 60px;
+        height: 100vh;
+        float: left;
+        background-color: #dadce1;
+
+        .sidepanel-header {
+            width: 100%;
+            height: auto;
+
+            #logo,
+            #logo-text {
+                display: block;
+                float: left;
+            }
+
+            #logo {
+                margin: 10px;
+            }
+
+            #logo-text {
+                color: orange;
+                font-family: 'Courier New';
+                font-size: .9rem;
+                font-weight: 700;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        .sidepanel-spaces-list {
+            width: 100%;
+            padding: 5px;
+            height: auto;
+
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                width: 100%;
+                height: 50px;
+                background-color: #585858;
+                margin: 10px 0;
+                border-radius: 12px;
+
+                .space-logotext {
+                    color: white;
+                }
+
+                &.with-label .space-label {
+                    position: absolute;
+                    display: none;
+                    width: auto;
+                    height: 25px;
+                    top: 12.5px;
+                    padding-left: 60px;
+                    
+                    .inner-label {
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        border-collapse: collapse;
+                        padding: 5px 15px;
+                        background-color: #222;
+                        border-radius: 6px;
+                        font-size: .8rem;
+                        color: white;
+                    }
+                }
+
+                &.with-label:hover .space-label {
+                    display: inline-block;
+                }
+            }
+        }
+    }
+
+    .left-side {
+        order: 1;
+    }
+
+    .right-side {
+        margin-left: auto;
+        order: 2;
+    }
+
+    .space-wrapper {
+        width: calc(25% - 60px);
+        height: 100vh;
+        float: left;
+        background-color: var(--spaceBg);
+
+        .space-header {
+            width: 100%;
+            height: var(--headerH);
+            padding: 0 10px;
+            display: flex;
+            position: relative;
+            align-items: center;
+            background-color: var(--spaceBg);
+            border-bottom: 2px #dbdddf solid;
+
+            .space-title {
+                font-weight: 700;
+            }
+
+            .space-action-menu-button {
+                cursor: pointer;
+            }
+
+            .space-action-menu {
+                position: absolute;
+                display: none;
+                z-index: 1;
+                left: auto;
+                right: 1px;
+                top: var(--headerH);
+                width: 200px;
+                background-color: #c3c5c7;
+
+                &.visible {
+                    display: block;
+                }
+
+                .space-action-menu-item {
+                    width: 100%;
+                    height: 42px;
+                    font-size: .9rem;
+                    font-weight: 700;
+                    padding: 10px;
+                    display: flex;
+                    align-items: center;
+
+                    &:hover {
+                        background-color: #9c9ea0;
+                    }
+                    
+                    svg {
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+
+        .space-content {
+            width: 100%;
+            padding: 10px;
+            height: calc(100vh - var(--headerH));
+
+            .space-search {
+                width: calc(100% - 20px);
+                margin: 10px;
+                padding-bottom: 20px;
+                border-bottom: 2px #dbdddf solid;
+
+                .space-search-field.custom-field-container {
+                    width: 100%;
+                    height: 24px;
+                    font-size: 1.1rem;
+                    padding-left: 30px;
+                    background: none;
+                    background-image: url("../../Assets/Images/magnifying-glass-solid.png");
+                    background-repeat: no-repeat;
+                    background-size: 24px;
+                    outline: none;
+                    display: block !important;
+
+                    div {
+                        border: 0;
+                    }
+
+                    fieldset {
+                        display: none;
+                    }
+
+                    input[placeholder="Search"] {
+                        padding: 0;
+                        border: 0;
+                    }
+                }
+            }
+
+            .channel-format,
+            .channel-info {
+                width: calc(100% - 20px);
+                margin: 10px;
+
+                .channel-format-top,
+                .channel-info-top {
+                    display: flex;
+                    height: 20px;
+                    font-weight: 700;
+                    color: #585858;
+                    text-transform: uppercase;
+
+                    .left-side {
+                        font-size: .8rem;
+                    }
+
+                    .right-side.channel-new-channel {
+                        cursor: pointer;
+                    }
+
+                    &.members .channel-info-settings {
+                        display: block;
+                        width: 15px;
+                        height: 15px;
+                        background: none;
+                        background-image: url("../../Assets/Images/spaceMembersSettings.png");
+                        background-repeat: no-repeat;
+                        background-size: 15px;
+                    }
+                }
+            }
+            
+            .channel-format-list {
+                .spinner-loader {
+                    width: 20px;
+                    height: 20px;
+                    background-image: url("../../Assets/Images/loader.gif");
+                    background-size: 20px;
+                }
+            }
+
+            .channel-format-list-item {
+                position: relative;
+                display: flex;
+                align-items: center;
+                width: 100%;
+                height: 32px;
+                border-radius: 8px;
+                color: #585858;
+                font-size: .9rem;
+                font-weight: 700;
+
+                &.active {
+                    background-color: #c3c5c7;
+                }
+
+                .channel-format-list-item-link {
+                    padding-left: 10px;
+                    cursor: pointer;
+
+                    &::before {
+                        content: "#";
+                        @include hashtag;
+                        color: #585858;
+                        margin-right: 10px;
+                    }
+                }
+
+                .channel-format-list-item-actions {
+                    position: absolute;
+                    display: none;
+                    align-items: center;
+                    left: auto;
+                    right: 10px;
+                    height: 32px;
+
+                    .channel-format-list-item-action {
+                        float: left;
+                        margin-left: 10px;
+                        color: #8d8c8c;
+                        cursor: pointer;
+                    }
+                }
+
+                &:hover {
+                    .channel-format-list-item-actions {
+                        display: flex;
+                    }
+                }
+            }
+        }
+    }
+
+    .channel-wrapper {
+        width: 75%;
+        height: 100vh;
+        background-color: var(--channelBg);
+        float: right;
+
+        .channel-header {
+            width: 100%;
+            height: var(--headerH);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            background-color: var(--channelBg);
+            border-bottom: 2px #dedede solid;
+            position: relative;
+
+            .left-side {
+                display: flex;
+                align-items: center;
+
+                .hashtag {
+                    @include hashtag;
+                    margin-right: 10px;
+                }
+
+                .channel-name {
+                    font-weight: bold;
+                    font-size: .9rem;
+                }
+            }
+
+            .right-side {
+                .connection {
+                    color: white;
+                    padding: 5px;
+                    font-size: .9rem;
+
+                    &.connection-live {
+                        background-color: rgb(105, 186, 105);
+                    }
+                    &.connection-error {
+                        background-color: rgb(195, 135, 61);
+                    }
+                }
+            }
+        }
+
+        .channel-content {
+            width: 100%;
+            padding: 10px;
+            height: calc(100vh - var(--headerH));
+            position: relative;
+        }
+    }
+
+    dialog.dialog-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 550px;
+        margin-left: calc(-550px / 2);
+        border-radius: 10px;
+
+        --messageDialogH: 200px;
+        --createSpaceDialogH: 620px;
+        
+        &.edit-message-dialog, &.delete-message-dialog {
+            height: var(--messageDialogH);
+            margin-top: calc((0px - var(--messageDialogH)) / 2);
+        }
+
+        &.create-space-dialog {
+            height: var(--createSpaceDialogH);
+            margin-top: calc((0px - var(--createSpaceDialogH)) / 2);
+        }
+
+        &[open] {
+            display: flex;
+        }
+
+        &::backdrop {
+            background-color: black;
+            opacity: .6;
+        }
+
+        .dialog-inner {
+            position: relative;
+            width: 100%;
+            padding: 10px;
+            padding-bottom: 40px;
+            
+            .dialog-top {
+                display: flex;
+                margin-bottom: 10px;
+
+                h2.dialog-title {
+                    order: 1;
+                    font-size: 1.2rem;
+                }
+
+                .dialog-close-button {
+                    order: 2;
+                    margin-left: auto;
+                    min-width: 0 !important;
+                    width: auto !important;
+                    padding: 0 !important;
+                    color: black;
+                    font-size: 1.2rem;
+                }
+            }
+
+            .dialog-edit-message-submit {
+                float: right;
+                position: absolute;
+                top: auto;
+                bottom: 0;
+                left: auto;
+                right: 0;
+            }
+
+            .image-preview {
+                width: 100%;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img {
+                    width: 50px !important;
+                    height: 50px !important;
+                    position: relative !important;
+                }
+            }
+
+            .button-wrapper {
+                width: 100%;
+                height: auto;
+                position: absolute;
+                top: auto;
+                bottom: 0;
+                background-color: #d3d3d3;
+                padding: 15px;
+
+                button {
+                    width: 90%;
+                    margin: 5px 5%;
+                }
+            }
+        }
+    }
+
+    .field.no-fieldset {
+        input {
+            background-color: #d3d3d3;
+            border-radius: 10px;
+        }
+        fieldset {
+            display: none;
+        }
+    }
+}

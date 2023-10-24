@@ -2,17 +2,15 @@
 import { Dispatch } from 'redux'
 
 // Internal
-import { useAuthContext, useAxios } from '@/hooks'
+import { useAxios } from '@/hooks'
 
 export const useAuthActions = () => {
     const { httpGetRequest, httpPostWithData } = useAxios()
-    const { setAuthContext } = useAuthContext()
     
     const fetchIsLoggedInStatus = (__reducer: Function) => async (dispatch: Dispatch) => {
         try {
-            const data = await httpGetRequest("?Category=Profiles&Action=CheckLoggedIn")
-            if (data.Result === "IS logged in") {
-                setAuthContext(data.ProfileID)
+            const data = await httpGetRequest("userLoggedInTest")
+            if (data.message === "Is logged in") {
                 dispatch(__reducer(data))
             }
         } catch (e) {

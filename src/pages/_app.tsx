@@ -3,7 +3,9 @@ import type { AppProps } from 'next/app'
 import { Provider } from "react-redux"
 
 // Internal
-import '@/styles/globals.css'
+import '@/core-ui/styles/Global.styles.scss'
+import '@/core-ui/styles/Guest.scss'
+import '@/core-ui/styles/Private.scss'
 import appStore from '@/redux/store'
 import { LayoutController } from '@/core-ui/'
 

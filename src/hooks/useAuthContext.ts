@@ -1,38 +1,105 @@
 // External
 import { useEffect, useState } from 'react'
+import jwt_decode from "jwt-decode"
 
-export const useAuthContext = () => {
-    let logonCreds : any = null
-    console.log("hest")
+// Internal
+import {
+    useAppDispatch,
+    useTypedSelector,
+
+    setAccessToken,
+    setRefreshToken,
+
+    selectAccessToken,
+    selectRefreshToken,
+} from '@/redux'
+import { jwtTokensDTO } from '@/types/AuthDTO'
+import { useCookie } from '@/hooks'
+
+export const useAuthContext = (__templateCheck?: Function) => {
+    // Redux
+    const dispatch = useAppDispatch()
+    const accessToken = useTypedSelector(selectAccessToken)
+    const refreshToken = useTypedSelector(selectRefreshToken)
+    const tokensFromRedux: { [key: string]: string } = { "accessToken": accessToken, "refreshToken": refreshToken }
+
+    // Hooks
+    const { getTheCookie, setTheCookie, deleteTheCookie } = useCookie()
+
+    /**
+     * Methods
+     */
+    // Getters and setters
+    const getAuthContext = (token: string) => {
+        return getTheCookie(token)
+    }
+    const setAuthContext = (name: string, token: string) => {
+        return setTheCookie(name, token)
+    }
+    const deleteAuthContext = (token: string) => {
+        return deleteTheCookie(token)
+    }
+    const removeTokens = () => {
+        deleteAuthContext("accessToken")
+        deleteAuthContext("refreshToken")
+    }
+
+    // Logical
+    const getCurrentToken = (tokenName: string) => {
+        if (tokenName) {
+            if (tokensFromRedux[tokenName]) return tokensFromRedux[tokenName]
+            if (getTheCookie(tokenName)) return getTheCookie(tokenName)
+        }
+        return tokenName
+    }
+
+    const saveTokens = (token: jwtTokensDTO) => {
+        if (token.accessToken) setAuthContext("accessToken", token.accessToken)
+        if (token.refreshToken) setAuthContext("refreshToken", token.refreshToken)
+    }
+
+    // Internal variables
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
         if (typeof window !== "undefined") {
-            logonCreds = localStorage.getItem("isLoggedIn")
-            if (logonCreds != null) {
-                //logonCreds = JSON.parse(logonCreds)
-                //if (logonCreds.userID && logonCreds.keyWithSalt) {
-                if ((typeof(logonCreds) === 'number' || 
-                    typeof(logonCreds) === "string" && logonCreds.trim() !== '')
-                    && !isNaN(logonCreds as number)) {
-                    return true
-                }
+            const tempAccessToken = getAuthContext("accessToken")
+            if (tempAccessToken != null
+                && (
+                    typeof (tempAccessToken) === "string"
+                    && tempAccessToken.trim() !== ''
+                )
+            ) {
+                return true
             }
         }
-        return true//false
+        return false
     })
 
-    const setAuthContext = (context:string) => {
-        localStorage.setItem("isLoggedIn", context)
-    }
-    const getAuthContext = () => {
-        return localStorage.getItem("isLoggedIn")
-    }
-    const removeAuthContext = () => {
-        return localStorage.removeItem("isLoggedIn")
-    }
+    // Listeners
+    useEffect(() => {
+        if (accessToken) {
+            const decodedJWT: any = jwt_decode(accessToken)
+            //(decodedJWT.exp * 1000)
+        }
+
+        const tokens: jwtTokensDTO = { 'accessToken': accessToken, 'refreshToken': refreshToken }
+        saveTokens(tokens)
+    }, [accessToken, refreshToken])
+
+    useEffect(() => {
+        if (__templateCheck) __templateCheck()
+    }, [isLoggedIn])
 
     useEffect(() => {
         // This will only be called once the component is mounted inside the browser
+        /*if (localStorage.getItem("tempAccessToken")) {
+            alert("Localstorage updated")
+            setAuthContext("accessToken", localStorage.getItem("tempAccessToken")!)
+            localStorage.removeItem("tempAccessToken")
+        }*/
+
+        if (getAuthContext("accessToken")) dispatch(setAccessToken({ "data": getAuthContext("accessToken") }))
+        if (getAuthContext("refreshToken")) dispatch(setRefreshToken({ "data": getAuthContext("refreshToken") }))
         setIsLoading(false)
     }, [])
 
@@ -40,8 +107,9 @@ export const useAuthContext = () => {
         isLoggedIn,
         setIsLoggedIn,
         isLoading,
-        logonCreds,
-        setAuthContext,
-        removeAuthContext
+        removeTokens,
+        getAuthContext,
+        getCurrentToken,
+        saveTokens,
     }
 }

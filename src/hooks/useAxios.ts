@@ -2,93 +2,167 @@
 import axios from 'axios'
 
 // Internal
-import { env, paths } from '@/env'
-//import { useAuthContext } from '../context'
+import { env, paths } from '@/env.local'
+import { useAuthContext, useCookie } from './'
+import {
+    useTypedSelector,
+    selectTheSpace,
+} from '@/redux'
+import { CONSTANTS } from '@/data/CONSTANTS'
+import { useSocket } from '@/components/providers/socket-provider'
 
 export const useAxios = () => {
-    //const { authID, authKey } = useAuthContext()
+    // Redux
+    //const theSpace = useTypedSelector(selectTheSpace)
+    
+    // Hooks
+    const { setTheCookie } = useCookie()
+    const { getCurrentToken } = useAuthContext()
+    const { socket } = useSocket()
 
+    // Socket.io stuff
+    const socketEmit = async (apiEndPoint: string, postContent: any = '') => {
+        if (!socket) return
+        let headers: any = {
+            Accept: 'application/json',
+            Authorization: "Bearer "+getCurrentToken("accessToken")
+        }
+        let config = {
+            withCredentials: true,
+            headers: headers,
+        }
+        const postAndConfig = {
+            post: {
+                postContent: JSON.stringify(postContent)
+            },
+            config: config
+        }
+        socket.emit(apiEndPoint, postAndConfig)
+    }
+
+    // Axios stuff
     axios.defaults.withCredentials = true
 
-    const postWithData = async (apiEndPoint : string, postContent : any = '') => {
-        //await getLaravelSanctumToken()
-        return axios
-            .post(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`, 
-            {
-                postContent: JSON.stringify(postContent),
-                /*authID: authID,
-                authKey: authKey*/
-            },
-            {
-                withCredentials: true,
-                headers: {
-                    'Accept': 'application/json'
-                },
-            })
-    }
-
-    const httpPostWithData = async (apiEndPoint : string, postContent : any = '') => {
-        try {
-            const { data: response } = await axios.post(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`, 
-                                                {
-                                                    postContent: JSON.stringify(postContent),
-                                                },
-                                                {
-                                                    withCredentials: true,
-                                                    headers: {
-                                                        'Accept': 'application/json'
-                                                    },
-                                                })
-            return response
-        } catch(e:any) {
-            if (e.response) console.log("httpPostWithData", e)
-            return false
+    const axiosAction = async (actionType: string, apiEndPoint: string, tokenName: string, postContent: any = '') => {
+        //console.log("API: "+apiEndPoint, postContent)
+        //console.log("axios", theSpace, getCurrentToken("accessToken")!.slice(0, 5))
+        let axiosUrl = `${env.url.API_URL + paths.API_ROUTE + apiEndPoint}`
+        let headers: any = {
+            Accept: 'application/json',
+            Authorization: "Bearer "+getCurrentToken(tokenName)
         }
-    }
+        let config = {
+            withCredentials: true,
+            headers: headers,
+        }
+        postContent = { postContent: JSON.stringify(postContent) }
 
-    const httpGetRequest = async (apiEndPoint : string) => {
-        try {
-            const { data: response } = await axios.get(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`)
-            return response
-        } catch (e:any) {
-            if (e.response && e.response.statusText === "Unauthorized") {
-                console.log("httpGetRequest", e)
-                return e.response.statusText
+        if (actionType === "get") {
+            try {
+                const { data: response } = await axios.get(axiosUrl, config)
+                return response
+            } catch (e: any) {
+                console.log("axiosAction GET error", e)
+                return e
             }
-            return false
+        } else if (actionType === "post") {
+            try {
+                const { data: response } = await axios.post(axiosUrl, postContent, config)
+                return response
+            } catch (e: any) {
+                console.log("axiosAction GET error", e)
+                return e
+            }
         }
     }
 
-    const getRequest = async (apiEndPoint : string) => {
-        return axios.get(`${env.url.API_URL+paths.API_ROUTE}/${apiEndPoint}`)
+    type ErrorProps = {
+        errorContext: any
+        actionType: string
+        apiEndPoint: string
+        tokenName: string
+        postContent?: any
     }
 
-    /*const getLaravelSanctumToken = async () => {
-        await axios.post(`${env.url.API_URL+paths.API_ROUTE}/tokens/create`).then(response => {
-            console.log(response)
-            //axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-        });
-    }*/
-
-    const getLaravelSanctumCSRF = async () => {
-        await axios.get(`${env.url.API_URL}/sanctum/csrf-cookie`).then(response => {
-            console.log(response)
-            console.log(response.data.token)
-            //axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-        });
+    const refreshJWTAndTryAgain = async ({ errorContext, actionType, apiEndPoint, tokenName, postContent } : ErrorProps) => {
+        // If need for JWT refresh token
+        let newE
+        if (errorContext.response && (errorContext.response.data.error === "UserOnly Unauthorized" || errorContext.response.data.message === "Token has expired")) {
+            try {
+                // Request a new JWT access token
+                const getToken = await axiosAction("get", "refreshJWT", "refreshToken")
+                const newToken = getToken.authorisation?.newAccessToken
+                if (newToken) {
+                    // Re-try original axios request with new token
+                    try {
+                        setTheCookie("accessToken", newToken)
+                        const { data: tryAgain } = await axiosAction(actionType, apiEndPoint, newToken, postContent)
+                        console.log("useAxios refreshJWTAndTryAgain() success", tryAgain)
+                        return tryAgain
+                    } catch (e: any) {
+                        newE = e
+                        console.log("tryAgain E", e)
+                    }
+                } else {
+                    return false
+                }
+            } catch (e: any) {
+                newE = e
+                console.log("getToken E", e)
+            }
+        }
+        
+        return newE
     }
 
-    const requestCSRF = async () => {
-        return axios.get(`${env.url.API_URL}/sanctum/csrf-cookie`)
+    const handleError = async ({ errorContext, actionType, apiEndPoint, tokenName, postContent } : ErrorProps) => {
+        if (errorContext.response) console.log(actionType+" send", errorContext)
+
+        if (errorContext.response?.data?.error && tokenName === "accessToken") {
+            const refreshProps = { errorContext, actionType, apiEndPoint, tokenName, postContent }
+            const send = await refreshJWTAndTryAgain(refreshProps)
+            
+            console.log("handleError send", send)
+            if (send.response?.data || !send) {
+                //window.location.href = CONSTANTS.LOGOUT_URL
+                alert("Axios logout warning")
+                return false
+            }
+            return send
+        }
+    }
+
+    const httpPostWithData = async (apiEndPoint: string, postContent: any = '', tokenName: string = 'accessToken') => {
+        const actionType = "post"
+        let send = await axiosAction(actionType, apiEndPoint, tokenName, postContent)
+        
+        if (send.response?.data?.error && tokenName === "accessToken") {
+            const errorContext = send
+            const errorProps = { errorContext, actionType, apiEndPoint, tokenName, postContent }
+            send = await handleError(errorProps)
+            
+            if (send.response?.data || !send) return false
+        }
+        return send
+    }
+
+    const httpGetRequest = async (apiEndPoint: string, tokenName: string = 'accessToken') => {
+        const actionType = "get"
+        let send = await axiosAction(actionType, apiEndPoint, tokenName)
+        
+        if (send.response?.data?.error && tokenName === "accessToken") {
+            const errorContext = send
+            const errorProps = { errorContext, actionType, apiEndPoint, tokenName }
+            send = await handleError(errorProps)
+
+            if (send.response?.data || !send) return false
+        }
+        return send
     }
 
     return {
-        postWithData,
-        getRequest,
         httpPostWithData,
         httpGetRequest,
-        requestCSRF,
-        getLaravelSanctumCSRF,
-        //getLaravelSanctumToken,
+        socketEmit,
     }
 }

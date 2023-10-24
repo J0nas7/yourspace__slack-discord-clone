@@ -1,26 +1,41 @@
 // External
-import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect } from 'react'
 
 // Internal
 import { Block, Text } from '@/components'
-import styles from '../Private.module.scss'
 import pp_logo from '@/Assets/Images/headerLogo.png'
+import { useSpaces } from '@/hooks'
+import { Space } from '@/components/'
 
 export default function Sidepanel() {
+  // Hooks
+  const { getSpacesList, spacesList } = useSpaces()
+
+  useEffect(() => {
+    getSpacesList()
+  }, [])
+
   return (
-    <Block className={styles.sidepanelWrapper}>
-        <Block className={styles.sidepanelHeader}>
-            <Link href="/">
-                <Image
-                    id={styles.Logo}
-                    src={pp_logo}
-                    alt="Spaces logo"
-                />
-                <Text theId={styles.Logotxt} variant="span">Spaces</Text>
-            </Link>
-        </Block>
+    <Block className="sidepanel-wrapper">
+      <Block className="sidepanel-header">
+        <Link href="/">
+          <Image
+            id="logo"
+            src={pp_logo}
+            alt="Spaces logo"
+            priority={true}
+          />
+          <Text theId="logo-text" variant="span">Spaces</Text>
+        </Link>
+        <Block className="clear-both"></Block>
+      </Block>
+      <Block className="sidepanel-spaces-list">
+        {spacesList && spacesList.map((space:any, i) =>
+          <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
+        )}
+      </Block>
     </Block>
   )
 }

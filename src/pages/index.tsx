@@ -1,16 +1,15 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+// External
 import { useEffect, useState } from 'react'
 
-const inter = Inter({ subsets: ['latin'] })
+// Internal
+import { Block } from '@/components'
 
 export default function Home() {
-  const [counter,setCounter] = useState<number>(1)
-  useEffect(() => {
-    console.log(counter+" fester")
-  }, [counter])
-  
+  const [counter, setCounter] = useState<number>(1)
+
   return (
-    <span onClick={() => setCounter(counter+1)} className="block">Festet {counter.toString()} gange</span>
+    <Block className="inner-content">
+      {counter} fester
+    </Block>
   )
 }

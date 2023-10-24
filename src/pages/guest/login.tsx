@@ -1,30 +1,34 @@
 // External
 import { useEffect, useState } from "react"
+import { Button } from "@mui/material"
+import Link from "next/link"
 
 // Internal
 import { Block, Text, Heading, Field } from "@/components"
-import styles from '@/core-ui/Guest.module.scss'
 import { useAuth } from "@/hooks"
 import { selectIsLoggedIn, useTypedSelector } from "@/redux"
 
 export default function Login() {
-    const { login, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
+    const { handleLoginSubmit, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
 
     const [userEmail, setUserEmail] = useState('')
     const [userPassword, setUserPassword] = useState('')
+    const [showPassword,setShowPassword] = useState<boolean>(false)
 
     const [loginPending, setLoginPending] = useState(false)
 
-    const doLogin = (e : any = '') => {
+    const doLogin = (e: any = '') => {
         if (typeof e.preventDefault === 'function') e.preventDefault()
-        
+
         if (!loginPending) {
             setLoginPending(true)
-            const loginDetails = { userEmail, userPassword }
-            
-            login(userEmail, userPassword)
+            handleLoginSubmit(userEmail, userPassword)
             setLoginPending(false)
         }
+    }
+
+    const ifEnter = (e: any) => {
+        if (e.key === 'Enter') doLogin()
     }
 
     const isLoggedIn = useTypedSelector(selectIsLoggedIn)
@@ -41,45 +45,57 @@ export default function Login() {
     }, [])
 
     return (
-        <Block className={styles.login}>
+        <Block className="login">
             <Heading title="Sign in to your account" />
-            <Text className={styles.teaserTxt}>Your space to hangout and communicate</Text>
+            <Text className="teaser-text">Your space to hangout and communicate</Text>
 
-            <Block className={styles.guestForm}>
+            <Block className="guest-form">
                 {errorMsg && status === 'resolved' && (
-                    <Text className={styles.error_notice} variant="p">{errorMsg}</Text>
+                    <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
 
                 <form onSubmit={doLogin}>
                     <Field
                         type="text"
-                        lbl="E-mail:"
+                        lbl="E-mail"
+                        innerLabel={true}
                         value={userEmail}
                         onChange={(e: string) => setUserEmail(e)}
+                        onKeyDown={(e: any) => { ifEnter(e) }}
                         disabled={status === 'resolving'}
-                        autoComplete="email"
+                        autoComplete="username"
                         className="login-field"
                     />
                     <Field
-                        type="password"
-                        lbl="Password:"
+                        type={showPassword ? 'text' : 'password'}
+                        lbl="Password"
+                        innerLabel={true}
                         value={userPassword}
                         onChange={(e: string) => setUserPassword(e)}
+                        onKeyDown={(e: any) => {ifEnter(e)}}
+                        endButton={() => {setShowPassword(!showPassword)}}
+                        endContent={!showPassword ? 'Show' : 'Hide'}
                         disabled={status === 'resolving'}
+                        autoComplete="password"
                         className="login-field"
                     />
-                    
                     <Text variant="p">
-                        <button
-                            className={'login-btn button ' + (loginPending ? styles.pending : '')}
+                        <Button
+                            className={'login-btn button button-green ' + (loginPending || status === 'resolving' ? "pending" : "")}
                             onClick={doLogin}
                             disabled={status === 'resolving'}
                         >
-                            <Text variant="span" className="btnTxt">Log on</Text>
-                        </button>
+                            <Text variant="span" className="button button-text">Log on</Text>
+                        </Button>
                     </Text>
                 </form>
+                <Block className="clear-both"></Block>
             </Block>
+            <Text variant="span" className="guest-link">
+                <Link href="/guest/create" className="link-item">Need an account?</Link>
+                <Link href="/guest/forgot" className="link-item">Forgot your password</Link>
+            </Text>
+            <Block className="clear-both" />
         </Block>
     )
 }

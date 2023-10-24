@@ -4,77 +4,100 @@ import { useRouter } from "next/navigation";
 
 // Internal
 import { useAxios, useAuthContext } from './'
+import { CONSTANTS } from "@/data/CONSTANTS"
+import { jwtTokensDTO } from '@/types/AuthDTO'
 import {
-    useAppDispatch, 
-    useTypedSelector, 
-    useAuthActions, 
-    setLoggedIn, 
-    setLoggedOut, 
-    setLoginErrorType, 
-    selectLoginErrorType 
+    useAppDispatch,
+    useTypedSelector,
+
+    useAuthActions,
+
+    setLoggedIn,
+    setLoggedOut,
+    setAccessToken,
+    setRefreshToken,
+    setLoginErrorType,
+    setCreateErrorType,
+
+    selectLoginErrorType,
+    selectCreateErrorType
 } from '../redux'
 
-const errorCodes : any = {
+const errorCodes: any = {
     wrong_credentials: 'Incorrect credentials. Please try again.',
-	invalid_username: 'Invalid username or email address. Please check it and try again.',
-	invalid_email: 'Invalid email address. Please check it and try again.',
-	incorrect_password: 'Incorrect password. Please try again, or reset your password.',
-	empty_username: 'Please provide your username.',
-	empty_password: 'Please provide your password.',
+    invalid_username: 'Invalid username or email address. Please check it and try again.',
+    invalid_email: 'Invalid email address. Please check it and try again.',
+    incorrect_password: 'Incorrect password. Please try again, or reset your password.',
+    empty_username: 'Please provide your username.',
+    empty_password: 'Please provide your password.',
     "Login Attempt Failed": 'Incorrect credentials. Please try again.',
-    "Empty request": 'Name or password not provided.',
+    //"Empty request": 'Name or password not provided.',
 }
 
 export const useAuth = () => {
-    const router = useRouter()
-    const { isLoggedIn, setIsLoggedIn, setAuthContext, removeAuthContext } = useAuthContext()
-    const { httpPostWithData, requestCSRF } = useAxios()
-    const [errorMsg,setErrorMsg] = useState<any>(null)
-    const [status,setStatus] = useState<any>(null)
+    // Instant variables
+    const [errorMsg, setErrorMsg] = useState<any>(null)
+    const [status, setStatus] = useState<any>(null)
 
+    // Hooks and Redux
     const dispatch = useAppDispatch()
     const loginErrorType = useTypedSelector(selectLoginErrorType)
+    const createErrorType = useTypedSelector(selectCreateErrorType)
     const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
+    const { isLoggedIn, setIsLoggedIn, removeTokens } = useAuthContext()
+    const { httpPostWithData, httpGetRequest } = useAxios()
 
-    const saveLoginSuccess = /*useSafeDispatch( */ (ProfileID : string) => {
-        setAuthContext(ProfileID)
+    // Methods
+    const saveLoginSuccess = (jwtData: jwtTokensDTO, memberOfSpaces: any) => {
+        dispatch(setAccessToken({ "data": jwtData.accessToken }))
+        dispatch(setRefreshToken({ "data": jwtData.refreshToken }))
         setIsLoggedIn(true)
-        goHome()
+        goHome(memberOfSpaces)
     }
 
-    const goHome = () => {
-        router.push('/')
+    const goHome = (anyMember?: any) => {
+        //router.push('/') !!! not hard refreshing
+        if (anyMember === 0) { // Not a member of any spaces, redirect to create space
+            window.location.href = "/create/space"
+        } else { // Member of a space, redirect to frontpage of app
+            window.location.href = "/"
+        }
     }
 
-    const onError = /*useSafeDispatch(*/ (errors? : any) => {
-        if (loginErrorType) {
-            const theErrorMsg = loginErrorType//errors.message
+    const onError = (fromAction: string, errors?: any) => {
+        if (loginErrorType || createErrorType) {
+            const theErrorMsg = errors?.message || loginErrorType || createErrorType
             setErrorMsg(
-                errorCodes[theErrorMsg] || theErrorMsg || loginErrorType
-                // `${ stripHtml( decodeEntities( errors.message ) ).result }`
+                errorCodes[theErrorMsg] || theErrorMsg
             )
         } else if (errors) {
-            dispatch(setLoginErrorType({
-                "data": errors.Result
-            }))
-        } else if (loginErrorType === "") {
+            if (fromAction === "login") {
+                dispatch(setLoginErrorType({
+                    "data": errors.message
+                }))
+            } else if (fromAction === "create") {
+                dispatch(setCreateErrorType({
+                    "data": errors.message
+                }))
+            }
+        } else if (loginErrorType === "" && createErrorType === "") {
             setErrorMsg(null)
         }
-	} //);
+    }
     useEffect(() => {
-        onError()
+        onError("")
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loginErrorType])
+    }, [loginErrorType, createErrorType])
 
-    const processLoginResult = (loginResult : any) => {
-        console.log("THE LOGIN RESULT", loginResult)
+    const processResult = (fromAction: string, theResult: any) => {
         setStatus('resolved')
-        if (loginResult.Result === "Failed") {
-            onError(loginResult)
-        } else if (loginResult.Result === "Login success") {
-            saveLoginSuccess(loginResult.ProfileID)
+
+        if (theResult.success === true) {
+            saveLoginSuccess(theResult.authorisation, theResult.memberOfSpaces)
             return true
         }
+
+        onError(fromAction, theResult)
         return false
     }
 
@@ -87,63 +110,167 @@ export const useAuth = () => {
         })*/
     }
 
-    const login = async (usernameInput : string, passwordInput : string) : Promise<boolean> => {
+    const logout = async () => {
         setStatus('resolving')
-        const loginVariables = {
-            "email": usernameInput, 
-            "password": passwordInput,
-            //"token_name": usernameInput, 
+        // Send login variables to the API for authentication
+        try {
+            const data = await httpGetRequest("userLogout")
+            dispatch(adminDoLogout(setLoggedOut))
+            removeTokens()
+            window.location.href = CONSTANTS.LOGIN_URL
+        } catch (e) {
+            console.log("useAuth logout error", e)
         }
-        
-        // If name/email or password is empty
-        if (!usernameInput || !passwordInput) {
-            const data = {
+        setStatus('resolved')
+        return
+    }
+
+    const handleCreateSubmit = async (realNameInput: string, displayNameInput: string, emailInput: string,
+        passwordInput: string, password2Input: string,
+        inputDD: string, inputMM: string, inputYYYY: string): Promise<boolean> => {
+
+        setStatus('resolving')
+        let errorData
+        let error = false
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!error && (!realNameInput || !displayNameInput || !emailInput || !passwordInput || !password2Input || !inputDD || !inputMM || !inputYYYY)) {
+            errorData = {
                 "success": false,
-                "message": "Empty request",
-                "data": false,
-                "Result": "Failed"
+                "message": "Missing neccesary credentials.",
+                "data": false
             }
-            processLoginResult(data)
-            return false
+            error = true
         }
-        
+
+        // If birthday credentials has wrong length
+        if (inputDD.length !== 2 || inputMM.length !== 2 || inputYYYY.length !== 4) {
+            errorData = {
+                "success": false,
+                "message": "Wrong length in birthday.",
+                "data": false
+            }
+            error = true
+        }
+
+        // Convert birthday strings to numbers
+        const inputDDint = parseInt(inputDD)
+        const inputMMint = parseInt(inputMM)
+        const inputYYYYint = parseInt(inputYYYY)
+
+        // If birthday formats was not numbers
+        if (!inputDDint || !inputMMint || !inputYYYYint) {
+            errorData = {
+                "success": false,
+                "message": "Wrong format in birthday.",
+                "data": false
+            }
+            error = true
+        }
+
+        // If passwords does not match
+        if (passwordInput !== password2Input) {
+            errorData = {
+                "success": false,
+                "message": "Passwords does not match.",
+                "data": false
+            }
+        }
+
+        // If email is not valid format
+        if (!emailInput.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
+            errorData = {
+                "success": false,
+                "message": "E-mail is not valid.",
+                "data": false
+            }
+            error = true
+        }
+
+        // Variables to send to backend API
+        const createVariables = {
+            "Profile_RealName": realNameInput,
+            "Profile_DisplayName": displayNameInput,
+            "Profile_Email": emailInput,
+            "Profile_Password": passwordInput,
+            "Profile_Password2": password2Input,
+            "Profile_BirthdayDD": inputDDint,
+            "Profile_BirthdayMM": inputMMint,
+            "Profile_BirthdayYYYY": inputYYYYint
+        }
+
+        // Send create variables to the API for creation
+        try {
+            if (!error) {
+                const data = await httpPostWithData("userCreate", createVariables)
+                return processResult("create", data)
+            }
+        } catch (e) {
+            console.log("useAuth create user error", e)
+            errorData = {
+                "success": false,
+                "message": "A server error occured. Try again.",
+                "data": false
+            }
+            error = true
+        }
+
+        processResult("create", errorData)
+        return false
+    }
+
+    const handleLoginSubmit = async (emailInput: string, passwordInput: string): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        let error = false
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setLoginErrorType({ "data": "" }))
-        
-        console.log("loginVariables", loginVariables)
-        // Request a new server-side Laravel Sanctum CSRF cookie
-        //requestCSRF().then(async csrfResp => {
-            // Send login variables to the API for authentication
-            try {
-                const data = await httpPostWithData("?Category=Profiles&Action=Login", loginVariables)
-                return processLoginResult(data)
-            } catch (e) {
-                console.log("useAuth login error", e)
-            }
-        //})
-        return false
-	}
 
-    const logout = () => {
-        setStatus('resolving')
-        dispatch(adminDoLogout(setLoggedOut))
-        removeAuthContext()
-        setStatus('resolved')
-        //navigate("/login")
-        return true
-	}
+        // If name/email or password is empty
+        if (!emailInput || !passwordInput) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            error = true
+        }
+
+        const loginVariables = {
+            "Profile_Email": emailInput,
+            "Profile_Password": passwordInput
+        }
+        // Send login variables to the API for authentication
+        try {
+            if (!error) {
+                const data = await httpPostWithData("userLogin", loginVariables)
+                return processResult("login", data)
+            }
+        } catch (e) {
+            console.log("useAuth login error", e)
+            errorData = {
+                "success": false,
+                "message": "A server error occured. Try again.",
+                "data": false
+            }
+            error = true
+        }
+
+        processResult("login", errorData)
+        return false
+    }
 
     return {
-		login,
-		logout,
+        logout,
         saveLoginSuccess,
         isLoggedInTest,
-		isLoggedIn,
-		errorMsg,
-		status,
+        isLoggedIn,
+        errorMsg,
+        status,
         goHome,
-		/*refetchViewer,
-		loadingViewer,
-		viewer,*/
-	}
+        handleLoginSubmit,
+        handleCreateSubmit,
+    }
 }
