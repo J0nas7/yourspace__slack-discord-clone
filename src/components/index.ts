@@ -8,6 +8,7 @@ export * from './ui/file-upload'
 export * from './ui/socket_indicator'
 
 export * from './chat/chat-input'
+export * from './chat/emoji-picker'
 
 export { default as Message } from './view-model/Message'
 export { default as Space } from './view-model/Space'

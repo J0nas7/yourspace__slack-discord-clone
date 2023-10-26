@@ -1,11 +1,9 @@
 // External
 import { useRouter } from "next/router"
 import { useState } from "react"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSmile } from "@fortawesome/free-solid-svg-icons"
 
 // Internal
-import { Block, Field, Form } from "@/components"
+import { Block, Field, Form, EmojiPicker } from "@/components"
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { useAxios } from "@/hooks"
 
@@ -54,13 +52,13 @@ export const ChatInput = ({
                         type="text"
                         lbl=""
                         value={newMessage}
-                        placeholder={"Message " + (type === "conversation" ? name : "#"+name)}
+                        placeholder={"Message " + (type === "conversation" ? name : "#" + name)}
                         onChange={(e: string) => setNewMessage(e)}
                         disabled={false}
                         className={styles["new-message-field"]}
                         autoComplete="off"
                     />
-                    <FontAwesomeIcon icon={faSmile} className={styles["message-emoticons"]} />
+                    <EmojiPicker onChange={(emoji: string) => setNewMessage(`${newMessage + emoji}`)} />
                 </Block>
             </Block>
         </Form>
