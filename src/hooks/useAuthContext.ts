@@ -15,6 +15,7 @@ import {
 } from '@/redux'
 import { jwtTokensDTO } from '@/types/AuthDTO'
 import { useCookie } from '@/hooks'
+import { CONSTANTS } from '@/data/CONSTANTS'
 
 export const useAuthContext = (__templateCheck?: Function) => {
     // Redux
@@ -45,6 +46,12 @@ export const useAuthContext = (__templateCheck?: Function) => {
     }
 
     // Logical
+    const doLogout = () => {
+        deleteAuthContext("accessToken")
+        deleteAuthContext("refreshToken")
+        window.location.href = CONSTANTS.LOGOUT_URL
+    }
+
     const getCurrentToken = (tokenName: string) => {
         if (tokenName) {
             if (tokensFromRedux[tokenName]) return tokensFromRedux[tokenName]
@@ -110,7 +117,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
         removeTokens,
         getAuthContext,
         getCurrentToken,
-        deleteAuthContext,
+        doLogout,
         saveTokens,
     }
 }

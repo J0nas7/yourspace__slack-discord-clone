@@ -8,7 +8,6 @@ import {
     useTypedSelector,
     selectTheSpace,
 } from '@/redux'
-import { CONSTANTS } from '@/data/CONSTANTS'
 import { useSocket } from '@/components/providers/socket-provider'
 
 export const useAxios = () => {
@@ -17,7 +16,7 @@ export const useAxios = () => {
     
     // Hooks
     const { setTheCookie } = useCookie()
-    const { getCurrentToken, getAuthContext, deleteAuthContext } = useAuthContext()
+    const { getCurrentToken, getAuthContext, doLogout } = useAuthContext()
     const { socket } = useSocket()
 
     // Socket.io stuff
@@ -127,9 +126,7 @@ export const useAxios = () => {
                 if (getAuthContext("accessToken")) {
                     alert("Your login session has expired. You will be logged out.")
                 }
-                deleteAuthContext("accessToken")
-                deleteAuthContext("refreshToken")
-                window.location.href = CONSTANTS.LOGOUT_URL
+                doLogout()
                 return false
             }
             return send
