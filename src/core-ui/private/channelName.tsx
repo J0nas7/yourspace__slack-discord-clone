@@ -1,8 +1,5 @@
 // External
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSmile } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
 
 // Internal

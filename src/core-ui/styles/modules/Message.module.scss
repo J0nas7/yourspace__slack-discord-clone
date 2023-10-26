@@ -16,15 +16,6 @@
     &:nth-child(2n) {
         background-color: #f0f0f0;
     }
-
-    .profile-picture {
-        float: left;
-        width: 40px;
-        height: 40px;
-        background-color: black;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
     
     .message-details {
         float: left;
@@ -127,10 +118,25 @@
 
             fieldset { display: none; }
         }
-        .message-emoticons {
-            color: #585858;
-            margin-left: auto;
+
+        .new-message-emoji-picker {
+            position: relative;
             order: 3;
+
+            .message-emoticons {
+                color: #585858;
+                margin-left: auto;
+            }
+            .new-message-emoji-picker-content {
+                display: none;
+                position: absolute;
+                top: -420px;
+                left: calc(-352px + 30px);
+
+                &.show-picker {
+                    display: block;
+                }
+            }
         }
     }
 }

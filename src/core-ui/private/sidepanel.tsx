@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { Block, Text } from '@/components'
 import pp_logo from '@/Assets/Images/headerLogo.png'
 import { useSpaces } from '@/hooks'
-import { Space } from '@/components/'
+import { Space, Profile as ProfileCard } from '@/components/'
 
 export default function Sidepanel() {
   // Hooks
@@ -35,6 +35,9 @@ export default function Sidepanel() {
         {spacesList && spacesList.map((space:any, i) =>
           <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
         )}
+      </Block>
+      <Block className="space-member-context">
+        <ProfileCard variant="space-bottom" className="member-context-details" />
       </Block>
     </Block>
   )

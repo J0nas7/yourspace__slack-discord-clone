@@ -19,6 +19,7 @@
     }
 
     .sidepanel-wrapper {
+        position: relative;
         width: 60px;
         height: 100vh;
         float: left;
@@ -93,6 +94,25 @@
                 &.with-label:hover .space-label {
                     display: inline-block;
                 }
+            }
+        }
+
+        .space-member-context {
+            position: absolute;
+            z-index: 1;
+            top: auto;
+            bottom: 0;
+            left: 60px;
+            width: calc(100vw - 75vw - 60px);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #dadce1;
+
+            .member-context-details {
+                width: 90%;
+                height: 40px;
             }
         }
     }
@@ -295,23 +315,6 @@
                 }
             }
         }
-
-        .space-member-context {
-            position: absolute;
-            top: auto;
-            bottom: 0;
-            width: 100%;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #dadce1;
-
-            .member-context-details {
-                width: 90%;
-                height: 40px;
-            }
-        }
     }
 
     .channel-wrapper {
@@ -465,6 +468,29 @@
                     width: 90%;
                     margin: 5px 5%;
                 }
+            }
+        }
+    }
+
+    // Global profile picture
+    .profile-picture {
+        float: left;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .yourprofile-global {
+        .profile-actions {
+            float: right;
+
+            svg {
+                cursor: pointer;
+                float: left;
+                width: 20px;
+                height: 20px;
+                margin-left: 20px;
             }
         }
     }

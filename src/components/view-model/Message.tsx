@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { MemberRole } from "@prisma/client";
+import Image from 'next/image'
 
 // Internal
 import { useAxios } from '@/hooks'
-import { Block, Text, Modal, Field } from '@/components'
+import { Block, Text, Modal, Field, Profile as ProfileCard } from '@/components'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { MessageDTO, ProfileDTO } from '@/types'
+import { MemberRole } from "@prisma/client"
 
 type Variant = 'in-channel'
 type Props = {
@@ -35,7 +36,6 @@ const Message = ({
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const [theDay, setTheDay] = useState<string>('')
     const [timestamp, setTimestamp] = useState<string>('')
-    const profilePicFolder = ""//apiUrl+"item_images/"
     const fileType = theMessage.Message_FileUrl?.split(".").pop()
 
     // Channel priviligies
@@ -68,11 +68,11 @@ const Message = ({
     if (variant == "in-channel") {
         return (
             <Block className={styles["message-item"]}>
-                <img alt="" className={styles["profile-picture"]} width="100px" src={profilePicFolder + theMessage.Message_MemberID} />
+                <ProfileCard variant="profile-picture" className="profile-picture" />
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
                         <Block className="left-side">
-                            <Text variant="span" className={styles["message-username"]}>{theMessage.Profile_DisplayName}</Text>
+                            <ProfileCard variant="in-channel" className={styles["message-username"]} />
                             {theDay && timestamp && (
                                 <Text variant="span" className={styles["message-datestamp"]}>
                                     {theDay + timestamp} ({theMessage.Message_ID})
@@ -88,6 +88,7 @@ const Message = ({
                         {theMessage.Message_Content}
                     </Block>
                 </Block>
+
                 {canEdit && (
                     <Modal
                         openModal={editModal}
@@ -110,6 +111,7 @@ const Message = ({
                         </Button>
                     </Modal>
                 )}
+
                 {canDelete && (
                     <Modal
                         openModal={deleteModal}
