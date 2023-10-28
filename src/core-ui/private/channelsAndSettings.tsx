@@ -23,7 +23,7 @@ export const ChannelsAndSettings = () => {
     const [channelsListToRender, setChannelsListToRender] = useState<{ [key: string]: [] }>(emptyChannels)
 
     // Methods
-    const initSpace = () => getTheSpace()
+    const initSpace = () => getTheSpace(tempSpaceName)
     const getAllChannels = (reset: boolean = false) => {
         if (reset) setChannelsListToRender(emptyChannels)
         getChannelsList("text")

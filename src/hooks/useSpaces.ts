@@ -55,31 +55,32 @@ export const useSpaces = () => {
         }
     }
 
-    const getTheSpace = async () => {
-        // Request the space from the unique space name
-        // Variables to send to backend API
-        const getSpaceVariables = {
-            "Space_Name": tempSpaceName
-        }
-
+    const getTheSpace = async (spaceName: string) => {
         // Request space from the unique space name
-        try {
-            const data = await httpPostWithData("getTheSpace", getSpaceVariables)
-            if (data.data) {
-                dispatch(setTheSpace({
-                    "data": data.data
-                }))
-                return data.data.Space_Name
+        if (spaceName) {
+            // Variables to send to backend API
+            const getSpaceVariables = {
+                "Space_Name": spaceName
             }
-        } catch (e) {
-            console.log("useSpaces getTheSpace error", e)
+
+            // Send request to the API for space
+            try {
+                const data = await httpPostWithData("getTheSpace", getSpaceVariables)
+                if (data.data) {
+                    dispatch(setTheSpace({
+                        "data": data.data
+                    }))
+                }
+            } catch (e) {
+                console.log("useSpaces getSpace error", e)
+            }
         }
         return
     }
 
     const getChannelsList = async (channelFormat: string) => {
+        // Request channel lists from the unique space name
         if (channelFormat && theSpace.Space_Name) {
-            // Request channel lists from the unique space name
             // Variables to send to backend API
             const getChannelsVariables = {
                 "Space_Name": theSpace.Space_Name,
@@ -103,8 +104,13 @@ export const useSpaces = () => {
 
     const afterSuccess = (theResult: any) => {
         const spaceName = theResult.data.Space_Name
-        const spaceID = theResult.data.Space_ID
-        router.push(CONSTANTS.SPACE_URL + spaceName)
+        const redirectTo = CONSTANTS.SPACE_URL + spaceName
+        
+        if (tempSpaceName && tempSpaceName !== spaceName) { // Hard refresh needed
+            window.location.href = redirectTo
+        } else { // Router push is enough
+            router.push(redirectTo)
+        }
     }
 
     // Handle error dispatch and set state of them correspondingly
@@ -139,6 +145,39 @@ export const useSpaces = () => {
 
         onError(fromAction, theResult)
         return false
+    }
+
+    const handleEditNameSubmit = async (newSpaceName: string,  oldSpaceName: string): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!newSpaceName || !oldSpaceName) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            processResult('create', errorData)
+            return false
+        }
+
+        // Variables to send to backend API
+        const createVariables = {
+            "Space_Name_old": oldSpaceName,
+            "Space_Name_new": newSpaceName,
+        }
+
+        // Send edit variables to the API for saving
+        try {
+            const data = await httpPostWithData("editSpace", createVariables)
+            return processResult('edit', data)
+        } catch (e) {
+            console.log("useSpaces editName error", e)
+        }
+        return true
     }
 
     const handleCreateSubmit = async (spaceName: string, spaceImage: string): Promise<boolean> => {
@@ -182,6 +221,7 @@ export const useSpaces = () => {
         channelsList,
         getChannelsList,
         handleCreateSubmit,
+        handleEditNameSubmit,
         errorMsg,
         status
     }

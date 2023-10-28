@@ -10,6 +10,7 @@ import { Block, Text, Field, Space as SpaceCard } from '@/components'
 import { ChannelsAndSettings } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
+import { CONSTANTS } from '@/data/CONSTANTS'
 
 export default function Space() {
   // Hooks
@@ -37,7 +38,7 @@ export default function Space() {
           <Block className={"space-action-menu "+(spaceActionMenu ? "visible" : "")}>
             <nav>
               <ul>
-                <li className="space-action-menu-item"><a href="#">
+                <li className="space-action-menu-item"><a href={CONSTANTS.SPACE_URL+tempSpace.Space_Name+"/edit-name"}>
                   <FontAwesomeIcon icon={faFont} />
                   Edit space name
                 </a></li>
