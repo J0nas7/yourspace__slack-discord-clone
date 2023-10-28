@@ -58,7 +58,6 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     }
     // Send request to the API for user data
     const profileData = await httpPostWithData("userData", getUserDataVariables)
-    console.log(profileData.data)
     if (profileData.data) setCurrentProfile(profileData.data)
   }
   useEffect(() => {

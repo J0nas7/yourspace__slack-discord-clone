@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text, Field, Space as SpaceCard } from '@/components'
+import { Block, Text, Field, EditSpaceName, Space as SpaceCard } from '@/components'
 import { ChannelsAndSettings } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
@@ -20,9 +20,16 @@ export default function Space() {
   const tempSpaceName: string = router.query.spaceName?.toString()!
   const [spaceSearch, setSpaceSearch] = useState<string>('')
   const [spaceActionMenu, setSpaceActionMenu] = useState<boolean>(false)
+  const [showEditModal, setShowEditModal] = useState<boolean>(false)
+
   const tempSpace: SpaceDTO = {
     Space_ID: 0,
     Space_Name: tempSpaceName,
+  }
+
+  const triggerEditModal = () => {
+    setSpaceActionMenu(false)
+    setShowEditModal(true)
   }
 
   return (
@@ -35,13 +42,15 @@ export default function Space() {
         </Block>
         <Block className="right-side">
           <FontAwesomeIcon className="space-action-menu-button" icon={faEllipsis} onClick={() => setSpaceActionMenu(!spaceActionMenu)} />
-          <Block className={"space-action-menu "+(spaceActionMenu ? "visible" : "")}>
+          <Block className={"space-action-menu " + (spaceActionMenu ? "visible" : "")}>
             <nav>
               <ul>
-                <li className="space-action-menu-item"><a href={CONSTANTS.SPACE_URL+tempSpace.Space_Name+"/edit-name"}>
-                  <FontAwesomeIcon icon={faFont} />
-                  Edit space name
-                </a></li>
+                <li className="space-action-menu-item">
+                  <Text variant="span" onClick={() => triggerEditModal()} className="space-action-menu-item-clickable">
+                    <FontAwesomeIcon icon={faFont} />
+                    Edit space name
+                  </Text>
+                </li>
                 <li className="space-action-menu-item"><a href="#">
                   <FontAwesomeIcon icon={faGear} />
                   Space settings
@@ -57,6 +66,9 @@ export default function Space() {
               </ul>
             </nav>
           </Block>
+          {showEditModal && (
+            <EditSpaceName />
+          )}
         </Block>
       </Block>
       <Block className="space-content">
