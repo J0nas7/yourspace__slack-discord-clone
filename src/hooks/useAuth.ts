@@ -112,7 +112,7 @@ export const useAuth = () => {
 
     const logout = async () => {
         setStatus('resolving')
-        // Send login variables to the API for authentication
+        // Send logout request to the API
         try {
             const data = await httpGetRequest("userLogout")
             dispatch(adminDoLogout(setLoggedOut))

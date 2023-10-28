@@ -31,7 +31,7 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
                 <FontAwesomeIcon icon={faPlus} className="channel-new-channel right-side" onClick={() => setShowCreateModal(true)} />
             </Block>
             <Block className="channel-format-list">
-                {channelsListToRender.length ? (
+                { channelsListToRender && channelsListToRender.length ? (
                     <>
                         {channelsListToRender.map((channel, i) =>
                             <ChannelCard
@@ -43,7 +43,7 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
                         )}
                     </>
                 ) : (
-                    <Text variant="span" className="spinner-loader" />
+                    <Block className="channel-format-list-item placeholder-loading channel-name"></Block>
                 )}
             </Block>
             <ChannelCreate defaultFormat={format} showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} resetChannels={resetChannels} />

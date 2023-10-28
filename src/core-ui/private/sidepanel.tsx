@@ -32,8 +32,18 @@ export default function Sidepanel() {
         <Block className="clear-both"></Block>
       </Block>
       <Block className="sidepanel-spaces-list">
-        {spacesList && spacesList.map((space:any, i) =>
-          <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
+        { spacesList && spacesList.length ? (
+          <>
+            { spacesList.map((space:any, i) =>
+              <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
+            )}
+          </>
+        ) : (
+          <>
+            <Link href="#" className="placeholder-loading space-name"></Link>
+            <Link href="#" className="placeholder-loading space-name"></Link>
+            <Link href="#" className="placeholder-loading space-name"></Link>
+          </>
         )}
       </Block>
       <Block className="space-member-context">

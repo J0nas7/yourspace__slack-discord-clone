@@ -7,6 +7,7 @@
 .page-wrapper {
     width: 100%;
     height: auto;
+    --sidepanelBg: #dadce1;
     --spaceBg: #edeff1;
     --channelBg: #fcfcfc;
     --headerH: 60px;
@@ -18,12 +19,74 @@
         font-size: 1.2rem;
     }
 
+    // Global profile picture
+    .profile-picture {
+        float: left;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .yourprofile-global {
+        .profile-actions {
+            float: right;
+
+            svg {
+                cursor: pointer;
+                float: left;
+                width: 20px;
+                height: 20px;
+                margin-left: 20px;
+            }
+        }
+    }
+
+    .field.no-fieldset {
+        input {
+            background-color: #d3d3d3;
+            border-radius: 10px;
+        }
+
+        fieldset {
+            display: none;
+        }
+    }
+
+    @-webkit-keyframes placeholdSpaceName {
+        from { background-color: #bdbfc4; }
+        to { background-color: #999b9f; }
+    }
+    @keyframes placeholdSpaceName {
+       from { background-color: #bdbfc4; }
+       to { background-color: #999b9f; }
+    }
+    @-webkit-keyframes placeholdChannelName {
+        from { background-color: var(--spaceBg); }
+        to { background-color: #d4d6d7; }
+    }
+    @keyframes placeholdChannelName {
+       from { background-color: var(--spaceBg); }
+       to { background-color: #d4d6d7; }
+    }
+    
+    .placeholder-loading {
+        &.space-name {
+            -webkit-animation: placeholdSpaceName 1s ease-in-out infinite alternate;
+            animation: placeholdSpaceName 1s ease-in-out infinite alternate;
+        }
+        &.channel-name {
+            -webkit-animation: placeholdChannelName 1s ease-in-out infinite alternate;
+            animation: placeholdChannelName 1s ease-in-out infinite alternate;
+        }
+    }
+
     .sidepanel-wrapper {
         position: relative;
         width: 60px;
         height: 100vh;
         float: left;
-        background-color: #dadce1;
+        background-color: var(--sidepanelBg);
 
         .sidepanel-header {
             width: 100%;
@@ -469,40 +532,6 @@
                     margin: 5px 5%;
                 }
             }
-        }
-    }
-
-    // Global profile picture
-    .profile-picture {
-        float: left;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-
-    .yourprofile-global {
-        .profile-actions {
-            float: right;
-
-            svg {
-                cursor: pointer;
-                float: left;
-                width: 20px;
-                height: 20px;
-                margin-left: 20px;
-            }
-        }
-    }
-
-    .field.no-fieldset {
-        input {
-            background-color: #d3d3d3;
-            border-radius: 10px;
-        }
-
-        fieldset {
-            display: none;
         }
     }
 }

@@ -46,7 +46,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
     }
 
     // Logical
-    const doLogout = () => {
+    const doLogout = async () => {
         deleteAuthContext("accessToken")
         deleteAuthContext("refreshToken")
         window.location.href = CONSTANTS.LOGOUT_URL
