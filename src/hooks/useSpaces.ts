@@ -17,6 +17,7 @@ import {
     selectChannelsList
 } from '../redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
+import { ProfileDTO } from "@/types";
 
 export const useSpaces = () => {
     // Hooks
@@ -27,6 +28,7 @@ export const useSpaces = () => {
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [spacesList, setSpacesList] = useState<Array<Object>>()
+    const [membersList,setMembersList] = useState<ProfileDTO[]>()
     const tempSpaceName: string = router.query.spaceName?.toString()!
     const routerChannelName = router.query.channelName
     const errorCodes: { [key: string]: string } = {
@@ -44,6 +46,14 @@ export const useSpaces = () => {
         // Send request to the API for spaces array
         try {
             const data = await httpGetRequest("getSpacesList")
+            const goToCreateSpace = "/create/space"
+            if (data.message == "NotAnyMember" && router.asPath !== goToCreateSpace) {
+                if (confirm("You are not a member of any spaces. Click OK to create your own. Or cancel to continue exploring others.")) {
+                    window.location.href = goToCreateSpace
+                }
+                return
+            }
+
             if (data.data && data.data.length) {
                 setSpacesList(data.data)
                 /*dispatch(setSpacesList({
@@ -73,6 +83,27 @@ export const useSpaces = () => {
                 }
             } catch (e) {
                 console.log("useSpaces getSpace error", e)
+            }
+        }
+        return
+    }
+
+    const getMembersOfTheSpace = async (spaceName: string) => {
+        // Request members list of space from the unique space name
+        if (spaceName) {
+            // Variables to send to backend API
+            const getMembersOfSpaceVariables = {
+                "Space_Name": spaceName
+            }
+
+            // Send request to the API for space
+            try {
+                const data = await httpPostWithData("getMembersOfSpaceList", getMembersOfSpaceVariables)
+                if (data.data) {
+                    setMembersList(data.data)
+                }
+            } catch (e) {
+                console.log("useSpaces getMembersOfSpace error", e)
             }
         }
         return
@@ -218,6 +249,8 @@ export const useSpaces = () => {
         getTheSpace,
         spacesList,
         getSpacesList,
+        membersList,
+        getMembersOfTheSpace,
         channelsList,
         getChannelsList,
         handleCreateSubmit,

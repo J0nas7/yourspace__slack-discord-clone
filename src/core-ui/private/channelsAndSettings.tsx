@@ -10,7 +10,7 @@ import { useSpaces } from '@/hooks'
 
 export const ChannelsAndSettings = () => {
     // Hooks
-    const { theSpace, getTheSpace, channelsList, getChannelsList } = useSpaces()
+    const { theSpace, getTheSpace, membersList, getMembersOfTheSpace, channelsList, getChannelsList } = useSpaces()
     const router = useRouter()
 
     // Internal variables
@@ -23,7 +23,6 @@ export const ChannelsAndSettings = () => {
     const [channelsListToRender, setChannelsListToRender] = useState<{ [key: string]: [] }>(emptyChannels)
 
     // Methods
-    const initSpace = () => getTheSpace(tempSpaceName)
     const getAllChannels = (reset: boolean = false) => {
         if (reset) setChannelsListToRender(emptyChannels)
         getChannelsList("text")
@@ -41,13 +40,14 @@ export const ChannelsAndSettings = () => {
     }, [channelsList])
 
     useEffect(() => {
-        if (!theSpace.Space_Name) initSpace()
+        if (!theSpace.Space_Name) getTheSpace(tempSpaceName)
         if (!channelsListToRender['text'].length) getAllChannels()
     }, [theSpace])
 
     useEffect(() => {
-        initSpace()
+        getTheSpace(tempSpaceName)
         setChannelsListToRender(emptyChannels)
+        getMembersOfTheSpace(tempSpaceName)
     }, [tempSpaceName])
 
     return (
@@ -62,6 +62,17 @@ export const ChannelsAndSettings = () => {
                         MEMBERS OF <SpaceCard variant='name' withLabel={false} space={theSpace}></SpaceCard>
                     </Text>
                     <Text variant="span" className="channel-info-settings right-side" />
+                </Block>
+                <Block className="space-members-list">
+                    {membersList ? (
+                        <>
+                            {membersList && membersList.map((member, i) =>
+                                <Block key={i}>{member.Profile_ID}/{member.Profile_DisplayName}</Block>
+                            )}
+                        </>
+                    ) : (
+                        <Block>Not any members</Block>
+                    )}
                 </Block>
             </Block>
         </>

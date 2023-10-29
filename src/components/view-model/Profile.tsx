@@ -15,7 +15,7 @@ import { ProfileDTO } from '@/types/'
 type Variant = 'in-channel' | 'space-bottom' | 'profile-picture'
 type Props = {
     variant: Variant
-    profile?: any
+    profile?: ProfileDTO
     profileID?: number
     className?: string
 }
@@ -30,56 +30,76 @@ const Profile = ({
 
     // Internal variables
     const now = new Date()
-    const [theProfile, setTheProfile] = useState<ProfileDTO>(profile)
-    
+    const [theProfile, setTheProfile] = useState<ProfileDTO>()
+
     const demoImg = "/member-icon.png"
-    const imgFolder = env.url.API_URL+"/profile_images/"
-    const profileImage = theProfile?.Profile_ImageUrl
-    const fileType = profileImage?.split(".").pop()
-    const [imgSrc,setImgSrc] = useState<string>(imgFolder+profileImage)
+    const imgFolder = env.url.API_URL + "/profile_images/"
+    const [imgSrc, setImgSrc] = useState<string>('')
 
     // Methods
     const profileMyself = async () => {
+        //console.log(variant + " myself", profile, profileID, theProfile)
         const profileData = await httpGetRequest("userData")
         if (profileData.data) setTheProfile(profileData.data)
     }
 
     useEffect(() => {
+        if (profile) setTheProfile(profile)
         // Set profile to logged-in user, if none is provided from props
         if (!profile && !profileID) {
             profileMyself()
         }
     }, [])
 
+    useEffect(() => {
+        const profileImage = theProfile?.Profile_ImageUrl
+        if (theProfile && profileImage) {
+            setImgSrc(profileImage)
+        } else {
+            setImgSrc(demoImg)
+        }
+    }, [theProfile])
+
     if (variant == "in-channel") {
         return (
-            <Text variant="span" className={className}>{theProfile?.Profile_DisplayName}</Text>
+            <>
+                {theProfile && <Text variant="span" className={className}>{theProfile?.Profile_DisplayName}</Text>}
+            </>
         )
     } else if (variant == "space-bottom") {
         return (
-            <Block className={"yourprofile-global "+className}>
-                <ProfileCard variant="profile-picture" className="profile-picture" profile={profile} />
-                <Block className="profile-info">
-                    {theProfile?.Profile_DisplayName}
-                </Block>
-                <Block className="profile-actions">
-                    <FontAwesomeIcon icon={faArrowRightFromBracket} className="profile-logout" onClick={() => doLogout()} />
-                    <FontAwesomeIcon icon={faGear} className="profile-settings" />
-                </Block>
-            </Block>
+            <>
+                {theProfile && (
+                    <Block className={"yourprofile-global " + className}>
+                        <ProfileCard variant="profile-picture" className="profile-picture" profile={theProfile} />
+                        <Block className="profile-info">
+                            {theProfile?.Profile_DisplayName}
+                        </Block>
+                        <Block className="profile-actions">
+                            <FontAwesomeIcon icon={faArrowRightFromBracket} className="profile-logout" onClick={() => doLogout()} />
+                            <FontAwesomeIcon icon={faGear} className="profile-settings" />
+                        </Block>
+                    </Block>
+                )}
+            </>
         )
     } else if (variant == "profile-picture") {
         return (
-            <Image
-                alt=""
-                width={40}
-                height={40}
-                className={className}
-                src={imgSrc}
-                onError={() => {
-                    setImgSrc(demoImg)
-                }}
-            />
+            <>
+                {theProfile && imgSrc && (
+                    <Image
+                        alt=""
+                        width={40}
+                        height={40}
+                        className={className}
+                        src={imgSrc}
+                        priority={false}
+                        onError={() => {
+                            setImgSrc(demoImg)
+                        }}
+                    />
+                )}
+            </>
         )
     }
 

@@ -19,11 +19,12 @@ type Props = {
     message: MessageDTO
     className?: string
     currentProfile: ProfileDTO
+    membersList?: ProfileDTO[]
     theId?: string
 }
 
 const Message = ({
-    variant = 'in-channel', message, className, currentProfile, theId
+    variant = 'in-channel', message, className, currentProfile, membersList, theId
 }: Props) => {
     // Hooks
     const router = useRouter()
@@ -37,6 +38,7 @@ const Message = ({
     const [theDay, setTheDay] = useState<string>('')
     const [timestamp, setTimestamp] = useState<string>('')
     const fileType = theMessage.Message_FileUrl?.split(".").pop()
+    const theMember: ProfileDTO = membersList?.filter((member) => member.Profile_ID == theMessage.Message_MemberID).pop()!
 
     // Channel priviligies
     const isAdmin = currentProfile.Member_Role === MemberRole.ADMIN
@@ -68,11 +70,11 @@ const Message = ({
     if (variant == "in-channel") {
         return (
             <Block className={styles["message-item"]}>
-                <ProfileCard variant="profile-picture" className="profile-picture" />
+                {theMember && <ProfileCard variant="profile-picture" className="profile-picture" profile={theMember} />}
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
                         <Block className="left-side">
-                            <ProfileCard variant="in-channel" className={styles["message-username"]} />
+                            {theMember && <ProfileCard variant="in-channel" className={styles["message-username"]} profile={theMember} />}
                             {theDay && timestamp && (
                                 <Text variant="span" className={styles["message-datestamp"]}>
                                     {theDay + timestamp} ({theMessage.Message_ID})

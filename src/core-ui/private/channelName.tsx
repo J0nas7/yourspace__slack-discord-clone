@@ -7,19 +7,20 @@ import { Block, Field, Text, ChatInput, Message as MessageCard } from '@/compone
 import { MessageDTO, ProfileDTO } from '@/types/'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { useSocket } from "@/components/providers/socket-provider"
-import { useAxios } from '@/hooks'
+import { useAxios, useSpaces } from '@/hooks'
 
 export const ChannelName = ({ channelName }: { channelName: string }) => {
   // Hooks
   const { socket } = useSocket()
   const router = useRouter()
   const { httpPostWithData, httpGetRequest } = useAxios()
+  const { membersList, getMembersOfTheSpace } = useSpaces()
 
   // Internal variables
-  const spaceName = router.query.spaceName
+  const spaceName: string = router.query.spaceName?.toString()!
   const [messages, setMessages] = useState<MessageDTO[]>([])
   const [messagesToRender, setMessagesToRender] = useState<MessageDTO[]>([])
-  const [currentProfile,setCurrentProfile] = useState<ProfileDTO>()
+  const [currentProfile, setCurrentProfile] = useState<ProfileDTO>()
 
   // Methods
   const loadFirstMessages = async () => {
@@ -46,6 +47,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   useEffect(() => {
     setMessagesToRender([])
     loadFirstMessages()
+    if (spaceName) getMembersOfTheSpace(spaceName)
   }, [channelName, spaceName])
 
   useEffect(() => {
@@ -72,9 +74,10 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     <Block className="channel-inner-content">
       <Block className={styles["channel-messages"]}>
         <Block className="reverse-messages">
-          {currentProfile && messagesToRender && messagesToRender.map((message, i) =>
-            <MessageCard variant="in-channel" className="channel-message" message={message} currentProfile={currentProfile} key={i} />
-          )}
+          {currentProfile && membersList && messagesToRender
+            && messagesToRender.map((message, i) =>
+              <MessageCard variant="in-channel" className="channel-message" message={message} currentProfile={currentProfile} membersList={membersList} key={i} />
+            )}
         </Block>
       </Block>
       <ChatInput
