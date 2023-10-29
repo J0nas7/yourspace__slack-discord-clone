@@ -170,12 +170,49 @@ export const useSpaces = () => {
         console.log("space processResult()", theResult)
 
         if (theResult.success === true) {
+            if (theResult.message == "The space was deleted") {
+                alert("The space was deleted")
+                window.location.href = "/"
+            }
+
             afterSuccess(theResult)
             return true
         }
 
         onError(fromAction, theResult)
         return false
+    }
+
+    const handleDeleteSubmit = async (deleteSpaceName: string): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!deleteSpaceName) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            processResult("delete", errorData)
+            return false
+        }
+
+        // Variables to send to backend API
+        const deleteVariables = {
+            "Space_Name": deleteSpaceName
+        }
+
+        // Send delete variables to the API the deleting
+        try {
+            const data = await httpPostWithData("deleteSpace", deleteVariables)
+            return processResult("delete", data)
+        } catch (e) {
+            console.log("useSpaces deleteSpace error", e)
+            return false
+        }
     }
 
     const handleEditNameSubmit = async (newSpaceName: string,  oldSpaceName: string): Promise<boolean> => {
@@ -207,8 +244,8 @@ export const useSpaces = () => {
             return processResult('edit', data)
         } catch (e) {
             console.log("useSpaces editName error", e)
+            return false
         }
-        return true
     }
 
     const handleCreateSubmit = async (spaceName: string, spaceImage: string): Promise<boolean> => {
@@ -253,8 +290,9 @@ export const useSpaces = () => {
         getMembersOfTheSpace,
         channelsList,
         getChannelsList,
-        handleCreateSubmit,
+        handleDeleteSubmit,
         handleEditNameSubmit,
+        handleCreateSubmit,
         errorMsg,
         status
     }

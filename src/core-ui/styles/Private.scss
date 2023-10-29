@@ -212,6 +212,8 @@
 
             .space-action-menu-button {
                 cursor: pointer;
+                width: 20px;
+                height: 20px;
             }
 
             .space-action-menu {
@@ -246,6 +248,9 @@
                     }
                     
                     svg {
+                        width: 20px;
+                        height: 20px;
+                        float: left;
                         margin-right: 10px;
                     }
                 }
@@ -459,7 +464,7 @@
             margin-top: calc((0px - var(--messageDialogH)) / 2);
         }
 
-        &.create-space-dialog, &.edit-space-dialog {
+        &.create-space-dialog, &.edit-space-dialog, &.delete-space-dialog {
             height: var(--createSpaceDialogH);
             margin-top: calc((0px - var(--createSpaceDialogH)) / 2);
         }

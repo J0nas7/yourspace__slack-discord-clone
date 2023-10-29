@@ -13,54 +13,42 @@ type Props = {
     trigger: Function
 }
 
-export default function editSpaceName({
+export default function deleteSpaceName({
     visible, trigger
 }: Props) {
     // Hooks
-    const { handleEditNameSubmit, errorMsg, status, theSpace, getTheSpace } = useSpaces()
+    const { handleDeleteSubmit, errorMsg, status, theSpace, getTheSpace } = useSpaces()
     const router = useRouter()
 
     // Internal variables
     const tempSpaceName: string = router.query.spaceName?.toString()!
-    const [editSpaceName, setEditSpaceName] = useState<string>('')
-    const [spaceImage, setSpaceImage] = useState<string>('')
-
+    
     // Methods
-    const onEdit = () => handleEditNameSubmit(editSpaceName, tempSpaceName)
+    const onDelete = () => handleDeleteSubmit(tempSpaceName)
     const onSkip = () => trigger(false)
 
     useEffect(() => {
         getTheSpace(tempSpaceName)
-        if (tempSpaceName) setEditSpaceName(tempSpaceName)
-        if (theSpace.Space_ImageUrl) setSpaceImage(theSpace.Space_ImageUrl)
     }, [tempSpaceName])
 
     return (
         <Modal
             openModal={visible}
             closeModal={() => trigger(false)}
-            title="Change your space name"
-            className="edit-space-dialog"
+            title="Delete the space"
+            className="delete-space-dialog"
         >
-            <Form onSubmit={onEdit} className={styles["edit-space-form"]}>
-                <Field
-                    type="text"
-                    lbl="Space name"
-                    displayLabel={true}
-                    innerLabel={false}
-                    placeholder="Enter space name"
-                    value={editSpaceName}
-                    onChange={(e: string) => setEditSpaceName(e)}
-                    disabled={false}
-                    grow={false}
-                    className={styles["edit-space-name"] + " no-fieldset"}
-                />
+            <Form onSubmit={onDelete} className={styles["edit-space-form"]}>
+                Are you sure you want to delete the space?<br/>
+                <strong>{theSpace.Space_Name}</strong><br/>
+                Channels and messages will also be deleted.
+                
                 {errorMsg && status === 'resolved' && (
                     <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
                 <Block className={styles["button-wrapper"]+ " button-wrapper"}>
-                    <Button className="button button-green" onClick={onEdit} disabled={false}>
-                        <Text variant="span" className="button button-text">Save changes</Text>
+                    <Button className="button button-red" onClick={onDelete} disabled={false}>
+                        <Text variant="span" className="button button-text">Delete space</Text>
                     </Button>
                     <Button className="button button-blue" onClick={onSkip} disabled={false}>
                         <Text variant="span" className="button button-text">Go back</Text>

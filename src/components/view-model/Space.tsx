@@ -26,16 +26,15 @@ const Space = ({
 }: Props) => {
     const router = useRouter()
     const theSpace: SpaceDTO = space
+    const logoText = (theSpace?.Space_ImageUrl ? false : theSpace?.Space_Name.slice(0,4))
 
-    const logoText = (theSpace.Space_ImageUrl ? false : theSpace.Space_Name.slice(0,4))
-
-    if (variant === "name") {
+    if (theSpace && variant === "name") {
         return (
             <Link href={"/space/" + theSpace.Space_Name} className={(withLabel ? 'with-label' : '')}>
                 {theSpace.Space_Name}
             </Link>
         )
-    } else if (variant === "sidepanel") {
+    } else if (theSpace && variant === "sidepanel") {
         return (
             <Link href={"/space/" + theSpace.Space_Name} className={(withLabel ? 'with-label' : '')}>
                 {logoText && (<Text variant="span" className="space-logotext">{logoText}</Text>)}

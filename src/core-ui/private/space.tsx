@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text, Field, EditSpaceName, Space as SpaceCard } from '@/components'
+import { Block, Text, Field, EditSpaceName, DeleteSpaceName, Space as SpaceCard } from '@/components'
 import { ChannelsAndSettings } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
@@ -21,6 +21,7 @@ export default function Space() {
   const [spaceSearch, setSpaceSearch] = useState<string>('')
   const [spaceActionMenu, setSpaceActionMenu] = useState<boolean>(false)
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
   const tempSpace: SpaceDTO = {
     Space_ID: 0,
@@ -30,6 +31,11 @@ export default function Space() {
   const triggerEditModal = () => {
     setSpaceActionMenu(false)
     setShowEditModal(true)
+  }
+
+  const triggerDeleteModal = () => {
+    setSpaceActionMenu(false)
+    setShowDeleteModal(true)
   }
 
   return (
@@ -59,16 +65,17 @@ export default function Space() {
                   <FontAwesomeIcon icon={faUsers} />
                   Manage members
                 </a></li>
-                <li className="space-action-menu-item"><a href="#">
-                  <FontAwesomeIcon icon={faTrashCan} />
-                  Delete space
-                </a></li>
+                <li className="space-action-menu-item">
+                  <Text variant="span" onClick={() => triggerDeleteModal()} className="space-action-menu-item-clickable">
+                    <FontAwesomeIcon icon={faTrashCan} />
+                    Delete space
+                  </Text>
+                </li>
               </ul>
             </nav>
           </Block>
-          {showEditModal && (
-            <EditSpaceName />
-          )}
+          {showEditModal && ( <EditSpaceName visible={showEditModal} trigger={setShowEditModal} /> )}
+          {showDeleteModal && ( <DeleteSpaceName visible={showDeleteModal} trigger={setShowDeleteModal} /> )}
         </Block>
       </Block>
       <Block className="space-content">
