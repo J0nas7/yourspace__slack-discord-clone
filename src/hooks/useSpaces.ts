@@ -14,7 +14,7 @@ import {
     setTheSpace,
     selectTheSpace,
     setChannelsList,
-    selectChannelsList
+    selectChannelsList,
 } from '../redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
 import { ProfileDTO } from "@/types";
@@ -25,15 +25,21 @@ export const useSpaces = () => {
     const router = useRouter()
 
     // Internal variables
+    let spaceContentLoading: boolean = false
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [spacesList, setSpacesList] = useState<Array<Object>>()
     const [membersList,setMembersList] = useState<ProfileDTO[]>()
-    const tempSpaceName: string = router.query.spaceName?.toString()!
+    const urlSpaceName: string = router.query.spaceName?.toString()!
     const routerChannelName = router.query.channelName
     const errorCodes: { [key: string]: string } = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
+    const emptyChannels: {[key: string]: []} = {
+            'text': [],
+            'audio': [],
+            'video': [],
+        }
 
     // Redux
     const dispatch = useAppDispatch()
@@ -42,6 +48,28 @@ export const useSpaces = () => {
     const channelsList = useTypedSelector(selectChannelsList)
 
     // Methods
+    const resetChannelsListToRender = async () => {
+        dispatch(setChannelsList({ "data": emptyChannels }))
+        return
+    }
+
+    const getAllChannels = async () => {
+        await getChannelsList("text")
+        await getChannelsList("audio")
+        await getChannelsList("video")
+    }
+
+    const resetChannels = () => {
+        //console.log("reset")
+        resetChannelsListToRender()
+        getAllChannels()
+    }
+
+    const initChannels = () => {
+        if (!channelsList['text'].length) getAllChannels()
+        return
+    }
+
     const getSpacesList = async () => {
         // Send request to the API for spaces array
         try {
@@ -65,12 +93,12 @@ export const useSpaces = () => {
         }
     }
 
-    const getTheSpace = async (spaceName: string) => {
+    const getTheSpace = async () => {
         // Request space from the unique space name
-        if (spaceName) {
+        if (urlSpaceName) {
             // Variables to send to backend API
             const getSpaceVariables = {
-                "Space_Name": spaceName
+                "Space_Name": urlSpaceName
             }
 
             // Send request to the API for space
@@ -88,12 +116,12 @@ export const useSpaces = () => {
         return
     }
 
-    const getMembersOfTheSpace = async (spaceName: string) => {
+    const getMembersOfTheSpace = async () => {
         // Request members list of space from the unique space name
-        if (spaceName) {
+        if (urlSpaceName) {
             // Variables to send to backend API
             const getMembersOfSpaceVariables = {
-                "Space_Name": spaceName
+                "Space_Name": urlSpaceName
             }
 
             // Send request to the API for space
@@ -111,7 +139,7 @@ export const useSpaces = () => {
 
     const getChannelsList = async (channelFormat: string) => {
         // Request channel lists from the unique space name
-        if (channelFormat && theSpace.Space_Name) {
+        if (channelFormat && theSpace?.Space_Name && !channelsList[channelFormat].length) {
             // Variables to send to backend API
             const getChannelsVariables = {
                 "Space_Name": theSpace.Space_Name,
@@ -131,13 +159,14 @@ export const useSpaces = () => {
                 console.log("useSpaces getChannelsList error", e)
             }
         }
+        return
     }
 
     const afterSuccess = (theResult: any) => {
         const spaceName = theResult.data.Space_Name
         const redirectTo = CONSTANTS.SPACE_URL + spaceName
         
-        if (tempSpaceName && tempSpaceName !== spaceName) { // Hard refresh needed
+        if (urlSpaceName && urlSpaceName !== spaceName) { // Hard refresh needed
             window.location.href = redirectTo
         } else { // Router push is enough
             router.push(redirectTo)
@@ -148,7 +177,7 @@ export const useSpaces = () => {
     const onError = (fromAction: string, errors?: any) => {
         if (createErrorType) {
             const theErrorMsg = errors?.message || createErrorType
-            console.log(theErrorMsg)
+            //console.log(theErrorMsg)
             setErrorMsg(
                 errorCodes[theErrorMsg] || theErrorMsg
             )
@@ -167,7 +196,7 @@ export const useSpaces = () => {
 
     const processResult = (fromAction: string, theResult: any) => {
         setStatus('resolved')
-        console.log("space processResult()", theResult)
+        //console.log("space processResult()", theResult)
 
         if (theResult.success === true) {
             if (theResult.message == "The space was deleted") {
@@ -281,6 +310,23 @@ export const useSpaces = () => {
         return true
     }
 
+    useEffect(() => {
+        if (theSpace?.Space_ID) {
+            const init = () => {
+                if (!spaceContentLoading) {
+                    spaceContentLoading = true
+                    initChannels()
+                    getMembersOfTheSpace()
+                }
+            }
+            init()
+        }
+    }, [theSpace])
+
+    useEffect(() => {
+        if (urlSpaceName) getTheSpace()
+    }, [])
+
     return {
         theSpace,
         getTheSpace,
@@ -290,6 +336,8 @@ export const useSpaces = () => {
         getMembersOfTheSpace,
         channelsList,
         getChannelsList,
+        resetChannelsListToRender,
+        resetChannels,
         handleDeleteSubmit,
         handleEditNameSubmit,
         handleCreateSubmit,

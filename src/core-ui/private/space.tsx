@@ -57,14 +57,24 @@ export default function Space() {
                     Edit space name
                   </Text>
                 </li>
-                <li className="space-action-menu-item"><a href="#">
-                  <FontAwesomeIcon icon={faGear} />
-                  Space settings
-                </a></li>
-                <li className="space-action-menu-item"><a href="#">
-                  <FontAwesomeIcon icon={faUsers} />
-                  Manage members
-                </a></li>
+                <li className="space-action-menu-item">
+                  <Link
+                    href={"/space/" + tempSpace.Space_Name + "/settings"}
+                    className="space-action-menu-item-clickable"
+                  >
+                    <FontAwesomeIcon icon={faGear} />
+                    Space settings
+                  </Link>
+                </li>
+                <li className="space-action-menu-item">
+                  <Link
+                    href={"/space/" + tempSpace.Space_Name + "/members"}
+                    className="space-action-menu-item-clickable"
+                  >
+                    <FontAwesomeIcon icon={faUsers} />
+                    Manage members
+                  </Link>
+                </li>
                 <li className="space-action-menu-item">
                   <Text variant="span" onClick={() => triggerDeleteModal()} className="space-action-menu-item-clickable">
                     <FontAwesomeIcon icon={faTrashCan} />
@@ -74,8 +84,8 @@ export default function Space() {
               </ul>
             </nav>
           </Block>
-          {showEditModal && ( <EditSpaceName visible={showEditModal} trigger={setShowEditModal} /> )}
-          {showDeleteModal && ( <DeleteSpaceName visible={showDeleteModal} trigger={setShowDeleteModal} /> )}
+          {showEditModal && (<EditSpaceName visible={showEditModal} trigger={setShowEditModal} />)}
+          {showDeleteModal && (<DeleteSpaceName visible={showDeleteModal} trigger={setShowDeleteModal} />)}
         </Block>
       </Block>
       <Block className="space-content">

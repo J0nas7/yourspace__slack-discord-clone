@@ -5,56 +5,36 @@ import { useRouter } from 'next/router'
 // Internal
 import { Block, Text, Space as SpaceCard } from '@/components'
 import { ChannelList } from "../"
-import { SpaceDTO } from '@/types'
 import { useSpaces } from '@/hooks'
 
 export const ChannelsAndSettings = () => {
     // Hooks
-    const { theSpace, getTheSpace, membersList, getMembersOfTheSpace, channelsList, getChannelsList } = useSpaces()
     const router = useRouter()
+    const { theSpace, membersList, channelsList, resetChannels } = useSpaces()
 
     // Internal variables
-    const emptyChannels: {[key: string]: []} = {
+    const routerChannelName = router.query.channelName
+
+    type channelListObject = { [key: string]: [] }
+    const emptyChannels: { [key: string]: [] } = {
         'text': [],
         'audio': [],
         'video': [],
     }
-    const tempSpaceName: string = router.query.spaceName?.toString()!
-    const [channelsListToRender, setChannelsListToRender] = useState<{ [key: string]: [] }>(emptyChannels)
-
-    // Methods
-    const getAllChannels = (reset: boolean = false) => {
-        if (reset) setChannelsListToRender(emptyChannels)
-        getChannelsList("text")
-        getChannelsList("audio")
-        getChannelsList("video")
-    }
-
-    const resetChannels = () => {
-        setChannelsListToRender(emptyChannels)
-        getAllChannels()
-    }
+    const [channelsListRender, setChannelsListRender] = useState<channelListObject>(emptyChannels)
 
     useEffect(() => {
-        if (channelsList['text'].length) setChannelsListToRender(channelsList)
+        //console.log("channelsAndSettings", channelsList)
+        if (channelsList['text'].length &&
+            channelsList['audio'].length && 
+            channelsList['video'].length) setChannelsListRender(channelsList)
     }, [channelsList])
-
-    useEffect(() => {
-        if (!theSpace.Space_Name) getTheSpace(tempSpaceName)
-        if (!channelsListToRender['text'].length) getAllChannels()
-    }, [theSpace])
-
-    useEffect(() => {
-        getTheSpace(tempSpaceName)
-        setChannelsListToRender(emptyChannels)
-        getMembersOfTheSpace(tempSpaceName)
-    }, [tempSpaceName])
 
     return (
         <>
-            <ChannelList format="Text" channelsList={channelsListToRender['text']} resetChannels={resetChannels} />
-            <ChannelList format="Audio" channelsList={channelsListToRender['audio']} resetChannels={resetChannels} />
-            <ChannelList format="Video" channelsList={channelsListToRender['video']} resetChannels={resetChannels} />
+            <ChannelList format="Text" channelsList={channelsListRender['text']} resetChannels={resetChannels} />
+            <ChannelList format="Audio" channelsList={channelsListRender['audio']} resetChannels={resetChannels} />
+            <ChannelList format="Video" channelsList={channelsListRender['video']} resetChannels={resetChannels} />
 
             <Block className="channel-info members">
                 <Block className="channel-info-top members">

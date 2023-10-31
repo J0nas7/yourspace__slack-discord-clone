@@ -6,3 +6,4 @@ export * from './actions/spaceAction'
 
 export * from './reducers/authSlice'
 export * from './reducers/spaceSlice'
+export * from './reducers/channelSlice'
