@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Internal
 import { RootState } from '../store'
-import { ChannelDTO } from '@/types'
+import { ChannelDTO, ProfileDTO } from '@/types'
 import { Channels } from '@mui/material/styles/createPalette'
 
 type channelListObject = {[key: string]: []}
@@ -11,6 +11,7 @@ type channelListObject = {[key: string]: []}
 export interface ChannelState {
     theChannel: ChannelDTO,
     channelsList: channelListObject,
+    membersList: ProfileDTO[] | undefined
 }
 
 const emptyChannel: ChannelDTO = {
@@ -25,7 +26,8 @@ const initialState = {
         'text': [],
         'audio': [],
         'video': [],
-    }
+    },
+    membersList: undefined
 } as ChannelState
 
 export const channelSlice = createSlice({
@@ -38,14 +40,18 @@ export const channelSlice = createSlice({
         setChannelsList: (state: ChannelState, action:PayloadAction<any>) => {
             const channelFormat: string = action.payload.format
             if (channelFormat) state.channelsList[channelFormat] = action.payload.data
-        }
+        },
+        setMembersList: (state: ChannelState, action:PayloadAction<any>) => {
+            state.membersList = action.payload.data
+        },
     },
 })
 
 const { actions } = channelSlice
-export const { setTheChannel, setChannelsList } = actions
+export const { setTheChannel, setChannelsList, setMembersList } = actions
 
 export default channelSlice.reducer
 
 export const selectTheChannel = (state: RootState) => state.channel.theChannel
 export const selectChannelsList = (state: RootState) => state.channel.channelsList
+export const selectMembersList = (state: RootState) => state.channel.membersList

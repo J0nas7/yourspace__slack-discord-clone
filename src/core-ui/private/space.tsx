@@ -52,13 +52,18 @@ export default function Space() {
             <nav>
               <ul>
                 <li className="space-action-menu-item">
-                  <Text variant="span" onClick={() => triggerEditModal()} className="space-action-menu-item-clickable">
+                  <Text
+                    variant="span"
+                    onClick={() => triggerEditModal()}
+                    className="space-action-menu-item-clickable"
+                  >
                     <FontAwesomeIcon icon={faFont} />
                     Edit space name
                   </Text>
                 </li>
                 <li className="space-action-menu-item">
                   <Link
+                    onClick={() => setSpaceActionMenu(false)}
                     href={"/space/" + tempSpace.Space_Name + "/settings"}
                     className="space-action-menu-item-clickable"
                   >
@@ -68,6 +73,7 @@ export default function Space() {
                 </li>
                 <li className="space-action-menu-item">
                   <Link
+                    onClick={() => setSpaceActionMenu(false)}
                     href={"/space/" + tempSpace.Space_Name + "/members"}
                     className="space-action-menu-item-clickable"
                   >
@@ -76,7 +82,11 @@ export default function Space() {
                   </Link>
                 </li>
                 <li className="space-action-menu-item">
-                  <Text variant="span" onClick={() => triggerDeleteModal()} className="space-action-menu-item-clickable">
+                  <Text
+                    variant="span"
+                    onClick={() => triggerDeleteModal()}
+                    className="space-action-menu-item-clickable"
+                  >
                     <FontAwesomeIcon icon={faTrashCan} />
                     Delete space
                   </Text>
@@ -102,6 +112,7 @@ export default function Space() {
           />
         </Block>
         <ChannelsAndSettings />
+        <Block className="clear-both"></Block>
       </Block>
     </Block>
   )

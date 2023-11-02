@@ -15,7 +15,9 @@ import {
     selectTheSpace,
     setChannelsList,
     selectChannelsList,
-} from '../redux'
+    setMembersList,
+    selectMembersList,
+} from '@/redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
 import { ProfileDTO } from "@/types";
 
@@ -29,7 +31,6 @@ export const useSpaces = () => {
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [spacesList, setSpacesList] = useState<Array<Object>>()
-    const [membersList,setMembersList] = useState<ProfileDTO[]>()
     const urlSpaceName: string = router.query.spaceName?.toString()!
     const routerChannelName = router.query.channelName
     const errorCodes: { [key: string]: string } = {
@@ -46,6 +47,7 @@ export const useSpaces = () => {
     const createErrorType = useTypedSelector(selectCreateErrorType)
     const theSpace = useTypedSelector(selectTheSpace)
     const channelsList = useTypedSelector(selectChannelsList)
+    const membersList = useTypedSelector(selectMembersList)
 
     // Methods
     const resetChannelsListToRender = async () => {
@@ -128,7 +130,9 @@ export const useSpaces = () => {
             try {
                 const data = await httpPostWithData("getMembersOfSpaceList", getMembersOfSpaceVariables)
                 if (data.data) {
-                    setMembersList(data.data)
+                    dispatch(setMembersList({
+                        "data": data.data
+                    }))
                 }
             } catch (e) {
                 console.log("useSpaces getMembersOfSpace error", e)

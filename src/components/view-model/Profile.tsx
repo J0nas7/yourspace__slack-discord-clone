@@ -12,7 +12,7 @@ import { useAxios, useAuthContext } from '@/hooks'
 import { Block, Text, Profile as ProfileCard } from '@/components'
 import { ProfileDTO } from '@/types/'
 
-type Variant = 'in-channel' | 'space-bottom' | 'profile-picture'
+type Variant = 'in-channel' | 'space-settings-member' | 'space-bottom' | 'profile-picture'
 type Props = {
     variant: Variant
     profile?: ProfileDTO
@@ -64,6 +64,17 @@ const Profile = ({
         return (
             <>
                 {theProfile && <Text variant="span" className={className}>{theProfile?.Profile_DisplayName}</Text>}
+            </>
+        )
+    } else if (variant == "space-settings-member") {
+        return (
+            <>
+                {theProfile && (
+                    <Block className={className}>
+                        <ProfileCard variant="profile-picture" className="profile-picture h25" profile={theProfile} />
+                        <Text variant="span">{theProfile.Profile_DisplayName}</Text>
+                    </Block>
+                )}
             </>
         )
     } else if (variant == "space-bottom") {

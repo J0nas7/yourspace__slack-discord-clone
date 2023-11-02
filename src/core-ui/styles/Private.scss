@@ -26,6 +26,11 @@
         height: 40px;
         border-radius: 50%;
         margin-right: 10px;
+        
+        &.h25 {
+            width: 25px;
+            height: 25px;
+        }
     }
 
     .yourprofile-global {
@@ -260,7 +265,8 @@
         .space-content {
             width: 100%;
             padding: 10px;
-            height: calc(100vh - var(--headerH));
+            overflow-y: auto;
+            height: calc(100vh - var(--headerH) - 60px);
 
             .space-search {
                 width: calc(100% - 20px);
@@ -326,6 +332,15 @@
                         background-size: 15px;
                     }
                 }
+
+                .space-members-list {
+                    .space-members-list-item {
+                        width: 100%;
+                        float: left;
+                        clear: both;
+                        margin-top: 5px;
+                    }
+                }
             }
 
             .channel-format-list {
@@ -389,12 +404,14 @@
         }
     }
 
-    .channel-wrapper {
+    .channel-wrapper, .other-pages-wrapper {
         width: 75%;
         height: 100vh;
         background-color: var(--channelBg);
         float: right;
+    }
 
+    .channel-wrapper {
         .channel-header {
             width: 100%;
             height: var(--headerH);
@@ -444,6 +461,14 @@
             padding: 10px;
             height: calc(100vh - var(--headerH));
             position: relative;
+        }
+    }
+
+    .other-pages-wrapper {
+        .other-pages-inner {
+            width: 500px;
+            margin: 0 auto;
+            margin-top: 25px;
         }
     }
 

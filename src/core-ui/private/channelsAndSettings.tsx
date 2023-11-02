@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text, Space as SpaceCard } from '@/components'
+import { Block, Text, Space as SpaceCard, Profile as ProfileCard } from '@/components'
 import { ChannelList } from "../"
 import { useSpaces } from '@/hooks'
 
@@ -26,7 +26,7 @@ export const ChannelsAndSettings = () => {
     useEffect(() => {
         //console.log("channelsAndSettings", channelsList)
         if (channelsList['text'].length &&
-            channelsList['audio'].length && 
+            channelsList['audio'].length &&
             channelsList['video'].length) setChannelsListRender(channelsList)
     }, [channelsList])
 
@@ -47,7 +47,7 @@ export const ChannelsAndSettings = () => {
                     {membersList ? (
                         <>
                             {membersList && membersList.map((member, i) =>
-                                <Block key={i}>{member.Profile_ID}/{member.Profile_DisplayName}</Block>
+                                <ProfileCard variant="space-settings-member" className="space-members-list-item" profile={member} key={i} />
                             )}
                         </>
                     ) : (
