@@ -23,7 +23,7 @@ model Space_Profile {
   Profile_Members  Space_Member[]
   Profile_Channels Space_Channel[]
 
-  Profile_Birthday  DateTime 
+  Profile_Birthday  DateTime
   Profile_CreatedAt DateTime @default(now())
   Profile_UpdatedAt DateTime @updatedAt
 }
@@ -83,9 +83,10 @@ enum ChannelType {
 }
 
 model Space_Channel {
-  Channel_ID   Int         @id @default(autoincrement())
-  Channel_Name String
-  Channel_Type ChannelType @default(TEXT)
+  Channel_ID     Int         @id @default(autoincrement())
+  Channel_Name   String
+  Channel_Type   ChannelType @default(TEXT)
+  Channel_Access String
 
   Channel_ProfileID Int
   Channel_Profile   Space_Profile @relation(fields: [Channel_ProfileID], references: [Profile_ID], onDelete: Cascade)

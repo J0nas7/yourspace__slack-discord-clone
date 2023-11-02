@@ -7,5 +7,6 @@ export type ChannelDTO = {
     Channel_Type: Channel,
 
     // Optional
+    Channel_Access?: string
     Channel_SpaceID?: number
 }

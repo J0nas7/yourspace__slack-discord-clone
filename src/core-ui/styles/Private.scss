@@ -472,6 +472,13 @@
         }
     }
 
+    .select-field-wrap {
+        width: 100%;
+        .MuiInputBase-root {
+            width: 100%;
+        }
+    }
+
     dialog.dialog-box {
         position: fixed;
         top: 50%;

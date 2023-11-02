@@ -10,11 +10,10 @@ import { useSpaces } from '@/hooks'
 export const ChannelsAndSettings = () => {
     // Hooks
     const router = useRouter()
-    const { theSpace, membersList, channelsList, resetChannels } = useSpaces()
+    const { urlSpaceName, getTheSpace, theSpace, membersList, channelsList, resetChannels } = useSpaces()
 
     // Internal variables
     const routerChannelName = router.query.channelName
-
     type channelListObject = { [key: string]: [] }
     const emptyChannels: { [key: string]: [] } = {
         'text': [],
@@ -23,12 +22,17 @@ export const ChannelsAndSettings = () => {
     }
     const [channelsListRender, setChannelsListRender] = useState<channelListObject>(emptyChannels)
 
+    // Methods
     useEffect(() => {
         //console.log("channelsAndSettings", channelsList)
         if (channelsList['text'].length &&
             channelsList['audio'].length &&
             channelsList['video'].length) setChannelsListRender(channelsList)
     }, [channelsList])
+
+    useEffect(() => {
+        if (urlSpaceName) getTheSpace()
+    }, [])
 
     return (
         <>

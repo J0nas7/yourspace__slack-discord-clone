@@ -327,11 +327,8 @@ export const useSpaces = () => {
         }
     }, [theSpace])
 
-    useEffect(() => {
-        if (urlSpaceName) getTheSpace()
-    }, [])
-
     return {
+        urlSpaceName,
         theSpace,
         getTheSpace,
         spacesList,

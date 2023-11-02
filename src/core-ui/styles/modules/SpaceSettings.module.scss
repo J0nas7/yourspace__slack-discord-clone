@@ -19,4 +19,52 @@
         clear: both;
         margin-bottom: 10px;
     }
+
+    .member-roles-item {
+        float: left;
+        width: 50%;
+        margin-bottom: 20px;
+        font-size: .75rem;
+
+        .role-item-title {
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+
+            span {
+                float: left;
+                margin-right: 10px;
+            }
+
+            .role-item-title-icon {
+                height: 18px;
+            }
+        }
+
+        .role-item-rule {
+            clear: both;
+            display: flex;
+            align-items: center;
+
+            .role-item-rule-check {
+                width: 10px;
+                float: left;
+                margin-right: 10px;
+                color: #008000;
+            }
+        }
+
+        &:nth-child(2n) {
+            clear: both;
+        }
+    }
+
+    .space-settings-rule {
+        margin-bottom: 20px;
+    }
+
+    .space-admin-channel, .space-rules-channel, .space-primary-language {
+        width: 200px;
+    }
 }

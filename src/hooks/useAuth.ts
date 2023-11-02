@@ -114,7 +114,7 @@ export const useAuth = () => {
         setStatus('resolving')
         // Send logout request to the API
         try {
-            const data = await httpGetRequest("userLogout")
+            httpGetRequest("userLogout")
             dispatch(adminDoLogout(setLoggedOut))
             removeTokens()
             window.location.href = CONSTANTS.LOGIN_URL
