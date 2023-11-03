@@ -48,6 +48,7 @@ model Space_Space {
 }
 
 enum MemberRole {
+  OWNER
   ADMIN
   MODERATOR
   GUEST

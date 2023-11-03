@@ -26,7 +26,7 @@
         height: 40px;
         border-radius: 50%;
         margin-right: 10px;
-        
+
         &.h25 {
             width: 25px;
             height: 25px;
@@ -59,27 +59,51 @@
     }
 
     @-webkit-keyframes placeholdSpaceName {
-        from { background-color: #bdbfc4; }
-        to { background-color: #999b9f; }
+        from {
+            background-color: #bdbfc4;
+        }
+
+        to {
+            background-color: #999b9f;
+        }
     }
+
     @keyframes placeholdSpaceName {
-       from { background-color: #bdbfc4; }
-       to { background-color: #999b9f; }
+        from {
+            background-color: #bdbfc4;
+        }
+
+        to {
+            background-color: #999b9f;
+        }
     }
+
     @-webkit-keyframes placeholdChannelName {
-        from { background-color: var(--spaceBg); }
-        to { background-color: #d4d6d7; }
+        from {
+            background-color: var(--spaceBg);
+        }
+
+        to {
+            background-color: #d4d6d7;
+        }
     }
+
     @keyframes placeholdChannelName {
-       from { background-color: var(--spaceBg); }
-       to { background-color: #d4d6d7; }
+        from {
+            background-color: var(--spaceBg);
+        }
+
+        to {
+            background-color: #d4d6d7;
+        }
     }
-    
+
     .placeholder-loading {
         &.space-name {
             -webkit-animation: placeholdSpaceName 1s ease-in-out infinite alternate;
             animation: placeholdSpaceName 1s ease-in-out infinite alternate;
         }
+
         &.channel-name {
             -webkit-animation: placeholdChannelName 1s ease-in-out infinite alternate;
             animation: placeholdChannelName 1s ease-in-out infinite alternate;
@@ -251,7 +275,7 @@
                     .space-action-menu-item-clickable {
                         cursor: pointer;
                     }
-                    
+
                     svg {
                         width: 20px;
                         height: 20px;
@@ -339,6 +363,10 @@
                         float: left;
                         clear: both;
                         margin-top: 5px;
+
+                        .member-action {
+                            display: none;
+                        }
                     }
                 }
             }
@@ -404,7 +432,8 @@
         }
     }
 
-    .channel-wrapper, .other-pages-wrapper {
+    .channel-wrapper,
+    .other-pages-wrapper {
         width: 75%;
         height: 100vh;
         background-color: var(--channelBg);
@@ -469,11 +498,34 @@
             width: 500px;
             margin: 0 auto;
             margin-top: 25px;
+
+            .space-member {
+                display: flex;
+                align-items: center;
+
+                .profile-picture.h25 { order: 1; }
+                .display-name { order: 2; }
+
+                .member-action {
+                    order: 3;
+                    display: none;
+                    color: #424242;
+                    margin-left: auto;
+                    cursor: pointer;
+                }
+
+                &:hover {
+                    .member-action {
+                        display: block;
+                    }
+                }
+            }
         }
     }
 
     .select-field-wrap {
         width: 100%;
+
         .MuiInputBase-root {
             width: 100%;
         }
@@ -496,7 +548,9 @@
             margin-top: calc((0px - var(--messageDialogH)) / 2);
         }
 
-        &.create-space-dialog, &.edit-space-dialog, &.delete-space-dialog {
+        &.create-space-dialog,
+        &.edit-space-dialog,
+        &.delete-space-dialog {
             height: var(--createSpaceDialogH);
             margin-top: calc((0px - var(--createSpaceDialogH)) / 2);
         }

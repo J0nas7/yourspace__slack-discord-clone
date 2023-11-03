@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGear, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { faGear, faArrowRightFromBracket, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 
 // Internal
@@ -70,9 +70,10 @@ const Profile = ({
         return (
             <>
                 {theProfile && (
-                    <Block className={className}>
+                    <Block className={className+" space-member"}>
                         <ProfileCard variant="profile-picture" className="profile-picture h25" profile={theProfile} />
-                        <Text variant="span">{theProfile.Profile_DisplayName}</Text>
+                        <Text variant="span" className="display-name">{theProfile.Profile_DisplayName}</Text>
+                        <FontAwesomeIcon icon={faTrash} className="member-action remove-member" />
                     </Block>
                 )}
             </>
