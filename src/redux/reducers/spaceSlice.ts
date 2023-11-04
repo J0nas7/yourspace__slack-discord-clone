@@ -6,7 +6,8 @@ import { RootState } from '../store'
 import { SpaceDTO } from '@/types'
 
 export interface SpaceState {
-    theSpace: SpaceDTO
+    theSpace: SpaceDTO,
+    getHighlightedSpaces: SpaceDTO[] | undefined
 }
 
 const emptySpace: SpaceDTO = {
@@ -15,7 +16,8 @@ const emptySpace: SpaceDTO = {
 }
 
 const initialState = {
-    theSpace: emptySpace
+    theSpace: emptySpace,
+    getHighlightedSpaces: []
 } as SpaceState
 
 export const spaceSlice = createSlice({
@@ -25,12 +27,16 @@ export const spaceSlice = createSlice({
         setTheSpace: (state: SpaceState, action:PayloadAction<any>) => {
             state.theSpace = action.payload.data
         },
+        setHighlightedSpaces: (state: SpaceState, action: PayloadAction<any>) => {
+            state.getHighlightedSpaces = action.payload.data
+        }
     },
 })
 
 const { actions } = spaceSlice
-export const { setTheSpace } = actions
+export const { setTheSpace, setHighlightedSpaces } = actions
 
 export default spaceSlice.reducer
 
 export const selectTheSpace = (state: RootState) => state.space.theSpace
+export const selectHighlightedSpaces = (state: RootState) => state.space.getHighlightedSpaces

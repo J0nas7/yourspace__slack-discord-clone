@@ -75,7 +75,7 @@ export default function spaceSettings() {
     <Block className="other-pages-wrapper">
       <Block className={"other-pages-inner " + styles["space-settings"]}>
         <Heading title={"Space settings: " + settingsToRender?.Space_Name} />
-        <Block className={styles["space-settings-section"] + " " + styles["space-public-private"]}>
+        <Block className={"page-section " + styles["space-public-private"]}>
           <Heading variant="h2" title="Public/private settings" />
           <Block>
             Public invite url
@@ -92,7 +92,7 @@ export default function spaceSettings() {
           </Block>
         </Block>
 
-        <Block className={styles["space-settings-section"] + " " + styles["space-community-settings"]}>
+        <Block className={"page-section " + styles["space-community-settings"]}>
           <Heading variant="h2" title="Community settings" />
           {selectItems.length && (
             <Block className={styles["space-settings-rule"] + " " + styles["space-rules-channel"]}>

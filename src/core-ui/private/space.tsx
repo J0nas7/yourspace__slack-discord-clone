@@ -22,12 +22,12 @@ export default function Space() {
   const [spaceActionMenu, setSpaceActionMenu] = useState<boolean>(false)
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-
   const tempSpace: SpaceDTO = {
     Space_ID: 0,
     Space_Name: tempSpaceName,
   }
 
+  // Methods
   const triggerEditModal = () => {
     setSpaceActionMenu(false)
     setShowEditModal(true)
@@ -39,10 +39,10 @@ export default function Space() {
   }
 
   return (
-    <Block className="space-wrapper">
-      <Block className="space-header">
+    <Block className="second-wrapper">
+      <Block className="second-header">
         <Block className="left-side">
-          <Text className="space-title">
+          <Text className="second-title">
             <SpaceCard variant='name' withLabel={false} space={tempSpace} />
           </Text>
         </Block>

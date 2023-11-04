@@ -61,7 +61,7 @@ export default function spaceMembers() {
     <Block className="other-pages-wrapper">
       <Block className={"other-pages-inner " + styles["space-settings"]}>
         <Heading title={"Space members: " + settingsToRender?.Space_Name} />
-        <Block className={styles["space-settings-section"] + " " + styles["space-members-list"]}>
+        <Block className={"page-section " + styles["space-members-list"]}>
           <Heading variant="h2" title="Space members" />
           {membersList ? (
             <>
@@ -74,7 +74,7 @@ export default function spaceMembers() {
           )}
           <Block className="clear-both"></Block>
         </Block>
-        <Block className={styles["space-settings-section"] + " " + styles["space-member-roles"]}>
+        <Block className={"page-section " + styles["space-member-roles"]}>
           <Heading variant="h2" title="Member roles" />
           <Block className={styles["member-roles-item"]}>
             <Text variant="span" className={styles["role-item-title"]}>

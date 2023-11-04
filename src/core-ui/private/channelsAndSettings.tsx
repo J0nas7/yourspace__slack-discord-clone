@@ -1,6 +1,6 @@
 // External
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { Button } from '@mui/material'
 
 // Internal
 import { Block, Text, Space as SpaceCard, Profile as ProfileCard } from '@/components'
@@ -9,11 +9,9 @@ import { useSpaces } from '@/hooks'
 
 export const ChannelsAndSettings = () => {
     // Hooks
-    const router = useRouter()
-    const { urlSpaceName, getTheSpace, theSpace, membersList, channelsList, resetChannels } = useSpaces()
+    const { urlSpaceName, getTheSpace, theSpace, membersList, channelsList, resetChannels, alreadyMember, becomeAMember } = useSpaces()
 
     // Internal variables
-    const routerChannelName = router.query.channelName
     type channelListObject = { [key: string]: [] }
     const emptyChannels: { [key: string]: [] } = {
         'text': [],
@@ -23,8 +21,15 @@ export const ChannelsAndSettings = () => {
     const [channelsListRender, setChannelsListRender] = useState<channelListObject>(emptyChannels)
 
     // Methods
+    const joinTheSpace = () => {
+        if (!alreadyMember) {
+            becomeAMember()
+        } else {
+            alert("You are already a member of this space.")
+        }
+    }
     useEffect(() => {
-        //console.log("channelsAndSettings", channelsList)
+        // console.log("channelsAndSettings", channelsList)
         if (channelsList['text'].length &&
             channelsList['audio'].length &&
             channelsList['video'].length) setChannelsListRender(channelsList)
@@ -36,6 +41,16 @@ export const ChannelsAndSettings = () => {
 
     return (
         <>
+            {!alreadyMember &&
+                <Block className="already-member">
+                    <Block className="already-member-teaser">
+                        Lige nu er du bare med på en kigger. Meld dig ind i spacet for at deltage i snakken!
+                        <Button className="join-button" onClick={joinTheSpace}>
+                            Deltag!
+                        </Button>
+                    </Block>
+                </Block>
+            }
             <ChannelList format="Text" channelsList={channelsListRender['text']} resetChannels={resetChannels} />
             <ChannelList format="Audio" channelsList={channelsListRender['audio']} resetChannels={resetChannels} />
             <ChannelList format="Video" channelsList={channelsListRender['video']} resetChannels={resetChannels} />

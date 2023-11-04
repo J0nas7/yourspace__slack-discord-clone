@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCompass } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from '@/components'
@@ -11,10 +13,10 @@ import { Space, Profile as ProfileCard } from '@/components/'
 
 export default function Sidepanel() {
   // Hooks
-  const { getSpacesList, spacesList } = useSpaces()
+  const { getMemberOfSpacesList, spacesList } = useSpaces()
 
   useEffect(() => {
-    getSpacesList()
+    getMemberOfSpacesList()
   }, [])
 
   return (
@@ -32,9 +34,9 @@ export default function Sidepanel() {
         <Block className="clear-both"></Block>
       </Block>
       <Block className="sidepanel-spaces-list">
-        { spacesList && spacesList.length ? (
+        {spacesList && spacesList.length ? (
           <>
-            { spacesList.map((space:any, i) =>
+            {spacesList.map((space: any, i) =>
               <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
             )}
           </>
@@ -45,6 +47,14 @@ export default function Sidepanel() {
             <Link href="#" className="placeholder-loading space-name"></Link>
           </>
         )}
+        <Link href={"/explore/all"} className="explore-spaces with-label">
+          <FontAwesomeIcon icon={faCompass} className="compass" />
+          <Text variant="span" className="space-label">
+            <Text variant="span" className="inner-label">
+              Udforsk
+            </Text>
+          </Text>
+        </Link>
       </Block>
       <Block className="space-member-context">
         <ProfileCard variant="space-bottom" className="member-context-details" />

@@ -17,6 +17,8 @@ import {
     selectChannelsList,
     setMembersList,
     selectMembersList,
+    setHighlightedSpaces,
+    selectHighlightedSpaces
 } from '@/redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
 import { ProfileDTO } from "@/types";
@@ -30,6 +32,7 @@ export const useSpaces = () => {
     let spaceContentLoading: boolean = false
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
+    const [alreadyMember,setAlreadyMember] = useState<boolean>(true)
     const [spacesList, setSpacesList] = useState<Array<Object>>()
     const urlSpaceName: string = router.query.spaceName?.toString()!
     const routerChannelName = router.query.channelName
@@ -46,6 +49,7 @@ export const useSpaces = () => {
     const dispatch = useAppDispatch()
     const createErrorType = useTypedSelector(selectCreateErrorType)
     const theSpace = useTypedSelector(selectTheSpace)
+    const highlightedSpacesList = useTypedSelector(selectHighlightedSpaces)
     const channelsList = useTypedSelector(selectChannelsList)
     const membersList = useTypedSelector(selectMembersList)
 
@@ -72,10 +76,10 @@ export const useSpaces = () => {
         return
     }
 
-    const getSpacesList = async () => {
+    const getMemberOfSpacesList = async () => {
         // Send request to the API for spaces array
         try {
-            const data = await httpGetRequest("getSpacesList")
+            const data = await httpGetRequest("getMemberOfSpacesList")
             const goToCreateSpace = "/create/space"
             if (data.message == "NotAnyMember" && router.asPath !== goToCreateSpace) {
                 if (confirm("You are not a member of any spaces. Click OK to create your own. Or cancel to continue exploring others.")) {
@@ -95,8 +99,42 @@ export const useSpaces = () => {
         }
     }
 
+    const getHighlightedSpacesList = async () => {
+        // Send get request to API
+        try {
+            const data = await httpGetRequest("getHighlightedSpacesList")
+            dispatch(setHighlightedSpaces({
+                "data": data.data
+            }))
+        } catch (e) {
+            console.log("useSpaces getHighlightedSpaces error", e)
+        }
+        return true
+    }
+
+    // Create membership from the unique space name
+    const becomeAMember = async () => {
+        if (urlSpaceName) {
+            // Variables to send to backend API
+            const createMembershipVariables = {
+                "Space_Name": urlSpaceName
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("becomeAMember", createMembershipVariables)
+                if (data.success) {
+                    window.location.href = '/space/'+urlSpaceName
+                }
+            } catch (e) {
+                console.log("useSpaces joinThisSpace error", e)
+            }
+        }
+        return
+    }
+
+    // Request space from the unique space name
     const getTheSpace = async () => {
-        // Request space from the unique space name
         if (urlSpaceName) {
             // Variables to send to backend API
             const getSpaceVariables = {
@@ -111,6 +149,7 @@ export const useSpaces = () => {
                         "data": data.data
                     }))
                 }
+                setAlreadyMember(data.alreadyMember)
             } catch (e) {
                 console.log("useSpaces getSpace error", e)
             }
@@ -332,7 +371,7 @@ export const useSpaces = () => {
         theSpace,
         getTheSpace,
         spacesList,
-        getSpacesList,
+        getMemberOfSpacesList,
         membersList,
         getMembersOfTheSpace,
         channelsList,
@@ -343,6 +382,10 @@ export const useSpaces = () => {
         handleEditNameSubmit,
         handleCreateSubmit,
         errorMsg,
-        status
+        status,
+        alreadyMember,
+        highlightedSpacesList,
+        getHighlightedSpacesList,
+        becomeAMember,
     }
 }
