@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan, faHashtag, faMicrophoneLines, faVideo } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 
 // Internal
@@ -38,6 +38,11 @@ const Channel = ({
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
     const [editChannelName, setEditChannelName] = useState<string>(theChannel.Channel_Name)
+    const channelTypeIcons: { [key: string]: React.ReactNode } = {
+        'TEXT': <FontAwesomeIcon icon={faHashtag} className="channel-format-list-item-link-icon" />,
+        'AUDIO': <FontAwesomeIcon icon={faMicrophoneLines} className="channel-format-list-item-link-icon" />,
+        'VIDEO': <FontAwesomeIcon icon={faVideo} className="channel-format-list-item-link-icon" />,
+    }
 
     // Methods
     const listItemLinkHandler = (newName: string) => {
@@ -69,9 +74,10 @@ const Channel = ({
         return (
             <Block
                 variant="span"
-                className={"channel-format-list-item" + (routerChannelName === channel.Channel_Name ? " active" : "")}
+                className={"channel-format-list-item " + (routerChannelName === channel.Channel_Name ? " active" : "")}
             >
                 <Text variant="span" className="channel-format-list-item-link" onClick={() => listItemLinkHandler(channel.Channel_Name)}>
+                    {channelTypeIcons[channel.Channel_Type]}
                     {channel.Channel_Name}
                 </Text>
                 <Block variant="span" className="channel-format-list-item-actions">

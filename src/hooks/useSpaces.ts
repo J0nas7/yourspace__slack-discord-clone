@@ -29,21 +29,20 @@ export const useSpaces = () => {
     const router = useRouter()
 
     // Internal variables
-    let spaceContentLoading: boolean = false
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
-    const [alreadyMember,setAlreadyMember] = useState<boolean>(true)
+    const [alreadyMember, setAlreadyMember] = useState<boolean>(true)
     const [spacesList, setSpacesList] = useState<Array<Object>>()
     const urlSpaceName: string = router.query.spaceName?.toString()!
     const routerChannelName = router.query.channelName
     const errorCodes: { [key: string]: string } = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
-    const emptyChannels: {[key: string]: []} = {
-            'text': [],
-            'audio': [],
-            'video': [],
-        }
+    const emptyChannels: { [key: string]: [] } = {
+        'text': [],
+        'audio': [],
+        'video': [],
+    }
 
     // Redux
     const dispatch = useAppDispatch()
@@ -63,12 +62,13 @@ export const useSpaces = () => {
         await getChannelsList("text")
         await getChannelsList("audio")
         await getChannelsList("video")
+        return
     }
 
-    const resetChannels = () => {
-        //console.log("reset")
-        resetChannelsListToRender()
-        getAllChannels()
+    const resetChannels = async () => {
+        console.log("reset")
+        await resetChannelsListToRender()
+        await getAllChannels()
     }
 
     const initChannels = () => {
@@ -125,7 +125,7 @@ export const useSpaces = () => {
             try {
                 const data = await httpPostWithData("removeMember", removeMembershipVariables)
                 if (data.success) {
-                    window.location.href = '/space/'+urlSpaceName
+                    window.location.href = '/space/' + urlSpaceName
                 }
             } catch (e) {
                 console.log("useSpaces removeMember error", e)
@@ -146,7 +146,7 @@ export const useSpaces = () => {
             try {
                 const data = await httpPostWithData("becomeAMember", createMembershipVariables)
                 if (data.success) {
-                    window.location.href = '/space/'+urlSpaceName
+                    window.location.href = '/space/' + urlSpaceName
                 }
             } catch (e) {
                 console.log("useSpaces becomeAMember error", e)
@@ -166,7 +166,6 @@ export const useSpaces = () => {
             // Send request to the API for space
             try {
                 const data = await httpPostWithData("getTheSpace", getSpaceVariables)
-                console.log(data)
                 if (data.data) {
                     dispatch(setTheSpace({
                         "data": data.data
@@ -205,10 +204,11 @@ export const useSpaces = () => {
 
     const getChannelsList = async (channelFormat: string) => {
         // Request channel lists from the unique space name
-        if (channelFormat && theSpace?.Space_Name && !channelsList[channelFormat].length) {
+        const spaceName = theSpace?.Space_Name || urlSpaceName
+        if (channelFormat && spaceName && !channelsList[channelFormat].length) {
             // Variables to send to backend API
             const getChannelsVariables = {
-                "Space_Name": theSpace.Space_Name,
+                "Space_Name": spaceName,
                 "Channel_Format": channelFormat
             }
 
@@ -231,7 +231,7 @@ export const useSpaces = () => {
     const afterSuccess = (theResult: any) => {
         const spaceName = theResult.data.Space_Name
         const redirectTo = CONSTANTS.SPACE_URL + spaceName
-        
+
         if (urlSpaceName && urlSpaceName !== spaceName) { // Hard refresh needed
             window.location.href = redirectTo
         } else { // Router push is enough
@@ -310,7 +310,7 @@ export const useSpaces = () => {
         }
     }
 
-    const handleEditNameSubmit = async (newSpaceName: string,  oldSpaceName: string): Promise<boolean> => {
+    const handleEditNameSubmit = async (newSpaceName: string, oldSpaceName: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
         // Resetting the errorType triggers another dispatch that resets the error
@@ -376,19 +376,6 @@ export const useSpaces = () => {
         return true
     }
 
-    useEffect(() => {
-        if (theSpace?.Space_ID) {
-            const init = () => {
-                if (!spaceContentLoading) {
-                    spaceContentLoading = true
-                    initChannels()
-                    getMembersOfTheSpace()
-                }
-            }
-            init()
-        }
-    }, [theSpace])
-
     return {
         urlSpaceName,
         theSpace,
@@ -397,6 +384,7 @@ export const useSpaces = () => {
         getMemberOfSpacesList,
         membersList,
         getMembersOfTheSpace,
+        initChannels,
         channelsList,
         getChannelsList,
         resetChannelsListToRender,

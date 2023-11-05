@@ -9,7 +9,7 @@ import { useSpaces } from '@/hooks'
 
 export const ChannelsAndSettings = () => {
     // Hooks
-    const { urlSpaceName, getTheSpace, theSpace, membersList, channelsList, resetChannels, alreadyMember, becomeAMember } = useSpaces()
+    const { urlSpaceName, getTheSpace, theSpace, membersList, channelsList, resetChannels, initChannels, alreadyMember, becomeAMember, getMembersOfTheSpace } = useSpaces()
 
     // Internal variables
     type channelListObject = { [key: string]: [] }
@@ -30,14 +30,30 @@ export const ChannelsAndSettings = () => {
     }
     useEffect(() => {
         // console.log("channelsAndSettings", channelsList)
-        if (channelsList['text'].length &&
-            channelsList['audio'].length &&
+        if (channelsList['text'].length ||
+            channelsList['audio'].length ||
             channelsList['video'].length) setChannelsListRender(channelsList)
     }, [channelsList])
 
     useEffect(() => {
-        if (urlSpaceName) getTheSpace()
-    }, [])
+        const spaceChange = async () => {
+            if (urlSpaceName) getTheSpace()
+            setChannelsListRender(emptyChannels)
+            //resetChannels()
+        }
+        spaceChange()
+    }, [urlSpaceName])
+
+    useEffect(() => {
+        console.log("theSpace", theSpace)
+        if (theSpace?.Space_ID) {
+            const init = async () => {
+                initChannels()
+                getMembersOfTheSpace()
+            }
+            init()
+        }
+    }, [theSpace])
 
     return (
         <>

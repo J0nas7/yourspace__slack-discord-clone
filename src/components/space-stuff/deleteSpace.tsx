@@ -28,7 +28,7 @@ export default function deleteSpaceName({
     const onSkip = () => trigger(false)
 
     useEffect(() => {
-        getTheSpace(tempSpaceName)
+        getTheSpace()
     }, [tempSpaceName])
 
     return (

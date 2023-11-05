@@ -490,18 +490,20 @@
                 color: #585858;
                 font-size: .9rem;
                 font-weight: 700;
-
+                
                 &.active {
                     background-color: #c3c5c7;
                 }
-
+                
                 .channel-format-list-item-link {
                     padding-left: 10px;
                     cursor: pointer;
+                    display: flex;
+                    align-items: center;
 
-                    &::before {
-                        content: "#";
+                    .channel-format-list-item-link-icon {
                         @include hashtag;
+                        height: 20px;
                         color: #585858;
                         margin-right: 10px;
                     }
