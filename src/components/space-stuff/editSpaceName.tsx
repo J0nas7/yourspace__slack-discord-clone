@@ -17,7 +17,7 @@ export default function editSpaceName({
     visible, trigger
 }: Props) {
     // Hooks
-    const { handleEditNameSubmit, errorMsg, status, theSpace, getTheSpace } = useSpaces()
+    const { handleUpdateSubmit, errorMsg, status, theSpace, getTheSpace } = useSpaces()
     const router = useRouter()
 
     // Internal variables
@@ -26,11 +26,11 @@ export default function editSpaceName({
     const [spaceImage, setSpaceImage] = useState<string>('')
 
     // Methods
-    const onEdit = () => handleEditNameSubmit(editSpaceName, tempSpaceName)
+    const onEdit = () => handleUpdateSubmit(editSpaceName, tempSpaceName)
     const onSkip = () => trigger(false)
 
     useEffect(() => {
-        getTheSpace(tempSpaceName)
+        getTheSpace()
         if (tempSpaceName) setEditSpaceName(tempSpaceName)
         if (theSpace.Space_ImageUrl) setSpaceImage(theSpace.Space_ImageUrl)
     }, [tempSpaceName])

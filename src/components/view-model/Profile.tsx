@@ -55,7 +55,7 @@ const Profile = ({
 
     const profileMyself = async () => {
         //console.log(variant + " myself", profile, profileID, theProfile)
-        const profileData = await httpGetRequest("userData")
+        const profileData = await httpGetRequest("readUser")
         if (profileData.data) setTheProfile(profileData.data)
     }
 

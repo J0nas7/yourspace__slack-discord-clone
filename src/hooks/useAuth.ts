@@ -204,7 +204,7 @@ export const useAuth = () => {
         // Send create variables to the API for creation
         try {
             if (!error) {
-                const data = await httpPostWithData("userCreate", createVariables)
+                const data = await httpPostWithData("createUser", createVariables)
                 return processResult("create", data)
             }
         } catch (e) {

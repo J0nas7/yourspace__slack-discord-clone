@@ -34,7 +34,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
 
       // Send request to the API for messages
       try {
-        const data = await httpPostWithData("getMessages", getMessagesVariables)
+        const data = await httpPostWithData("read10Messages", getMessagesVariables)
         if (data.data && data.data.length) {
           setMessages([...data.data])
         }
@@ -47,7 +47,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   useEffect(() => {
     setMessagesToRender([])
     loadFirstMessages()
-    if (spaceName) getMembersOfTheSpace(spaceName)
+    if (spaceName) getMembersOfTheSpace()
   }, [channelName, spaceName])
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
       "Space_Name": spaceName
     }
     // Send request to the API for user data
-    const profileData = await httpPostWithData("userData", getUserDataVariables)
+    const profileData = await httpPostWithData("readUser", getUserDataVariables)
     if (profileData.data) setCurrentProfile(profileData.data)
   }
   useEffect(() => {

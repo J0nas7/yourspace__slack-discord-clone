@@ -30,7 +30,7 @@ const Channel = ({
 }: Props) => {
     // Hooks
     const router = useRouter()
-    const { handleEditSubmit, errorMsg, status } = useChannels("")
+    const { handleUpdateSubmit, errorMsg, status } = useChannels()
 
     // Internal variables
     const routerChannelName = router.query.channelName
@@ -64,7 +64,7 @@ const Channel = ({
         resetChannels!()
     }
 
-    const onEdit = () => handleEditSubmit(editChannelName, theChannel.Channel_Name, onSuccess)
+    const onEdit = () => handleUpdateSubmit(editChannelName, theChannel.Channel_Name, onSuccess)
 
     const onDelete = () => {
 

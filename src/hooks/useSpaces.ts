@@ -43,6 +43,7 @@ export const useSpaces = () => {
         'audio': [],
         'video': [],
     }
+    const channelTypes: string[] = ['text', 'audio', 'video']
 
     // Redux
     const dispatch = useAppDispatch()
@@ -52,34 +53,28 @@ export const useSpaces = () => {
     const channelsList = useTypedSelector(selectChannelsList)
     const membersList = useTypedSelector(selectMembersList)
 
-    // Methods
+    /**
+     * Misc. Methods
+     */
     const resetChannelsListToRender = async () => {
         dispatch(setChannelsList({ "data": emptyChannels }))
         return
     }
 
-    const getAllChannels = async () => {
-        await getChannelsList("text")
-        await getChannelsList("audio")
-        await getChannelsList("video")
-        return
-    }
+    const getAllChannels = () => channelTypes.map(type => getChannelsList(type))
 
     const resetChannels = async () => {
         console.log("reset")
         await resetChannelsListToRender()
-        await getAllChannels()
+        getAllChannels()
     }
 
-    const initChannels = () => {
-        if (!channelsList['text'].length) getAllChannels()
-        return
-    }
+    const initChannels = () => !channelsList['text'].length ? getAllChannels() : 0
 
     const getMemberOfSpacesList = async () => {
         // Send request to the API for spaces array
         try {
-            const data = await httpGetRequest("getMemberOfSpacesList")
+            const data = await httpGetRequest("readMemberOfSpacesList")
             const goToCreateSpace = "/create/space"
             if (data.message == "NotAnyMember" && router.asPath !== goToCreateSpace) {
                 if (confirm("You are not a member of any spaces. Click OK to create your own. Or cancel to continue exploring others.")) {
@@ -102,7 +97,7 @@ export const useSpaces = () => {
     const getHighlightedSpacesList = async () => {
         // Send get request to API
         try {
-            const data = await httpGetRequest("getHighlightedSpacesList")
+            const data = await httpGetRequest("readHighlightedSpacesList")
             dispatch(setHighlightedSpaces({
                 "data": data.data
             }))
@@ -165,7 +160,7 @@ export const useSpaces = () => {
 
             // Send request to the API for space
             try {
-                const data = await httpPostWithData("getTheSpace", getSpaceVariables)
+                const data = await httpPostWithData("readSpace", getSpaceVariables)
                 if (data.data) {
                     dispatch(setTheSpace({
                         "data": data.data
@@ -189,7 +184,7 @@ export const useSpaces = () => {
 
             // Send request to the API for space
             try {
-                const data = await httpPostWithData("getMembersOfSpaceList", getMembersOfSpaceVariables)
+                const data = await httpPostWithData("readMembersOfSpaceList", getMembersOfSpaceVariables)
                 if (data.data) {
                     dispatch(setMembersList({
                         "data": data.data
@@ -214,7 +209,7 @@ export const useSpaces = () => {
 
             // Send request to the API for channel list
             try {
-                const data = await httpPostWithData("getChannelsList", getChannelsVariables)
+                const data = await httpPostWithData("readChannelsList", getChannelsVariables)
                 if (data.data && data.data.length) {
                     dispatch(setChannelsList({
                         "format": channelFormat,
@@ -254,7 +249,8 @@ export const useSpaces = () => {
         } else if (createErrorType === "") {
             setErrorMsg('')
         }
-    } //);
+    }
+
     useEffect(() => {
         onError('')
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -276,6 +272,75 @@ export const useSpaces = () => {
 
         onError(fromAction, theResult)
         return false
+    }
+
+    /**
+     * Generic Methods
+     */
+    const handleCreateSubmit = async (spaceName: string, spaceImage: string): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!spaceName) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            processResult('create', errorData)
+            return false
+        }
+
+        // Variables to send to backend API
+        const createVariables = {
+            "Space_Name": spaceName,
+            "Space_ImageUrl": spaceImage
+        }
+
+        // Send create variables to the API for creation
+        try {
+            const data = await httpPostWithData("createSpace", createVariables)
+            return processResult('create', data)
+        } catch (e) {
+            console.log("useSpaces create error", e)
+        }
+        return true
+    }
+
+    const handleUpdateSubmit = async (newSpaceName: string, oldSpaceName: string): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!newSpaceName || !oldSpaceName) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            processResult('create', errorData)
+            return false
+        }
+
+        // Variables to send to backend API
+        const createVariables = {
+            "Space_Name_old": oldSpaceName,
+            "Space_Name_new": newSpaceName,
+        }
+
+        // Send edit variables to the API for saving
+        try {
+            const data = await httpPostWithData("updateSpace", createVariables)
+            return processResult('edit', data)
+        } catch (e) {
+            console.log("useSpaces editName error", e)
+            return false
+        }
     }
 
     const handleDeleteSubmit = async (deleteSpaceName: string): Promise<boolean> => {
@@ -310,72 +375,6 @@ export const useSpaces = () => {
         }
     }
 
-    const handleEditNameSubmit = async (newSpaceName: string, oldSpaceName: string): Promise<boolean> => {
-        setStatus('resolving')
-        let errorData
-        // Resetting the errorType triggers another dispatch that resets the error
-        dispatch(setCreateErrorType({ "data": "" }))
-
-        // If credentials are empty
-        if (!newSpaceName || !oldSpaceName) {
-            errorData = {
-                "success": false,
-                "message": "Missing neccesary credentials.",
-                "data": false
-            }
-            processResult('create', errorData)
-            return false
-        }
-
-        // Variables to send to backend API
-        const createVariables = {
-            "Space_Name_old": oldSpaceName,
-            "Space_Name_new": newSpaceName,
-        }
-
-        // Send edit variables to the API for saving
-        try {
-            const data = await httpPostWithData("editSpace", createVariables)
-            return processResult('edit', data)
-        } catch (e) {
-            console.log("useSpaces editName error", e)
-            return false
-        }
-    }
-
-    const handleCreateSubmit = async (spaceName: string, spaceImage: string): Promise<boolean> => {
-        setStatus('resolving')
-        let errorData
-        // Resetting the errorType triggers another dispatch that resets the error
-        dispatch(setCreateErrorType({ "data": "" }))
-
-        // If credentials are empty
-        if (!spaceName) {
-            errorData = {
-                "success": false,
-                "message": "Missing neccesary credentials.",
-                "data": false
-            }
-            processResult('create', errorData)
-            return false
-        }
-
-        // Variables to send to backend API
-        const createVariables = {
-            "Space_Name": spaceName,
-            "Space_ImageUrl": spaceImage
-        }
-
-        // Send create variables to the API for creation
-        try {
-            const data = await httpPostWithData("createNewSpace", createVariables)
-            return processResult('create', data)
-        } catch (e) {
-            console.log("useSpaces create error", e)
-        }
-        return true
-    }
-
     return {
         urlSpaceName,
         theSpace,
@@ -389,9 +388,9 @@ export const useSpaces = () => {
         getChannelsList,
         resetChannelsListToRender,
         resetChannels,
-        handleDeleteSubmit,
-        handleEditNameSubmit,
         handleCreateSubmit,
+        handleUpdateSubmit,
+        handleDeleteSubmit,
         errorMsg,
         status,
         alreadyMember,

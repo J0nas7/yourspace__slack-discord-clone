@@ -16,7 +16,11 @@ import {
     selectTheChannel,*/
 } from '../redux'
 
-export const useChannels = (tempChannelName: string) => {
+export const useChannels = () => {
+    // Hooks
+    const { httpPostWithData, httpGetRequest } = useAxios()
+    const router = useRouter()
+
     // Internal variables
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
@@ -24,15 +28,13 @@ export const useChannels = (tempChannelName: string) => {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
 
-    // Hooks
-    const { httpPostWithData, httpGetRequest } = useAxios()
-    const router = useRouter()
-
     // Redux
     const dispatch = useAppDispatch()
     const createErrorType = useTypedSelector(selectCreateErrorType)
 
-    // Methods
+    /**
+     * Misc. Methods
+     */
     const afterSuccess = (theResult: any, onSuccess?: Function) => {
         const channelName = theResult.data.Channel_Name
         if (onSuccess) onSuccess()
@@ -55,11 +57,7 @@ export const useChannels = (tempChannelName: string) => {
         } else if (createErrorType === "") {
             setErrorMsg('')
         }
-    } //);
-    useEffect(() => {
-        onError('')
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [createErrorType])
+    }
 
     const processResult = (fromAction: string, theResult: any, onSuccess?: Function) => {
         setStatus('resolved')
@@ -74,40 +72,9 @@ export const useChannels = (tempChannelName: string) => {
         return false
     }
 
-    const handleEditSubmit = async (channelName: string, oldChannelName: string, onSuccess: Function): Promise<boolean> => {
-        setStatus('resolving')
-        let errorData
-        // Resetting the errorType triggers another dispatch that resets the error
-        dispatch(setCreateErrorType({ "data": "" }))
-
-        // If credentials are empty
-        if (!channelName) {
-            errorData = {
-                "success": false,
-                "message": "Missing neccesary credentials.",
-                "data": false
-            }
-            processResult('edit', errorData)
-            return false
-        }
-
-        // Variables to send to backend API
-        const editVariables = {
-            "Space_Name": router.query.spaceName,
-            "Channel_Name": channelName,
-            "Old_Channel_Name": oldChannelName
-        }
-
-        // Send edit variables to the API for editing
-        try {
-            const data = await httpPostWithData("editChannel", editVariables)
-            return processResult('edit', data, onSuccess)
-        } catch (e) {
-            console.log("useChannels edit error", e)
-        }
-        return true
-    }
-
+    /**
+     * Generic Methods
+     */
     const handleCreateSubmit = async (channelName: string, channelFormat: string, onSuccess: Function): Promise<boolean> => {
         setStatus('resolving')
         let errorData
@@ -133,7 +100,7 @@ export const useChannels = (tempChannelName: string) => {
 
         // Send create variables to the API for creation
         try {
-            const data = await httpPostWithData("createNewChannel", createVariables)
+            const data = await httpPostWithData("createChannel", createVariables)
             return processResult('create', data, onSuccess)
         } catch (e) {
             console.log("useChannels create error", e)
@@ -141,9 +108,48 @@ export const useChannels = (tempChannelName: string) => {
         return true
     }
 
+    const handleUpdateSubmit = async (channelName: string, oldChannelName: string, onSuccess: Function): Promise<boolean> => {
+        setStatus('resolving')
+        let errorData
+        // Resetting the errorType triggers another dispatch that resets the error
+        dispatch(setCreateErrorType({ "data": "" }))
+
+        // If credentials are empty
+        if (!channelName) {
+            errorData = {
+                "success": false,
+                "message": "Missing neccesary credentials.",
+                "data": false
+            }
+            processResult('edit', errorData)
+            return false
+        }
+
+        // Variables to send to backend API
+        const editVariables = {
+            "Space_Name": router.query.spaceName,
+            "Channel_Name": channelName,
+            "Old_Channel_Name": oldChannelName
+        }
+
+        // Send edit variables to the API for editing
+        try {
+            const data = await httpPostWithData("updateChannel", editVariables)
+            return processResult('edit', data, onSuccess)
+        } catch (e) {
+            console.log("useChannels edit error", e)
+        }
+        return true
+    }
+
+    useEffect(() => {
+        onError('')
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [createErrorType])
+
     return {
-        handleEditSubmit,
         handleCreateSubmit,
+        handleUpdateSubmit,
         status,
         errorMsg,
     }
