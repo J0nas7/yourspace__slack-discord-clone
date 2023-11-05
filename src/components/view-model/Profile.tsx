@@ -1,16 +1,17 @@
 // External
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGear, faArrowRightFromBracket, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faGear, faArrowRightFromBracket, faTrash, faFont } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
+import Link from 'next/link'
 
 // Internal
 import { env, paths } from '@/env.local'
-import { useAxios, useAuthContext } from '@/hooks'
+import { useAxios, useAuthContext, useSpaces } from '@/hooks'
 import { Block, Text, Profile as ProfileCard } from '@/components'
-import { ProfileDTO } from '@/types/'
+import { ProfileDTO, SpaceDTO } from '@/types/'
 
 type Variant = 'in-channel' | 'space-settings-member' | 'space-bottom' | 'profile-picture'
 type Props = {
@@ -27,16 +28,31 @@ const Profile = ({
     const router = useRouter()
     const { httpGetRequest } = useAxios()
     const { doLogout } = useAuthContext()
+    const { removeMember } = useSpaces()
 
     // Internal variables
     const now = new Date()
+    const tempSpaceName: string = router.query.spaceName?.toString()!
     const [theProfile, setTheProfile] = useState<ProfileDTO>()
+    const [spaceBottomActionMenu, setSpaceBottomActionMenu] = useState<boolean>(false)
 
     const demoImg = "/member-icon.png"
     const imgFolder = env.url.API_URL + "/profile_images/"
     const [imgSrc, setImgSrc] = useState<string>('')
 
+    const tempSpace: SpaceDTO = {
+        Space_ID: 0,
+        Space_Name: tempSpaceName,
+    }
+
     // Methods
+    const triggerLeaveSpaceModal = () => {
+        setSpaceBottomActionMenu(false)
+        if (confirm("Are you sure you want to leave this space?")) {
+            removeMember()
+        }
+    }
+
     const profileMyself = async () => {
         //console.log(variant + " myself", profile, profileID, theProfile)
         const profileData = await httpGetRequest("userData")
@@ -70,7 +86,7 @@ const Profile = ({
         return (
             <>
                 {theProfile && (
-                    <Block className={className+" space-member"}>
+                    <Block className={className + " space-member"}>
                         <ProfileCard variant="profile-picture" className="profile-picture h25" profile={theProfile} />
                         <Text variant="span" className="display-name">{theProfile.Profile_DisplayName}</Text>
                         <FontAwesomeIcon icon={faTrash} className="member-action remove-member" />
@@ -89,7 +105,33 @@ const Profile = ({
                         </Block>
                         <Block className="profile-actions">
                             <FontAwesomeIcon icon={faArrowRightFromBracket} className="profile-logout" onClick={() => doLogout()} />
-                            <FontAwesomeIcon icon={faGear} className="profile-settings" />
+                            <FontAwesomeIcon icon={faGear} className="profile-settings" onClick={() => setSpaceBottomActionMenu(!spaceBottomActionMenu)} />
+                        </Block>
+                        <Block className={"profile-settings-nav " + (spaceBottomActionMenu ? "visible" : "")}>
+                            <nav>
+                                <ul>
+                                    <li className="profile-settings-nav-item">
+                                        <Link
+                                            onClick={() => setSpaceBottomActionMenu(false)}
+                                            href={"/space/" + tempSpace.Space_Name + "/leave"}
+                                            className="profile-settings-nav-item-clickable"
+                                        >
+                                            <FontAwesomeIcon icon={faFont} />
+                                            Change nickname
+                                        </Link>
+                                    </li>
+                                    <li className="profile-settings-nav-item color-red">
+                                        <Text
+                                            variant="span"
+                                            onClick={() => triggerLeaveSpaceModal()}
+                                            className="profile-settings-nav-item-clickable"
+                                        >
+                                            <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                                            Leave space
+                                        </Text>
+                                    </li>
+                                </ul>
+                            </nav>
                         </Block>
                     </Block>
                 )}

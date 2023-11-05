@@ -42,7 +42,7 @@ model Space_Space {
 
   Space_CreatedAt DateTime @default(now())
   Space_UpdatedAt DateTime @updatedAt
-  Space_DeletedAt DateTime
+  Space_DeletedAt DateTime?
 
   @@index([Space_ProfileID])
 }
@@ -72,6 +72,7 @@ model Space_Member {
 
   Member_CreatedAt DateTime @default(now())
   Member_UpdatedAt DateTime @updatedAt
+  Member_DeletedAt DateTime?
 
   @@index([Member_ProfileID])
   @@index([Member_SpaceID])
@@ -99,7 +100,7 @@ model Space_Channel {
 
   Channel_CreatedAt DateTime @default(now())
   Channel_UpdatedAt DateTime @updatedAt
-  Channel_DeletedAt DateTime
+  Channel_DeletedAt DateTime?
 
   @@index([Channel_ProfileID])
   @@index([Channel_SpaceID])
@@ -121,7 +122,7 @@ model Space_Message {
 
   Message_CreatedAt DateTime @default(now())
   Message_UpdatedAt DateTime @updatedAt
-  Message_DeletedAt DateTime
+  Message_DeletedAt DateTime?
 
   @@index([Message_MemberID])
   @@index([Message_ChannelID])

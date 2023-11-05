@@ -112,6 +112,28 @@ export const useSpaces = () => {
         return true
     }
 
+    // Remove membership from the unique space name
+    const removeMember = async (Profile_ID: number = 0) => {
+        if (urlSpaceName) {
+            // Variables to send to backend API
+            const removeMembershipVariables = {
+                "Space_Name": urlSpaceName,
+                "Profile_ID": Profile_ID
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("removeMember", removeMembershipVariables)
+                if (data.success) {
+                    window.location.href = '/space/'+urlSpaceName
+                }
+            } catch (e) {
+                console.log("useSpaces removeMember error", e)
+            }
+        }
+        return
+    }
+
     // Create membership from the unique space name
     const becomeAMember = async () => {
         if (urlSpaceName) {
@@ -127,7 +149,7 @@ export const useSpaces = () => {
                     window.location.href = '/space/'+urlSpaceName
                 }
             } catch (e) {
-                console.log("useSpaces joinThisSpace error", e)
+                console.log("useSpaces becomeAMember error", e)
             }
         }
         return
@@ -144,6 +166,7 @@ export const useSpaces = () => {
             // Send request to the API for space
             try {
                 const data = await httpPostWithData("getTheSpace", getSpaceVariables)
+                console.log(data)
                 if (data.data) {
                     dispatch(setTheSpace({
                         "data": data.data
@@ -386,6 +409,7 @@ export const useSpaces = () => {
         alreadyMember,
         highlightedSpacesList,
         getHighlightedSpacesList,
+        removeMember,
         becomeAMember,
     }
 }

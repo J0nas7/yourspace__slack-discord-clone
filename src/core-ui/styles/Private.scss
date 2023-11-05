@@ -33,6 +33,9 @@
         }
     }
 
+    .space-member-context {
+        position: relative;
+    }
     .yourprofile-global {
         .profile-actions {
             float: right;
@@ -43,6 +46,52 @@
                 width: 20px;
                 height: 20px;
                 margin-left: 20px;
+            }
+        }
+
+        .profile-settings-nav {
+            position: absolute;
+            display: none;
+            z-index: 1;
+            left: auto;
+            right: 1px;
+            top: -85px;
+            width: 200px;
+            background-color: #c3c5c7;
+
+            &.visible {
+                display: block;
+            }
+
+            .profile-settings-nav-item {
+                width: 100%;
+                height: 42px;
+                font-size: .9rem;
+                font-weight: 700;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+
+                &:hover {
+                    background-color: #9c9ea0;
+                }
+
+                .profile-settings-nav-item-clickable {
+                    cursor: pointer; 
+                }
+
+                svg {
+                    width: 20px;
+                    height: 20px;
+                    float: left;
+                    margin-right: 10px;
+                }
+
+                &.color-red {
+                    .profile-settings-nav-item-clickable, svg {
+                        color: red;
+                    }
+                }
             }
         }
     }
@@ -249,14 +298,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(75,171,202, .75);
+            background: rgba(75, 171, 202, .75);
             color: white;
             font-size: .75rem;
-            
+
             .already-member-teaser {
                 display: flex;
                 align-items: center;
-                
+
                 .join-button {
                     width: 100px;
                     height: 30px;
@@ -553,11 +602,12 @@
             h1 {
                 margin-bottom: 30px;
             }
+
             .page-section {
                 background-color: #edeff1;
                 margin-bottom: 30px;
                 padding: 20px;
-            
+
                 h2 {
                     font-weight: 600;
                     margin-bottom: 20px;
