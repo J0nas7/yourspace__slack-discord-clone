@@ -56,17 +56,11 @@ export const useSpaces = () => {
     /**
      * Misc. Methods
      */
-    const resetChannelsListToRender = async () => {
-        dispatch(setChannelsList({ "data": emptyChannels }))
-        return
-    }
-
     const getAllChannels = () => channelTypes.map(type => getChannelsList(type))
 
     const resetChannels = async () => {
         console.log("reset")
-        await resetChannelsListToRender()
-        getAllChannels()
+        channelTypes.map(type => getChannelsList(type, true))
     }
 
     const initChannels = () => !channelsList['text'].length ? getAllChannels() : 0
@@ -197,10 +191,11 @@ export const useSpaces = () => {
         return
     }
 
-    const getChannelsList = async (channelFormat: string) => {
+    const getChannelsList = async (channelFormat: string, forceReset: boolean = false) => {
         // Request channel lists from the unique space name
         const spaceName = theSpace?.Space_Name || urlSpaceName
-        if (channelFormat && spaceName && !channelsList[channelFormat].length) {
+        if (channelFormat && spaceName && (!channelsList[channelFormat].length || forceReset)) {
+            console.log(channelFormat, spaceName, channelsList)
             // Variables to send to backend API
             const getChannelsVariables = {
                 "Space_Name": spaceName,
@@ -386,7 +381,6 @@ export const useSpaces = () => {
         initChannels,
         channelsList,
         getChannelsList,
-        resetChannelsListToRender,
         resetChannels,
         handleCreateSubmit,
         handleUpdateSubmit,

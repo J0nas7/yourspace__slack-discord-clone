@@ -64,7 +64,10 @@ const Channel = ({
         resetChannels!()
     }
 
-    const onEdit = () => handleUpdateSubmit(editChannelName, theChannel.Channel_Name, onSuccess)
+    const onEdit = (e: any = '') => {
+        e.preventDefault()
+        handleUpdateSubmit(editChannelName, theChannel.Channel_Name, onSuccess)
+    }
 
     const onDelete = () => {
 

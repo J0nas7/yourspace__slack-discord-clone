@@ -6,11 +6,13 @@ import { combineReducers } from 'redux'
 import authReducer from './reducers/authSlice'
 import spaceReducer from './reducers/spaceSlice'
 import channelReducer from './reducers/channelSlice'
+import messageReducer from './reducers/messageSlice'
 
 const rootReducer = combineReducers({
     auth: authReducer,
     space: spaceReducer,
-    channel: channelReducer
+    channel: channelReducer,
+    message: messageReducer
 })
 
 export const appReducer = (state:any, action:any) => {

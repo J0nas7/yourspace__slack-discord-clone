@@ -35,11 +35,18 @@ export const useChannels = () => {
     /**
      * Misc. Methods
      */
-    const afterSuccess = (theResult: any, onSuccess?: Function) => {
+    const afterSuccess = (fromAction: string, theResult: any, onSuccess?: Function) => {
         const channelName = theResult.data.Channel_Name
         if (onSuccess) onSuccess()
-        router.push(CONSTANTS.SPACE_URL + router.query.spaceName +
-            CONSTANTS.CHANNEL_URL + channelName)
+        const redirect = CONSTANTS.SPACE_URL + router.query.spaceName +
+            CONSTANTS.CHANNEL_URL + channelName
+
+        router.push(redirect)
+        /*if (fromAction == "updateChannel") {
+            window.location.href = redirect
+        } else {
+            router.push(redirect)
+        }*/
     }
 
     // Handle error dispatch and set state of them correspondingly
@@ -64,7 +71,7 @@ export const useChannels = () => {
         console.log("channel processResult()", theResult)
 
         if (theResult.success === true) {
-            afterSuccess(theResult, onSuccess)
+            afterSuccess(fromAction, theResult, onSuccess)
             return true
         }
 
@@ -101,7 +108,7 @@ export const useChannels = () => {
         // Send create variables to the API for creation
         try {
             const data = await httpPostWithData("createChannel", createVariables)
-            return processResult('create', data, onSuccess)
+            return processResult('createChannel', data, onSuccess)
         } catch (e) {
             console.log("useChannels create error", e)
         }
@@ -135,7 +142,7 @@ export const useChannels = () => {
         // Send edit variables to the API for editing
         try {
             const data = await httpPostWithData("updateChannel", editVariables)
-            return processResult('edit', data, onSuccess)
+            return processResult('updateChannel', data, onSuccess)
         } catch (e) {
             console.log("useChannels edit error", e)
         }

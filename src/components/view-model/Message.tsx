@@ -7,8 +7,8 @@ import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 
 // Internal
-import { useAxios } from '@/hooks'
-import { Block, Text, Modal, Field, Profile as ProfileCard } from '@/components'
+import { useAxios, useMessages } from '@/hooks'
+import { Block, Text, Modal, Profile as ProfileCard, ChatInput } from '@/components'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { MessageDTO, ProfileDTO } from '@/types'
 import { MemberRole } from "@prisma/client"
@@ -29,11 +29,13 @@ const Message = ({
     // Hooks
     const router = useRouter()
     const { httpGetRequest } = useAxios()
+    const { updateExistingMessage, deleteMessage } = useMessages()
 
     // Internal variables
     const theMessage: MessageDTO = message
     const [editMsg, setEditMsg] = useState<string>(theMessage.Message_Content)
     const [editModal, setEditModal] = useState<boolean>(false)
+    const [newContent,setNewContent] = useState<string>(theMessage.Message_Content)
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const [theDay, setTheDay] = useState<string>('')
     const [timestamp, setTimestamp] = useState<string>('')
@@ -51,7 +53,13 @@ const Message = ({
 
     // Methods
     const editMessage = () => canEdit ? setEditModal(true) : false
-    const deleteMessage = () => canDelete ? setDeleteModal(true) : false
+    const saveChanges = (e: any = '') => {
+        e.preventDefault()
+        if (canEdit) {
+            setEditModal(false)
+            updateExistingMessage(theMessage, newContent)
+        }
+    }
 
     const setDateAndTime = () => {
         const now = new Date()
@@ -83,7 +91,7 @@ const Message = ({
                         </Block>
                         <Block className={"right-side " + styles["message-actions"]}>
                             {canEdit && (<FontAwesomeIcon icon={faPen} className={styles["message-action"]} onClick={() => editMessage()} />)}
-                            {canDelete && (<FontAwesomeIcon icon={faTrashCan} className={styles["message-action"]} onClick={() => deleteMessage()} />)}
+                            {canDelete && (<FontAwesomeIcon icon={faTrashCan} className={styles["message-action"]} onClick={() => deleteMessage(theMessage)} />)}
                         </Block>
                     </Block>
                     <Block className={styles["message-content"]}>
@@ -98,32 +106,16 @@ const Message = ({
                         title="Edit the message"
                         className={styles["edit-message-dialog"] + " m" + theMessage.Message_MemberID}
                     >
-                        <Field
-                            type="text"
-                            lbl="Edit the message:"
-                            value={editMsg}
-                            onChange={(e: string) => setEditMsg(e)}
-                            disabled={false}
-                            grow={true}
-                            growMin={3}
-                            className="message-field"
+                        <ChatInput
+                            name={""}
+                            type="channel"
+                            className="edit-message"
+                            value={newContent}
+                            setChanges={setNewContent}
+                            saveChanges={saveChanges}
                         />
-                        <Button className="button button-green dialog-edit-message-submit" onClick={() => alert('hej')} disabled={false}>
-                            <Text variant="span" className="button button-text">Save changes</Text>
-                        </Button>
-                    </Modal>
-                )}
-
-                {canDelete && (
-                    <Modal
-                        openModal={deleteModal}
-                        closeModal={() => setDeleteModal(false)}
-                        title="Delete the message"
-                        className={styles["delete-message-dialog"] + " m" + theMessage.Message_MemberID}
-                    >
-                        Are you sure you want to delete this message?
-                        <Button className="button button-red dialog-edit-message-submit" onClick={() => alert('hej')} disabled={false}>
-                            <Text variant="span" className="button button-text">Yes, delete it</Text>
+                        <Button className="button button-blue dialog-edit-message-submit" onClick={() => setEditModal(false)} disabled={false}>
+                            <Text variant="span" className="button button-text">Cancel</Text>
                         </Button>
                     </Modal>
                 )}

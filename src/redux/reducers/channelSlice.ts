@@ -38,6 +38,7 @@ export const channelSlice = createSlice({
             state.theChannel = action.payload.data
         },
         setChannelsList: (state: ChannelState, action:PayloadAction<any>) => {
+            console.log("redux channelsList", action.payload)
             const channelFormat: string = action.payload.format
             if (channelFormat) state.channelsList[channelFormat] = action.payload.data
         },

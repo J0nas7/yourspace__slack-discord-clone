@@ -7,7 +7,7 @@ import { Block, Field, Text, ChatInput, Message as MessageCard } from '@/compone
 import { MessageDTO, ProfileDTO } from '@/types/'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { useSocket } from "@/components/providers/socket-provider"
-import { useAxios, useSpaces } from '@/hooks'
+import { useAxios, useSpaces, useMessages } from '@/hooks'
 
 export const ChannelName = ({ channelName }: { channelName: string }) => {
   // Hooks
@@ -15,44 +15,19 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   const router = useRouter()
   const { httpPostWithData, httpGetRequest } = useAxios()
   const { membersList, getMembersOfTheSpace } = useSpaces()
+  const { readFirstMessages, updateMessageStream, reduxMessageStream } = useMessages()
 
   // Internal variables
   const spaceName: string = router.query.spaceName?.toString()!
   const [messages, setMessages] = useState<MessageDTO[]>([])
-  const [messagesToRender, setMessagesToRender] = useState<MessageDTO[]>([])
   const [currentProfile, setCurrentProfile] = useState<ProfileDTO>()
 
   // Methods
-  const loadFirstMessages = async () => {
-    if (channelName && spaceName) {
-      // Request messages in the channel
-      // Variables to send to backend API
-      const getMessagesVariables = {
-        "Space_Name": spaceName,
-        "Channel_Name": channelName,
-      }
-
-      // Send request to the API for messages
-      try {
-        const data = await httpPostWithData("read10Messages", getMessagesVariables)
-        if (data.data && data.data.length) {
-          setMessages([...data.data])
-        }
-      } catch (e) {
-        console.log("Channel getMessages error", e)
-      }
-    }
-  }
-
   useEffect(() => {
-    setMessagesToRender([])
-    loadFirstMessages()
+    updateMessageStream()
+    readFirstMessages()
     if (spaceName) getMembersOfTheSpace()
   }, [channelName, spaceName])
-
-  useEffect(() => {
-    setMessagesToRender(messages)
-  }, [messages])
 
   const getCurrentProfile = async () => {
     const getUserDataVariables = {
@@ -62,20 +37,21 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     const profileData = await httpPostWithData("readUser", getUserDataVariables)
     if (profileData.data) setCurrentProfile(profileData.data)
   }
+
   useEffect(() => {
     getCurrentProfile()
   }, [spaceName])
 
   socket?.on('sendChatToClient', (message: MessageDTO) => {
-    if (message.Channel_Name == channelName) setMessagesToRender([...messagesToRender, message])
+    if (message.Channel_Name == channelName) updateMessageStream(false, message)
   })
 
   return (
     <Block className="channel-inner-content">
       <Block className={styles["channel-messages"]}>
         <Block className="reverse-messages">
-          {currentProfile && membersList && messagesToRender
-            && messagesToRender.map((message, i) =>
+          {currentProfile && membersList && reduxMessageStream
+            && reduxMessageStream.map((message, i) =>
               <MessageCard variant="in-channel" className="channel-message" message={message} currentProfile={currentProfile} membersList={membersList} key={i} />
             )}
         </Block>
@@ -83,11 +59,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
       <ChatInput
         name={channelName}
         type="channel"
-        apiUrl="/api/socket/messages"
-        query={{
-          channelID: 1,
-          serverID: 4
-        }}
+        className="new-message"
       />
     </Block>
   )

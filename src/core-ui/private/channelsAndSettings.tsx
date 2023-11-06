@@ -45,7 +45,6 @@ export const ChannelsAndSettings = () => {
     }, [urlSpaceName])
 
     useEffect(() => {
-        console.log("theSpace", theSpace)
         if (theSpace?.Space_ID) {
             const init = async () => {
                 initChannels()
@@ -67,9 +66,9 @@ export const ChannelsAndSettings = () => {
                     </Block>
                 </Block>
             }
-            <ChannelList format="Text" channelsList={channelsListRender['text']} resetChannels={resetChannels} />
-            <ChannelList format="Audio" channelsList={channelsListRender['audio']} resetChannels={resetChannels} />
-            <ChannelList format="Video" channelsList={channelsListRender['video']} resetChannels={resetChannels} />
+            <ChannelList format="Text" channelsList={channelsList['text']} resetChannels={resetChannels} />
+            <ChannelList format="Audio" channelsList={channelsList['audio']} resetChannels={resetChannels} />
+            <ChannelList format="Video" channelsList={channelsList['video']} resetChannels={resetChannels} />
 
             <Block className="channel-info members">
                 <Block className="channel-info-top members">

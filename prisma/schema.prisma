@@ -88,7 +88,7 @@ model Space_Channel {
   Channel_ID     Int         @id @default(autoincrement())
   Channel_Name   String
   Channel_Type   ChannelType @default(TEXT)
-  Channel_Access String
+  Channel_Access String?
 
   Channel_ProfileID Int
   Channel_Profile   Space_Profile @relation(fields: [Channel_ProfileID], references: [Profile_ID], onDelete: Cascade)
