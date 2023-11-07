@@ -21,7 +21,7 @@ import {
     selectHighlightedSpaces
 } from '@/redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
-import { ProfileDTO } from "@/types";
+import { ProfileDTO, SpaceDTO, apiResponseDTO } from "@/types";
 
 export const useSpaces = () => {
     // Hooks
@@ -32,7 +32,7 @@ export const useSpaces = () => {
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [alreadyMember, setAlreadyMember] = useState<boolean>(true)
-    const [spacesList, setSpacesList] = useState<Array<Object>>()
+    const [spacesList, setSpacesList] = useState<SpaceDTO[]>()
     const urlSpaceName: string = router.query.spaceName?.toString()!
     const routerChannelName = router.query.channelName
     const errorCodes: { [key: string]: string } = {
@@ -70,8 +70,8 @@ export const useSpaces = () => {
         try {
             const data = await httpGetRequest("readMemberOfSpacesList")
             const goToCreateSpace = "/create/space"
-            if (data.message == "NotAnyMember" && router.asPath !== goToCreateSpace) {
-                if (confirm("You are not a member of any spaces. Click OK to create your own. Or cancel to continue exploring others.")) {
+            if (data.message == "NotMemberOfSpace" && router.asPath !== goToCreateSpace) {
+                if (confirm("You are not a member of a space. Click OK to create your own. Or cancel to continue exploring others.")) {
                     window.location.href = goToCreateSpace
                 }
                 return
@@ -124,7 +124,7 @@ export const useSpaces = () => {
     }
 
     // Create membership from the unique space name
-    const becomeAMember = async () => {
+    const createMember = async () => {
         if (urlSpaceName) {
             // Variables to send to backend API
             const createMembershipVariables = {
@@ -133,36 +133,12 @@ export const useSpaces = () => {
 
             // Send request to the API for membership
             try {
-                const data = await httpPostWithData("becomeAMember", createMembershipVariables)
+                const data = await httpPostWithData("createMember", createMembershipVariables)
                 if (data.success) {
                     window.location.href = '/space/' + urlSpaceName
                 }
             } catch (e) {
-                console.log("useSpaces becomeAMember error", e)
-            }
-        }
-        return
-    }
-
-    // Request space from the unique space name
-    const getTheSpace = async () => {
-        if (urlSpaceName) {
-            // Variables to send to backend API
-            const getSpaceVariables = {
-                "Space_Name": urlSpaceName
-            }
-
-            // Send request to the API for space
-            try {
-                const data = await httpPostWithData("readSpace", getSpaceVariables)
-                if (data.data) {
-                    dispatch(setTheSpace({
-                        "data": data.data
-                    }))
-                }
-                setAlreadyMember(data.alreadyMember)
-            } catch (e) {
-                console.log("useSpaces getSpace error", e)
+                console.log("useSpaces createMember error", e)
             }
         }
         return
@@ -195,7 +171,7 @@ export const useSpaces = () => {
         // Request channel lists from the unique space name
         const spaceName = theSpace?.Space_Name || urlSpaceName
         if (channelFormat && spaceName && (!channelsList[channelFormat].length || forceReset)) {
-            console.log(channelFormat, spaceName, channelsList)
+            //console.log(channelFormat, spaceName, channelsList)
             // Variables to send to backend API
             const getChannelsVariables = {
                 "Space_Name": spaceName,
@@ -218,7 +194,7 @@ export const useSpaces = () => {
         return
     }
 
-    const afterSuccess = (theResult: any) => {
+    const afterSuccess = (theResult: apiResponseDTO) => {
         const spaceName = theResult.data.Space_Name
         const redirectTo = CONSTANTS.SPACE_URL + spaceName
 
@@ -230,16 +206,16 @@ export const useSpaces = () => {
     }
 
     // Handle error dispatch and set state of them correspondingly
-    const onError = (fromAction: string, errors?: any) => {
+    const onError = (fromAction: string, errorMsgFromAPI?: string) => {
         if (createErrorType) {
-            const theErrorMsg = errors?.message || createErrorType
+            const theErrorMsg = errorMsgFromAPI || createErrorType
             //console.log(theErrorMsg)
             setErrorMsg(
                 errorCodes[theErrorMsg] || theErrorMsg
             )
-        } else if (errors) {
+        } else if (errorMsgFromAPI) {
             dispatch(setCreateErrorType({
-                "data": errors.message
+                "data": errorMsgFromAPI
             }))
         } else if (createErrorType === "") {
             setErrorMsg('')
@@ -251,28 +227,28 @@ export const useSpaces = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [createErrorType])
 
-    const processResult = (fromAction: string, theResult: any) => {
+    const processResult = (fromAction: string, theResult: apiResponseDTO) => {
         setStatus('resolved')
         //console.log("space processResult()", theResult)
 
         if (theResult.success === true) {
             if (theResult.message == "The space was deleted") {
                 alert("The space was deleted")
-                window.location.href = "/"
+                window.location.href = "/explore/all"
             }
 
             afterSuccess(theResult)
             return true
         }
 
-        onError(fromAction, theResult)
+        onError(fromAction, theResult.message)
         return false
     }
 
     /**
      * Generic Methods
      */
-    const handleCreateSubmit = async (spaceName: string, spaceImage: string): Promise<boolean> => {
+    const createSpace = async (spaceName: string, spaceImage: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
         // Resetting the errorType triggers another dispatch that resets the error
@@ -285,7 +261,7 @@ export const useSpaces = () => {
                 "message": "Missing neccesary credentials.",
                 "data": false
             }
-            processResult('create', errorData)
+            processResult('createSpace', errorData)
             return false
         }
 
@@ -298,14 +274,42 @@ export const useSpaces = () => {
         // Send create variables to the API for creation
         try {
             const data = await httpPostWithData("createSpace", createVariables)
-            return processResult('create', data)
+            return processResult('createSpace', data)
         } catch (e) {
             console.log("useSpaces create error", e)
         }
         return true
     }
 
-    const handleUpdateSubmit = async (newSpaceName: string, oldSpaceName: string): Promise<boolean> => {
+    // Request space from the unique space name
+    const readSpace = async (spaceName?: string) => {
+        if (urlSpaceName || spaceName) {
+            // Variables to send to backend API
+            const getSpaceVariables = {
+                "Space_Name": spaceName ? spaceName : urlSpaceName
+            }
+
+            // Send request to the API for space
+            try {
+                const data = await httpPostWithData("readSpace", getSpaceVariables)
+                if (data.data) {
+                    dispatch(setTheSpace({
+                        "data": data.data
+                    }))
+                } else {
+                    alert("The space was not found.")
+                    router.push("/explore/all")
+                    return
+                }
+                setAlreadyMember(data.alreadyMember)
+            } catch (e) {
+                console.log("useSpaces getSpace error", e)
+            }
+        }
+        return
+    }
+
+    const updateSpace = async (newSpaceName: string, oldSpaceName: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
         // Resetting the errorType triggers another dispatch that resets the error
@@ -318,7 +322,7 @@ export const useSpaces = () => {
                 "message": "Missing neccesary credentials.",
                 "data": false
             }
-            processResult('create', errorData)
+            processResult('updateSpace', errorData)
             return false
         }
 
@@ -331,14 +335,14 @@ export const useSpaces = () => {
         // Send edit variables to the API for saving
         try {
             const data = await httpPostWithData("updateSpace", createVariables)
-            return processResult('edit', data)
+            return processResult('updateSpace', data)
         } catch (e) {
             console.log("useSpaces editName error", e)
-            return false
         }
+        return false
     }
 
-    const handleDeleteSubmit = async (deleteSpaceName: string): Promise<boolean> => {
+    const deleteSpace = async (deleteSpaceName: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
         // Resetting the errorType triggers another dispatch that resets the error
@@ -351,7 +355,7 @@ export const useSpaces = () => {
                 "message": "Missing neccesary credentials.",
                 "data": false
             }
-            processResult("delete", errorData)
+            processResult("deleteSpace", errorData)
             return false
         }
 
@@ -363,7 +367,7 @@ export const useSpaces = () => {
         // Send delete variables to the API the deleting
         try {
             const data = await httpPostWithData("deleteSpace", deleteVariables)
-            return processResult("delete", data)
+            return processResult("deleteSpace", data)
         } catch (e) {
             console.log("useSpaces deleteSpace error", e)
             return false
@@ -371,26 +375,31 @@ export const useSpaces = () => {
     }
 
     return {
+        // Variables
         urlSpaceName,
         theSpace,
-        getTheSpace,
         spacesList,
-        getMemberOfSpacesList,
         membersList,
-        getMembersOfTheSpace,
-        initChannels,
         channelsList,
-        getChannelsList,
-        resetChannels,
-        handleCreateSubmit,
-        handleUpdateSubmit,
-        handleDeleteSubmit,
         errorMsg,
         status,
         alreadyMember,
         highlightedSpacesList,
+
+        // Misc. methods
+        getMemberOfSpacesList,
+        getMembersOfTheSpace,
+        initChannels,
+        getChannelsList,
+        resetChannels,
         getHighlightedSpacesList,
         removeMember,
-        becomeAMember,
+        createMember,
+
+        // Generic methods
+        readSpace,
+        createSpace,
+        updateSpace,
+        deleteSpace,
     }
 }

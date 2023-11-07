@@ -9,10 +9,11 @@ import { useRouter } from 'next/router'
 import { Block, Text, Modal, Channel as ChannelCard } from '@/components'
 import { ChannelCreate } from '@/core-ui'
 import { CONSTANTS } from '@/data/CONSTANTS'
+import { ChannelDTO } from '@/types/'
 
 type Props = {
     format: string
-    channelsList: any
+    channelsList: ChannelDTO[]
     resetChannels: Function
 }
 
@@ -22,7 +23,6 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
 
     // Internal variables
     const [showCreateModal, setShowCreateModal] = useState<boolean>(false)
-    const channelsListToRender: Array<any> = channelsList
 
     return (
         <Block className="channel-format">
@@ -31,9 +31,9 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
                 <FontAwesomeIcon icon={faPlus} className="channel-new-channel right-side" onClick={() => setShowCreateModal(true)} />
             </Block>
             <Block className="channel-format-list">
-                { channelsListToRender && channelsListToRender.length ? (
+                { channelsList && channelsList.length ? (
                     <>
-                        {channelsListToRender.map((channel, i) =>
+                        {channelsList.map((channel, i) =>
                             <ChannelCard
                                 variant="space-channel-format-list-item" 
                                 channel={channel} 

@@ -17,13 +17,16 @@ import { IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField } f
 import { Block, Text } from "./block_text"
 import TextareaAutosize from 'react-textarea-autosize'
 
-export const SelectField = ({
-    lbl, title, value, items, displayLabel, innerLabel, hiddenMUILabel, className, onChange, disabled, error, required, ...props
-}: {
+type SelectElement = {
+    value: string,
+    title: string
+}
+
+type Props = {
     lbl: string,
     title: string
     value: number|string,
-    items: any,
+    items: Array<SelectElement>,
     onChange: Function,
     disabled: boolean,
     error?: string,
@@ -33,7 +36,11 @@ export const SelectField = ({
     hiddenMUILabel?: boolean
     className?: string
     props?: Object
-}) => {
+}
+
+export const SelectField = ({
+    lbl, title, value, items, displayLabel, innerLabel, hiddenMUILabel, className, onChange, disabled, error, required, ...props
+}: Props) => {
     const inputProps = {
         className,
         label: `${(innerLabel ? lbl : '')}`,
@@ -58,7 +65,7 @@ export const SelectField = ({
                         label="Admin-only text channel"
                         onChange={onChange()}
                     >
-                        {items && items!.map((item: any, key: any) =>
+                        {items && items!.map((item: SelectElement, key: number) =>
                             <MenuItem value={item.value} key={key}>{item.title}</MenuItem>
                         )}
                     </Select>

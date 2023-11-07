@@ -84,11 +84,6 @@ export const useAuthContext = (__templateCheck?: Function) => {
 
     // Listeners
     useEffect(() => {
-        if (accessToken) {
-            const decodedJWT: any = jwt_decode(accessToken)
-            //(decodedJWT.exp * 1000)
-        }
-
         const tokens: jwtTokensDTO = { 'accessToken': accessToken, 'refreshToken': refreshToken }
         saveTokens(tokens)
     }, [accessToken, refreshToken])

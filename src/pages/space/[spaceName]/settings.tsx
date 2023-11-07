@@ -16,7 +16,7 @@ import {
 
 export default function spaceSettings() {
   // Hooks
-  const { urlSpaceName, getTheSpace, theSpace, channelsList } = useSpaces()
+  const { theSpace, channelsList } = useSpaces()
 
   // Internal variables
   const [settingsToRender, setSettingsToRender] = useState<SpaceDTO>()
@@ -67,10 +67,6 @@ export default function spaceSettings() {
     }
   }, [channelsList])
 
-  useEffect(() => {
-    if (urlSpaceName) getTheSpace()
-  }, [])
-
   return (
     <Block className="other-pages-wrapper">
       <Block className={"other-pages-inner " + styles["space-settings"]}>
@@ -94,35 +90,41 @@ export default function spaceSettings() {
 
         <Block className={"page-section " + styles["space-community-settings"]}>
           <Heading variant="h2" title="Community settings" />
-          {selectItems.length && (
-            <Block className={styles["space-settings-rule"] + " " + styles["space-rules-channel"]}>
-              {channelsList['text'].length && (
-                <SelectField
-                  lbl="rules-text-channel"
-                  title="Rules/guidelines channel"
-                  value={rulesTextChannel}
-                  items={selectItems}
-                  onChange={(e: any) => handleRulesChannel}
-                  disabled={false}
-                />
+          {selectItems.length ? (
+            <>
+              {selectItems.length && (
+                <Block className={styles["space-settings-rule"] + " " + styles["space-rules-channel"]}>
+                  {channelsList['text'].length && (
+                    <SelectField
+                      lbl="rules-text-channel"
+                      title="Rules/guidelines channel"
+                      value={rulesTextChannel}
+                      items={selectItems}
+                      onChange={(e: any) => handleRulesChannel}
+                      disabled={false}
+                    />
+                  )}
+                  Valgt: {printRulesChannelName ? printRulesChannelName : '-'}
+                </Block>
               )}
-              Valgt: {printRulesChannelName ? printRulesChannelName : '-'}
-            </Block>
-          )}
-          {selectItems.length && (
-            <Block className={styles["space-settings-rule"] + " " + styles["space-admin-channel"]}>
-              {channelsList['text'].length && (
-                <SelectField
-                  lbl="admin-only-text-channel"
-                  title="Admin-only text channel"
-                  value={adminTextChannel}
-                  items={selectItems}
-                  onChange={(e: any) => handleAdminChannel}
-                  disabled={false}
-                />
+              {selectItems.length && (
+                <Block className={styles["space-settings-rule"] + " " + styles["space-admin-channel"]}>
+                  {channelsList['text'].length && (
+                    <SelectField
+                      lbl="admin-only-text-channel"
+                      title="Admin-only text channel"
+                      value={adminTextChannel}
+                      items={selectItems}
+                      onChange={(e: any) => handleAdminChannel}
+                      disabled={false}
+                    />
+                  )}
+                  Valgt: {printAdminChannelName ? printAdminChannelName : '-'}
+                </Block>
               )}
-              Valgt: {printAdminChannelName ? printAdminChannelName : '-'}
-            </Block>
+            </>
+          ) : (
+            <Block className={styles["space-settings-rule"]}>No channels to use for settings</Block>
           )}
           {languages.length && (
             <Block className={styles["space-settings-language"] + " " + styles["space-primary-language"]}>

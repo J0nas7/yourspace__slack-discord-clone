@@ -3,13 +3,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCompass } from '@fortawesome/free-solid-svg-icons'
+import { faCompass, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from '@/components'
 import pp_logo from '@/Assets/Images/headerLogo.png'
 import { useSpaces } from '@/hooks'
 import { Space, Profile as ProfileCard } from '@/components/'
+import { SpaceDTO } from '@/types'
 
 export default function Sidepanel() {
   // Hooks
@@ -36,7 +37,7 @@ export default function Sidepanel() {
       <Block className="sidepanel-spaces-list">
         {spacesList && spacesList.length ? (
           <>
-            {spacesList.map((space: any, i) =>
+            {spacesList.map((space: SpaceDTO, i) =>
               <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
             )}
           </>
@@ -47,11 +48,19 @@ export default function Sidepanel() {
             <Link href="#" className="placeholder-loading space-name"></Link>
           </>
         )}
+        <Link href={"/create/space"} className="create-space with-label">
+          <FontAwesomeIcon icon={faPlus} className="create" />
+          <Text variant="span" className="space-label">
+            <Text variant="span" className="inner-label">
+              Opret&nbsp;et&nbsp;space
+            </Text>
+          </Text>
+        </Link>
         <Link href={"/explore/all"} className="explore-spaces with-label">
           <FontAwesomeIcon icon={faCompass} className="compass" />
           <Text variant="span" className="space-label">
             <Text variant="span" className="inner-label">
-              Udforsk
+              Udforsk&nbsp;spaces
             </Text>
           </Text>
         </Link>

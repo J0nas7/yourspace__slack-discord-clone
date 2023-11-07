@@ -1,5 +1,5 @@
 // External
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { Button } from '@mui/material'
 
 // Internal
@@ -16,7 +16,7 @@ type Props = {
 
 export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModal, resetChannels}:  Props) => {
     // Hooks
-    const { handleCreateSubmit, errorMsg, status } = useChannels("")
+    const { createChannel, errorMsg, status } = useChannels()
 
     // Internal variables
     const [channelName, setChannelName] = useState<string>('')
@@ -28,7 +28,12 @@ export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModa
         setChannelName('')
         resetChannels()
     }
-    const onCreate = () => handleCreateSubmit(channelName, channelFormat, onSuccess)
+
+    const onCreate =(e?: FormEvent) => {
+        e?.preventDefault()
+        createChannel(channelName, channelFormat, onSuccess)
+    }
+
     const onCancel = () => setShowCreateModal(false)
 
     return (

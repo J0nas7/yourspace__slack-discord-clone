@@ -1,5 +1,5 @@
 // External
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 // Internal
@@ -59,8 +59,8 @@ export const useMessages = () => {
      * CRUD Methods
      */
     // Submit new message from input field
-    const createNewMessage = (e: any = '') => {
-        e.preventDefault()
+    const createNewMessage = (e?: FormEvent) => {
+        e?.preventDefault()
         const messageData = {
             Message_Content: newMessage,
             Channel_Name: channelName,

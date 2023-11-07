@@ -16,7 +16,7 @@ import {
 
 export default function spaceMembers() {
   // Hooks
-  const { urlSpaceName, getTheSpace, membersList } = useSpaces()
+  const { membersList } = useSpaces()
 
   // Internal variables
   type moderatorsAndAboveObject = { [key: string]: ProfileDTO[] }
@@ -52,10 +52,6 @@ export default function spaceMembers() {
   useEffect(() => {
     setSettingsToRender(theSpace)
   }, [theSpace])
-
-  useEffect(() => {
-    if (urlSpaceName) getTheSpace()
-  }, [])
 
   return (
     <Block className="other-pages-wrapper">

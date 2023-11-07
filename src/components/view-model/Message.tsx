@@ -1,6 +1,6 @@
 // External
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
@@ -53,8 +53,9 @@ const Message = ({
 
     // Methods
     const editMessage = () => canEdit ? setEditModal(true) : false
-    const saveChanges = (e: any = '') => {
-        e.preventDefault()
+    
+    const saveChanges = (e?: FormEvent) => {
+        e?.preventDefault()
         if (canEdit) {
             setEditModal(false)
             updateExistingMessage(theMessage, newContent)

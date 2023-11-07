@@ -23,7 +23,7 @@ export const EmojiPicker = ({
     useEffect(() => {
         if (typeof document !== "undefined") {
             const shadowRoot = document.querySelector('em-emoji-picker')?.shadowRoot
-            const styleTag: any = document.createElement('style')
+            const styleTag: Element = document.createElement('style')
             styleTag.innerHTML = 
                 "section#root { height: 400px; }" + 
                 "#preview { display: none; }"

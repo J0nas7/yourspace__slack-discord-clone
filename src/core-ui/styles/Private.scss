@@ -243,8 +243,8 @@
                     display: inline-block;
                 }
 
-                &.explore-spaces {
-                    .compass {
+                &.explore-spaces, &.create-space {
+                    .compass, .create {
                         width: 25px;
                         height: 25px;
                         color: white;

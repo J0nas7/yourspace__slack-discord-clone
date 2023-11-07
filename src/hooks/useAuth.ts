@@ -1,11 +1,11 @@
 // External
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 // Internal
 import { useAxios, useAuthContext } from './'
 import { CONSTANTS } from "@/data/CONSTANTS"
-import { jwtTokensDTO } from '@/types/AuthDTO'
+import { apiResponseDTO, jwtTokensDTO } from "@/types"
 import {
     useAppDispatch,
     useTypedSelector,
@@ -23,7 +23,11 @@ import {
     selectCreateErrorType
 } from '../redux'
 
-const errorCodes: any = {
+interface Errors {
+    [key: string]: string | undefined
+}
+
+const errorCodes: Errors = {
     wrong_credentials: 'Incorrect credentials. Please try again.',
     invalid_username: 'Invalid username or email address. Please check it and try again.',
     invalid_email: 'Invalid email address. Please check it and try again.',
@@ -35,69 +39,75 @@ const errorCodes: any = {
 }
 
 export const useAuth = () => {
-    // Instant variables
-    const [errorMsg, setErrorMsg] = useState<any>(null)
-    const [status, setStatus] = useState<any>(null)
-
-    // Hooks and Redux
-    const dispatch = useAppDispatch()
-    const loginErrorType = useTypedSelector(selectLoginErrorType)
-    const createErrorType = useTypedSelector(selectCreateErrorType)
-    const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
+    // Hooks
     const { isLoggedIn, setIsLoggedIn, removeTokens } = useAuthContext()
     const { httpPostWithData, httpGetRequest } = useAxios()
 
+    // Instant variables
+    const [errorMsg, setErrorMsg] = useState<string>('')
+    const [status, setStatus] = useState<string>('')
+
+    // Redux
+    const dispatch = useAppDispatch()
+    const { fetchIsLoggedInStatus, adminDoLogout } = useAuthActions()
+    const loginErrorType = useTypedSelector(selectLoginErrorType)
+    const createErrorType = useTypedSelector(selectCreateErrorType)
+
     // Methods
-    const saveLoginSuccess = (jwtData: jwtTokensDTO, memberOfSpaces: any) => {
+    const saveLoginSuccess = (jwtData: jwtTokensDTO, memberOfSpaces: number) => {
         dispatch(setAccessToken({ "data": jwtData.accessToken }))
         dispatch(setRefreshToken({ "data": jwtData.refreshToken }))
         setIsLoggedIn(true)
         goHome(memberOfSpaces)
     }
 
-    const goHome = (anyMember?: any) => {
+    const goHome = (memberOfSpace?: number) => {
+        // Redirect to explore all
+        window.location.href = "/explore/all"
+        /*
         //router.push('/') !!! not hard refreshing
-        if (anyMember === 0) { // Not a member of any spaces, redirect to create space
-            window.location.href = "/create/space"
+        if (memberOfSpace === 0) { // Not a member of a space, redirect to explore all
+            window.location.href = "/explore/all"
         } else { // Member of a space, redirect to frontpage of app
             window.location.href = "/"
-        }
+        }*/
     }
 
-    const onError = (fromAction: string, errors?: any) => {
+    const onError = (fromAction: string, errorMsgFromAPI?: string) => {
         if (loginErrorType || createErrorType) {
-            const theErrorMsg = errors?.message || loginErrorType || createErrorType
+            const theErrorMsg: string = errorMsgFromAPI || loginErrorType || createErrorType
             setErrorMsg(
                 errorCodes[theErrorMsg] || theErrorMsg
             )
-        } else if (errors) {
+        } else if (errorMsgFromAPI) {
             if (fromAction === "login") {
                 dispatch(setLoginErrorType({
-                    "data": errors.message
+                    "data": errorMsgFromAPI
                 }))
             } else if (fromAction === "create") {
                 dispatch(setCreateErrorType({
-                    "data": errors.message
+                    "data": errorMsgFromAPI
                 }))
             }
         } else if (loginErrorType === "" && createErrorType === "") {
-            setErrorMsg(null)
+            setErrorMsg('')
         }
     }
+
     useEffect(() => {
         onError("")
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loginErrorType, createErrorType])
 
-    const processResult = (fromAction: string, theResult: any) => {
+    const processResult = (fromAction: string, theResult: apiResponseDTO) => {
         setStatus('resolved')
 
         if (theResult.success === true) {
-            saveLoginSuccess(theResult.authorisation, theResult.memberOfSpaces)
+            saveLoginSuccess(theResult.data.authorisation, theResult.data.memberOfSpaces)
             return true
         }
 
-        onError(fromAction, theResult)
+        onError(fromAction, theResult.message)
         return false
     }
 
@@ -125,12 +135,12 @@ export const useAuth = () => {
         return
     }
 
-    const handleCreateSubmit = async (realNameInput: string, displayNameInput: string, emailInput: string,
+    const createProfile = async (realNameInput: string, displayNameInput: string, emailInput: string,
         passwordInput: string, password2Input: string,
         inputDD: string, inputMM: string, inputYYYY: string): Promise<boolean> => {
 
         setStatus('resolving')
-        let errorData
+        let errorData: apiResponseDTO
         let error = false
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setCreateErrorType({ "data": "" }))
@@ -217,13 +227,13 @@ export const useAuth = () => {
             error = true
         }
 
-        processResult("create", errorData)
+        processResult("create", errorData!)
         return false
     }
 
     const handleLoginSubmit = async (emailInput: string, passwordInput: string): Promise<boolean> => {
         setStatus('resolving')
-        let errorData
+        let errorData: apiResponseDTO
         let error = false
         // Resetting the errorType triggers another dispatch that resets the error
         dispatch(setLoginErrorType({ "data": "" }))
@@ -258,7 +268,7 @@ export const useAuth = () => {
             error = true
         }
 
-        processResult("login", errorData)
+        processResult("login", errorData!)
         return false
     }
 
@@ -271,6 +281,6 @@ export const useAuth = () => {
         status,
         goHome,
         handleLoginSubmit,
-        handleCreateSubmit,
+        createProfile,
     }
 }

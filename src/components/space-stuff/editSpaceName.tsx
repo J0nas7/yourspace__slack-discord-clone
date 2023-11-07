@@ -17,23 +17,17 @@ export default function editSpaceName({
     visible, trigger
 }: Props) {
     // Hooks
-    const { handleUpdateSubmit, errorMsg, status, theSpace, getTheSpace } = useSpaces()
+    const { updateSpace, errorMsg, status, theSpace } = useSpaces()
     const router = useRouter()
 
     // Internal variables
     const tempSpaceName: string = router.query.spaceName?.toString()!
-    const [editSpaceName, setEditSpaceName] = useState<string>('')
-    const [spaceImage, setSpaceImage] = useState<string>('')
+    const [editSpaceName, setEditSpaceName] = useState<string>(theSpace.Space_Name)
+    const [spaceImage, setSpaceImage] = useState<string>(theSpace.Space_ImageUrl || '')
 
     // Methods
-    const onEdit = () => handleUpdateSubmit(editSpaceName, tempSpaceName)
+    const onEdit = () => updateSpace(editSpaceName, tempSpaceName)
     const onSkip = () => trigger(false)
-
-    useEffect(() => {
-        getTheSpace()
-        if (tempSpaceName) setEditSpaceName(tempSpaceName)
-        if (theSpace.Space_ImageUrl) setSpaceImage(theSpace.Space_ImageUrl)
-    }, [tempSpaceName])
 
     return (
         <Modal

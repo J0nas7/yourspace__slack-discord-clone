@@ -3,5 +3,6 @@ export * from './MessageDTO'
 export * from './SpaceDTO'
 export * from './ChannelDTO'
 export * from './ProfileDTO'
+export * from './apiDTO'
 
 export * from './ServerIO'

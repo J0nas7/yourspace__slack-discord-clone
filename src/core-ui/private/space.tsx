@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text, Field, EditSpaceName, DeleteSpaceName, Space as SpaceCard } from '@/components'
+import { Block, Text, Field, EditSpaceName, Space as SpaceCard } from '@/components'
 import { ChannelsAndSettings } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
@@ -15,16 +15,16 @@ import { CONSTANTS } from '@/data/CONSTANTS'
 export default function Space() {
   // Hooks
   const router = useRouter()
+  const { theSpace, initChannels, getMembersOfTheSpace, readSpace, deleteSpace } = useSpaces()
 
   // Internal variables
-  const tempSpaceName: string = router.query.spaceName?.toString()!
+  const urlSpaceName: string = router.query.spaceName?.toString()!
   const [spaceSearch, setSpaceSearch] = useState<string>('')
   const [spaceActionMenu, setSpaceActionMenu] = useState<boolean>(false)
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const tempSpace: SpaceDTO = {
     Space_ID: 0,
-    Space_Name: tempSpaceName,
+    Space_Name: urlSpaceName,
   }
 
   // Methods
@@ -33,10 +33,27 @@ export default function Space() {
     setShowEditModal(true)
   }
 
-  const triggerDeleteModal = () => {
-    setSpaceActionMenu(false)
-    setShowDeleteModal(true)
+  const confirmDeleteSpace = () => {
+    if (confirm("Are you sure you want to delete this space, and its content?")) {
+      setSpaceActionMenu(false)
+      deleteSpace(urlSpaceName)
+    }
   }
+
+  useEffect(() => {
+    console.log("wrapper", urlSpaceName)
+    if (urlSpaceName) readSpace(urlSpaceName)
+  }, [urlSpaceName])
+
+  useEffect(() => {
+    if (theSpace?.Space_ID) {
+      const init = async () => {
+        initChannels()
+        getMembersOfTheSpace()
+      }
+      init()
+    }
+  }, [theSpace])
 
   return (
     <Block className="second-wrapper">
@@ -84,7 +101,7 @@ export default function Space() {
                 <li className="space-action-menu-item">
                   <Text
                     variant="span"
-                    onClick={() => triggerDeleteModal()}
+                    onClick={() => confirmDeleteSpace()}
                     className="space-action-menu-item-clickable"
                   >
                     <FontAwesomeIcon icon={faTrashCan} />
@@ -95,7 +112,6 @@ export default function Space() {
             </nav>
           </Block>
           {showEditModal && (<EditSpaceName visible={showEditModal} trigger={setShowEditModal} />)}
-          {showDeleteModal && (<DeleteSpaceName visible={showDeleteModal} trigger={setShowDeleteModal} />)}
         </Block>
       </Block>
       <Block className="space-content">

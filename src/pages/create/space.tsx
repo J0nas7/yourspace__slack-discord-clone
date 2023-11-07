@@ -8,16 +8,16 @@ import { Block, Modal, Text, Form, Field, FileUpload } from '@/components'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
 
 export default function Space() {
+    // Hooks
+    const { createSpace, errorMsg, status } = useSpaces()
+
     // Internal variables
     const [createSpaceModal, setCreateSpaceModal] = useState<boolean>(true)
     const [editSpaceName, setEditSpaceName] = useState<string>('')
     const [spaceImage, setSpaceImage] = useState<string>('')
 
-    // Hooks
-    const { handleCreateSubmit, errorMsg, status } = useSpaces()
-
-    const onCreate = () => handleCreateSubmit(editSpaceName, spaceImage)
-
+    // Methods
+    const onCreate = () => createSpace(editSpaceName, spaceImage)
     const onSkip = () => setCreateSpaceModal(false)
 
     return (
