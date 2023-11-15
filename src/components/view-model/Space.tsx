@@ -24,33 +24,34 @@ type Props = {
 const Space = ({
     variant = 'name', withLabel = false, space, className, theId
 }: Props) => {
+    // Hooks
     const router = useRouter()
+
+    // Internal variables
     const theSpace: SpaceDTO = space
+    const innerLabelName = theSpace?.Space_Name.replaceAll(' ', '&nbsp;')
+    const logoText = (theSpace?.Space_ImageUrl ? false : theSpace?.Space_Name.slice(0,4))
 
-    const logoText = (theSpace.Space_ImageUrl ? false : theSpace.Space_Name.slice(0,4))
-
-    if (variant === "name") {
+    if (theSpace && variant === "name") {
         return (
             <Link href={"/space/" + theSpace.Space_Name} className={(withLabel ? 'with-label' : '')}>
                 {theSpace.Space_Name}
             </Link>
         )
-    } else if (variant === "sidepanel") {
+    } else if (theSpace && variant === "sidepanel") {
         return (
             <Link href={"/space/" + theSpace.Space_Name} className={(withLabel ? 'with-label' : '')}>
                 {logoText && (<Text variant="span" className="space-logotext">{logoText}</Text>)}
                 <Text variant="span" className="space-label">
                     <Text variant="span" className="inner-label">
-                        {theSpace.Space_Name}
+                        <span dangerouslySetInnerHTML={{__html: innerLabelName}}></span>
                     </Text>
                 </Text>
             </Link>
         )
     }
 
-    return (
-        <></>
-    )
+    return (<></>)
 }
 
 export default Space

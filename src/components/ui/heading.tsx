@@ -1,6 +1,7 @@
 // Internal
 import { Text } from '..'
 
+type Variant = 'h1' | 'h2'
 /**
  * Renders a form field.
  *
@@ -13,7 +14,7 @@ export const Heading = ({
     className = ''
 } : {
     title: string,
-    variant?: any
+    variant?: Variant
     className?: string,
 }) => {
 	return (

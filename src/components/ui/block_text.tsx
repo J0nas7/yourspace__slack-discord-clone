@@ -13,7 +13,7 @@ const elements: Record<Variant, ReturnElement> = {
 }
 
 const classes: Record<Variant, string> = {
-    h1: 'page-title w-full md:w-[50%]',
+    h1: 'page-title',
     h2: 'block',
     p: 'block w-full float-left my-2',
     span: 'block',

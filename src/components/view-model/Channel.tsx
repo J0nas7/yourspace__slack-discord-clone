@@ -1,9 +1,9 @@
 // External
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faTrashCan, faHashtag, faMicrophoneLines, faVideo } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 
 // Internal
@@ -30,7 +30,7 @@ const Channel = ({
 }: Props) => {
     // Hooks
     const router = useRouter()
-    const { handleEditSubmit, errorMsg, status } = useChannels("")
+    const { updateChannel, deleteChannel, errorMsg, status } = useChannels()
 
     // Internal variables
     const routerChannelName = router.query.channelName
@@ -38,6 +38,11 @@ const Channel = ({
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
     const [editChannelName, setEditChannelName] = useState<string>(theChannel.Channel_Name)
+    const channelTypeIcons: { [key: string]: React.ReactNode } = {
+        'TEXT': <FontAwesomeIcon icon={faHashtag} className="channel-format-list-item-link-icon" />,
+        'AUDIO': <FontAwesomeIcon icon={faMicrophoneLines} className="channel-format-list-item-link-icon" />,
+        'VIDEO': <FontAwesomeIcon icon={faVideo} className="channel-format-list-item-link-icon" />,
+    }
 
     // Methods
     const listItemLinkHandler = (newName: string) => {
@@ -54,32 +59,35 @@ const Channel = ({
     }
 
     const onSuccess = () => {
-        setShowModal!(false)
+        if (setShowModal) setShowModal(false)
         setEditChannelName('')
         resetChannels!()
     }
 
-    const onEdit = () => handleEditSubmit(editChannelName, theChannel.Channel_Name, onSuccess)
-
-    const onDelete = () => {
-
+    const onEdit = (e?: FormEvent) => {
+        e?.preventDefault()
+        updateChannel(editChannelName, theChannel.Channel_Name, onSuccess)
     }
+
+    const onDelete = () => deleteChannel(channel.Channel_Name, onSuccess)
+
+    const handleDeleteChannel = () => confirm("Are you sure you want to delete the channel?") ? onDelete() : false
 
     if (variant === "space-channel-format-list-item") {
         return (
             <Block
                 variant="span"
-                className={"channel-format-list-item" + (routerChannelName === channel.Channel_Name ? " active" : "")}
+                className={"channel-format-list-item " + (routerChannelName === channel.Channel_Name ? " active" : "")}
             >
                 <Text variant="span" className="channel-format-list-item-link" onClick={() => listItemLinkHandler(channel.Channel_Name)}>
+                    {channelTypeIcons[channel.Channel_Type]}
                     {channel.Channel_Name}
                 </Text>
                 <Block variant="span" className="channel-format-list-item-actions">
                     <FontAwesomeIcon icon={faPen} className="channel-format-list-item-action" onClick={() => setShowEditModal(true)} />
-                    <FontAwesomeIcon icon={faTrashCan} className="channel-format-list-item-action" onClick={() => setShowDeleteModal(true)} />
+                    <FontAwesomeIcon icon={faTrashCan} className="channel-format-list-item-action" onClick={() => handleDeleteChannel()} />
                 </Block>
                 <ChannelCard variant="EDIT" channel={channel} showModal={showEditModal} setShowModal={setShowEditModal} resetChannels={resetChannels} />
-                <ChannelCard variant="DELETE" channel={channel} showModal={showDeleteModal} setShowModal={setShowDeleteModal} resetChannels={resetChannels} />
             </Block>
         )
     } else if (variant === "EDIT") {
@@ -90,7 +98,7 @@ const Channel = ({
                 title={"Edit channel: " + channel.Channel_Name}
                 className="edit-channel-dialog"
             >
-                <Form onSubmit={onEdit} className={styles["edit-channel-form"]}>
+                <Form onSubmit={(e) => onEdit(e)} className={styles["edit-channel-form"]}>
                     <Text variant="p" className={styles["edit-channel-teaser"]}>
                         Change your channels name.
                     </Text>
@@ -111,7 +119,7 @@ const Channel = ({
                         <Text className="error-notice" variant="p">{errorMsg}</Text>
                     )}
                     <Block className={styles["button-wrapper"] + " button-wrapper"}>
-                        <Button className="button button-green" onClick={onEdit} disabled={false}>
+                        <Button className="button button-green" onClick={() => onEdit()} disabled={false}>
                             <Text variant="span" className="button button-text">Save changes</Text>
                         </Button>
                         <Button className="button button-blue" onClick={() => setShowModal!(false)} disabled={false}>
@@ -121,7 +129,7 @@ const Channel = ({
                 </Form>
             </Modal>
         )
-    } else if (variant === "DELETE") {
+    /*} else if (variant === "DELETE") {
         return (
             <Modal
                 openModal={showModal!}
@@ -148,11 +156,9 @@ const Channel = ({
                 </Form>
             </Modal>
         )
-    }
+    */}
 
-    return (
-        <></>
-    )
+    return (<></>)
 }
 
 export default Channel

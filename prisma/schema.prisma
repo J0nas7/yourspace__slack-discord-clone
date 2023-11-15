@@ -23,7 +23,7 @@ model Space_Profile {
   Profile_Members  Space_Member[]
   Profile_Channels Space_Channel[]
 
-  Profile_Birthday  DateTime 
+  Profile_Birthday  DateTime
   Profile_CreatedAt DateTime @default(now())
   Profile_UpdatedAt DateTime @updatedAt
 }
@@ -42,11 +42,13 @@ model Space_Space {
 
   Space_CreatedAt DateTime @default(now())
   Space_UpdatedAt DateTime @updatedAt
+  Space_DeletedAt DateTime?
 
   @@index([Space_ProfileID])
 }
 
 enum MemberRole {
+  OWNER
   ADMIN
   MODERATOR
   GUEST
@@ -70,6 +72,7 @@ model Space_Member {
 
   Member_CreatedAt DateTime @default(now())
   Member_UpdatedAt DateTime @updatedAt
+  Member_DeletedAt DateTime?
 
   @@index([Member_ProfileID])
   @@index([Member_SpaceID])
@@ -82,9 +85,10 @@ enum ChannelType {
 }
 
 model Space_Channel {
-  Channel_ID   Int         @id @default(autoincrement())
-  Channel_Name String
-  Channel_Type ChannelType @default(TEXT)
+  Channel_ID     Int         @id @default(autoincrement())
+  Channel_Name   String
+  Channel_Type   ChannelType @default(TEXT)
+  Channel_Access String?
 
   Channel_ProfileID Int
   Channel_Profile   Space_Profile @relation(fields: [Channel_ProfileID], references: [Profile_ID], onDelete: Cascade)
@@ -96,6 +100,7 @@ model Space_Channel {
 
   Channel_CreatedAt DateTime @default(now())
   Channel_UpdatedAt DateTime @updatedAt
+  Channel_DeletedAt DateTime?
 
   @@index([Channel_ProfileID])
   @@index([Channel_SpaceID])
@@ -117,6 +122,7 @@ model Space_Message {
 
   Message_CreatedAt DateTime @default(now())
   Message_UpdatedAt DateTime @updatedAt
+  Message_DeletedAt DateTime?
 
   @@index([Message_MemberID])
   @@index([Message_ChannelID])

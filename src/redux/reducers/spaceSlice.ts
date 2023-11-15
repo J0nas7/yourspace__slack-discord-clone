@@ -5,11 +5,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import { SpaceDTO } from '@/types'
 
-type channelListObject = {[key: string]: []}
-
 export interface SpaceState {
     theSpace: SpaceDTO,
-    channelsList: channelListObject
+    getHighlightedSpaces: SpaceDTO[] | undefined
 }
 
 const emptySpace: SpaceDTO = {
@@ -19,11 +17,7 @@ const emptySpace: SpaceDTO = {
 
 const initialState = {
     theSpace: emptySpace,
-    channelsList: {
-        'text': [],
-        'audio': [],
-        'video': [],
-    }
+    getHighlightedSpaces: []
 } as SpaceState
 
 export const spaceSlice = createSlice({
@@ -33,17 +27,16 @@ export const spaceSlice = createSlice({
         setTheSpace: (state: SpaceState, action:PayloadAction<any>) => {
             state.theSpace = action.payload.data
         },
-        setChannelsList: (state:SpaceState, action:PayloadAction<any>) => {
-            const channelFormat: string = action.payload.format
-            state.channelsList[channelFormat] = action.payload.data
-        },
+        setHighlightedSpaces: (state: SpaceState, action: PayloadAction<any>) => {
+            state.getHighlightedSpaces = action.payload.data
+        }
     },
 })
 
 const { actions } = spaceSlice
-export const { setTheSpace, setChannelsList } = actions
+export const { setTheSpace, setHighlightedSpaces } = actions
 
 export default spaceSlice.reducer
 
 export const selectTheSpace = (state: RootState) => state.space.theSpace
-export const selectChannelsList = (state: RootState) => state.space.channelsList
+export const selectHighlightedSpaces = (state: RootState) => state.space.getHighlightedSpaces

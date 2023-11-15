@@ -3,7 +3,7 @@ export * from './templates/guest-layout'
 
 export * from './private/space'
 export * from './private/channel'
-export * from './private/channelName'
+export * from './private/channelStream'
 export * from './private/channelCreate'
 export * from './private/channelsList'
 export * from './private/channelsAndSettings'

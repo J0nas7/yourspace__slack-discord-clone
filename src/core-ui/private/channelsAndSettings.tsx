@@ -1,60 +1,59 @@
 // External
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { Button } from '@mui/material'
 
 // Internal
-import { Block, Text, Space as SpaceCard } from '@/components'
+import { Block, Text, Space as SpaceCard, Profile as ProfileCard } from '@/components'
 import { ChannelList } from "../"
-import { SpaceDTO } from '@/types'
 import { useSpaces } from '@/hooks'
 
 export const ChannelsAndSettings = () => {
     // Hooks
-    const { theSpace, getTheSpace, channelsList, getChannelsList } = useSpaces()
-    const router = useRouter()
+    const { urlSpaceName, theSpace, membersList, channelsList, resetChannels, initChannels, alreadyMember, createMember, getMembersOfTheSpace } = useSpaces()
 
     // Internal variables
-    const emptyChannels: {[key: string]: []} = {
+    type channelListObject = { [key: string]: [] }
+    const emptyChannels: { [key: string]: [] } = {
         'text': [],
         'audio': [],
         'video': [],
     }
-    const tempSpaceName: string = router.query.spaceName?.toString()!
-    const [channelsListToRender, setChannelsListToRender] = useState<{ [key: string]: [] }>(emptyChannels)
+    const [channelsListRender, setChannelsListRender] = useState<channelListObject>(emptyChannels)
 
     // Methods
-    const initSpace = () => getTheSpace()
-    const getAllChannels = (reset: boolean = false) => {
-        if (reset) setChannelsListToRender(emptyChannels)
-        getChannelsList("text")
-        getChannelsList("audio")
-        getChannelsList("video")
+    const joinTheSpace = () => {
+        if (!alreadyMember) {
+            createMember()
+        } else {
+            alert("You are already a member of this space.")
+        }
     }
-
-    const resetChannels = () => {
-        setChannelsListToRender(emptyChannels)
-        getAllChannels()
-    }
-
     useEffect(() => {
-        if (channelsList['text'].length) setChannelsListToRender(channelsList)
+        // console.log("channelsAndSettings", channelsList)
+        if (channelsList['text'].length ||
+            channelsList['audio'].length ||
+            channelsList['video'].length) setChannelsListRender(channelsList)
     }, [channelsList])
 
     useEffect(() => {
-        if (!theSpace.Space_Name) initSpace()
-        if (!channelsListToRender['text'].length) getAllChannels()
-    }, [theSpace])
-
-    useEffect(() => {
-        initSpace()
-        setChannelsListToRender(emptyChannels)
-    }, [tempSpaceName])
+        setChannelsListRender(emptyChannels)
+    }, [urlSpaceName])
 
     return (
         <>
-            <ChannelList format="Text" channelsList={channelsListToRender['text']} resetChannels={resetChannels} />
-            <ChannelList format="Audio" channelsList={channelsListToRender['audio']} resetChannels={resetChannels} />
-            <ChannelList format="Video" channelsList={channelsListToRender['video']} resetChannels={resetChannels} />
+            {!alreadyMember &&
+                <Block className="already-member">
+                    <Block className="already-member-teaser">
+                        Lige nu er du bare med på en kigger. Meld dig ind i spacet for at deltage i snakken!
+                        <Button className="join-button" onClick={joinTheSpace}>
+                            Deltag!
+                        </Button>
+                    </Block>
+                </Block>
+            }
+            <ChannelList format="Text" channelsList={channelsListRender['text']} resetChannels={resetChannels} />
+            <ChannelList format="Audio" channelsList={channelsListRender['audio']} resetChannels={resetChannels} />
+            <ChannelList format="Video" channelsList={channelsListRender['video']} resetChannels={resetChannels} />
 
             <Block className="channel-info members">
                 <Block className="channel-info-top members">
@@ -62,6 +61,17 @@ export const ChannelsAndSettings = () => {
                         MEMBERS OF <SpaceCard variant='name' withLabel={false} space={theSpace}></SpaceCard>
                     </Text>
                     <Text variant="span" className="channel-info-settings right-side" />
+                </Block>
+                <Block className="space-members-list">
+                    {membersList ? (
+                        <>
+                            {membersList && membersList.map((member, i) =>
+                                <ProfileCard variant="space-settings-member" className="space-members-list-item" profile={member} key={i} />
+                            )}
+                        </>
+                    ) : (
+                        <Block>There is no members</Block>
+                    )}
                 </Block>
             </Block>
         </>

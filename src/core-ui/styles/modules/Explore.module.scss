@@ -1,0 +1,32 @@
+.explore-wrapper {
+    position: relative;
+
+    .explore-jumbotron {
+        position: absolute;
+        width: calc(100% - 40px);
+        height: 350px;
+        margin: 20px;
+        padding: 20px;
+        background-image: linear-gradient(to right bottom, #add8e6, #96ccde, #7ec0d7, #65b5d0, #47a9c9);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        
+        .explore-jumbotron-inner {
+            h1 {
+                color: white !important;
+                margin: 0 !important;
+            }
+    
+            .jumbotron-teaser {
+                font-weight: 500;
+            }
+        }
+    }
+
+    .highlighted-section {
+        margin-top: calc(350px + 40px + 30px);
+    }
+}

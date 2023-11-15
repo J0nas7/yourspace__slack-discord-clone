@@ -27,6 +27,12 @@
     color: white !important;
 }
 
+h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #3f89a1;
+}
+
 button {
     @include button;
 

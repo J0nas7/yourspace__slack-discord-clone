@@ -11,20 +11,10 @@
     height: auto;
     background: none;
     float: left;
-    padding: 20px 10px;
-    margin-bottom: 20px;
+    padding: 15px 10px;
 
     &:nth-child(2n) {
         background-color: #f0f0f0;
-    }
-
-    .profile-picture {
-        float: left;
-        width: 40px;
-        height: 40px;
-        background: black;
-        border-radius: 50%;
-        margin-right: 10px;
     }
     
     .message-details {
@@ -79,14 +69,17 @@
     }
 }
 
-.channel-new-message {
+.channel-message {
     width: 100%;
     height: 80px;
-    position: absolute;
-    top: auto;
-    bottom: 0;
     display: flex;
     align-items: center;
+    
+    &.add-message {
+        position: absolute;
+        top: auto;
+        bottom: 0;
+    }
 
     .new-message-tools {
         width: 90%;
@@ -128,10 +121,25 @@
 
             fieldset { display: none; }
         }
-        .message-emoticons {
-            color: #585858;
-            margin-left: auto;
+
+        .new-message-emoji-picker {
+            position: relative;
             order: 3;
+
+            .message-emoticons {
+                color: #585858;
+                margin-left: auto;
+            }
+            .new-message-emoji-picker-content {
+                display: none;
+                position: absolute;
+                top: -420px;
+                left: calc(-352px + 30px);
+
+                &.show-picker {
+                    display: block;
+                }
+            }
         }
     }
 }

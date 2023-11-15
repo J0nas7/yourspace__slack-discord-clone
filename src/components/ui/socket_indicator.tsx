@@ -13,8 +13,6 @@ export const SocketIndicator = () => {
     }
 
     return (
-        <Block className="connection connection-live">
-            Live: Real-time updates
-        </Block>
+        <Block className="connection connection-live"></Block>
     )
 }

@@ -1,5 +1,5 @@
 // External
-import { useEffect, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { Button } from "@mui/material"
 import Link from "next/link"
 
@@ -9,8 +9,10 @@ import { useAuth } from "@/hooks"
 import { selectIsLoggedIn, useTypedSelector } from "@/redux"
 
 export default function Create() {
-    const { handleCreateSubmit, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
+    // Hooks
+    const { createProfile, isLoggedInTest, saveLoginSuccess, errorMsg, status, goHome } = useAuth()
 
+    // Internal variables
     const [userRealName, setUserRealName] = useState<string>('')
     const [userDisplayName, setUserDisplayName] = useState<string>('')
     const [userEmail, setUserEmail] = useState<string>('')
@@ -24,19 +26,18 @@ export default function Create() {
 
     const [createPending, setCreatePending] = useState(false)
 
-    const doCreate = (e: any = '') => {
-        if (typeof e.preventDefault === 'function') e.preventDefault()
+    // Methods
+    const handleCreate = (e?: FormEvent) => {
+        e?.preventDefault()
 
         if (!createPending) {
             setCreatePending(true)
-            handleCreateSubmit(userRealName, userDisplayName, userEmail, userPassword, userPassword2, userDD, userMM, userYYYY)
+            createProfile(userRealName, userDisplayName, userEmail, userPassword, userPassword2, userDD, userMM, userYYYY)
             setCreatePending(false)
         }
     }
 
-    const ifEnter = (e: any) => {
-        if (e.key === 'Enter') doCreate()
-    }
+    const ifEnter = (e: React.KeyboardEvent) => (e.key === 'Enter') ? handleCreate() : 0
 
     const isLoggedIn = useTypedSelector(selectIsLoggedIn)
 
@@ -57,14 +58,17 @@ export default function Create() {
                     <Text className="error-notice" variant="p">{errorMsg}</Text>
                 )}
 
-                <form onSubmit={doCreate}>
+                <form onSubmit={handleCreate}>
                     <Field
                         type="text"
                         lbl="Your name"
                         innerLabel={true}
                         value={userRealName}
                         onChange={(e: string) => setUserRealName(e)}
-                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        onKeyDown={
+                            (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                            ifEnter(event)
+                        }
                         disabled={status === 'resolving'}
                         className="login-field"
                         required={true}
@@ -75,7 +79,10 @@ export default function Create() {
                         innerLabel={true}
                         value={userDisplayName}
                         onChange={(e: string) => setUserDisplayName(e)}
-                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        onKeyDown={
+                            (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                            ifEnter(event)
+                        }
                         disabled={status === 'resolving'}
                         className="login-field"
                     />
@@ -85,7 +92,10 @@ export default function Create() {
                         innerLabel={true}
                         value={userEmail}
                         onChange={(e: string) => setUserEmail(e)}
-                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        onKeyDown={
+                            (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                            ifEnter(event)
+                        }
                         disabled={status === 'resolving'}
                         className="login-field"
                     />
@@ -95,7 +105,10 @@ export default function Create() {
                         innerLabel={true}
                         value={userPassword}
                         onChange={(e: string) => setUserPassword(e)}
-                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        onKeyDown={
+                            (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                            ifEnter(event)
+                        }
                         endButton={() => { setShowPassword(!showPassword) }}
                         endContent={!showPassword ? 'Show' : 'Hide'}
                         disabled={status === 'resolving'}
@@ -107,7 +120,10 @@ export default function Create() {
                         innerLabel={true}
                         value={userPassword2}
                         onChange={(e: string) => setUserPassword2(e)}
-                        onKeyDown={(e: any) => { ifEnter(e) }}
+                        onKeyDown={
+                            (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                            ifEnter(event)
+                        }
                         disabled={status === 'resolving'}
                         className="login-field"
                     />
@@ -119,7 +135,10 @@ export default function Create() {
                                 innerLabel={true}
                                 value={userDD}
                                 onChange={(e: string) => setUserDD(e)}
-                                onKeyDown={(e: any) => { ifEnter(e) }}
+                                onKeyDown={
+                                    (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                                    ifEnter(event)
+                                }
                                 disabled={status === 'resolving'}
                                 className="login-field"
                             />
@@ -129,7 +148,10 @@ export default function Create() {
                                 innerLabel={true}
                                 value={userMM}
                                 onChange={(e: string) => setUserMM(e)}
-                                onKeyDown={(e: any) => { ifEnter(e) }}
+                                onKeyDown={
+                                    (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                                    ifEnter(event)
+                                }
                                 disabled={status === 'resolving'}
                                 className="login-field"
                             />
@@ -139,7 +161,10 @@ export default function Create() {
                                 innerLabel={true}
                                 value={userYYYY}
                                 onChange={(e: string) => setUserYYYY(e)}
-                                onKeyDown={(e: any) => { ifEnter(e) }}
+                                onKeyDown={
+                                    (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                                    ifEnter(event)
+                                }
                                 disabled={status === 'resolving'}
                                 className="login-field"
                             />
@@ -148,7 +173,7 @@ export default function Create() {
                     <Text variant="p" className="clear-both">
                         <Button
                             className={'create-btn button button-green ' + (createPending || status === 'resolving' ? "pending" : "")}
-                            onClick={doCreate}
+                            onClick={handleCreate}
                             disabled={status === 'resolving'}
                         >
                             <Text variant="span" className="button button-text">Create account</Text>

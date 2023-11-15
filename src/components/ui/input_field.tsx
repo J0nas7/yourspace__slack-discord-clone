@@ -19,89 +19,94 @@ import TextareaAutosize from 'react-textarea-autosize'
 
 export const Field = ({
     type, lbl, displayLabel, innerLabel, hiddenMUILabel, placeholder, description, required, value, grow, growMin, disabled, className, onChange, onKeyDown, endButton, endContent, error, ...props
-} : {
+}: {
     type: string,
-    lbl: string, 
-    value: string, 
-    onChange: Function, 
-    onKeyDown?: Function, 
-    endButton?: Function, 
-    endContent?: string, 
-    disabled: boolean, 
+    lbl: string,
+    value: string,
+    onChange: Function,
+    onKeyDown?: Function,
+    endButton?: Function,
+    endContent?: string,
+    disabled: boolean,
     error?: string,
     required?: boolean
     displayLabel?: boolean,
-    innerLabel?: boolean, 
+    innerLabel?: boolean,
     hiddenMUILabel?: boolean
-    placeholder?: string, 
-    description?: string, 
-    grow?: boolean, 
-    growMin?: number, 
-    autoComplete?: string, 
+    placeholder?: string,
+    description?: string,
+    grow?: boolean,
+    growMin?: number,
+    autoComplete?: string,
     className?: string
     props?: Object
 }) => {
-	const inputProps = {
+    const inputProps = {
         type,
-		value,
+        value,
         className,
         label: `${(innerLabel ? lbl : '')}`,
-        id: `field-${ lbl }`,
-		placeholder,
+        id: `field-${lbl}`,
+        placeholder,
         disabled,
         required,
         ...props,
-	}
+    }
 
-	return (
-		<Block className={'custom-field-container field ' + className + (error ? ' field--error' : '') } theId={className}>
-            { ((lbl || displayLabel === true) && !innerLabel) && (
-                <label htmlFor={ `field-${ lbl }` }>
-                    { lbl }
+    return (
+        <Block className={'custom-field-container field ' + className + (error ? ' field--error' : '')} theId={className}>
+            {((lbl || displayLabel === true) && !innerLabel) && (
+                <label htmlFor={`field-${lbl}`}>
+                    {lbl}
                 </label>
-            ) }
-			<Block className="field-input">
-				{ grow === true ? (
+            )}
+            <Block className="field-input">
+                {grow === true ? (
                     <TextareaAutosize
-                        { ...inputProps }
+                        {...inputProps}
                         minRows={(growMin ? growMin : 1)}
                         maxRows={10}
                         onChange={(event) => onChange(event.target.value)}
                     />
-				) : (
+                ) : (
                     <Text variant="span" className="input-field-wrap">
-                        <TextField 
-                            { ...inputProps } 
-                            onChange={(event:any) => onChange(event.target.value)} 
+                        <TextField
+                            {...inputProps}
+                            onChange={
+                                (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => 
+                                onChange(event.target.value)
+                            }
                             onKeyDown={onKeyDown ?
-                                (event) => onKeyDown!(event) : 
+                                (event) => onKeyDown!(event) :
                                 undefined}
-                            InputProps={endButton ? 
-                                {endAdornment: (
-                                    <InputAdornment position="end">
-                                    <IconButton
-                                        edge="end"
-                                        onClick={() => endButton()}
-                                    >
-                                    {endContent}
-                                    </IconButton>
-                                    </InputAdornment>
-                                )}
+                            InputProps={endButton ?
+                                {
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                edge="end"
+                                                onClick={() => endButton()}
+                                            >
+                                                {endContent}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }
                                 : undefined}
                         />
                     </Text>
-				) }
-			</Block>
-			{ description && (
-				<Text variant="p" className="field__description">
-					{ description }
+                )}
+            </Block>
+            {description && (
+                <Text variant="p" className="field__description">
+                    {description}
                 </Text>
-			) }
-			{ error && (
-				<Text variant="p" className="field__error">
-					{ error }
+            )}
+            {error && (
+                <Text variant="p" className="field__error">
+                    {error}
                 </Text>
-			) }
-		</Block>
-	)
+            )}
+        </Block>
+    )
 }

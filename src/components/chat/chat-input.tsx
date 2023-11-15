@@ -1,66 +1,51 @@
 // External
 import { useRouter } from "next/router"
-import { useState } from "react"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSmile } from "@fortawesome/free-solid-svg-icons"
+import { FormEventHandler, useState } from "react"
 
 // Internal
-import { Block, Field, Form } from "@/components"
+import { Block, Field, Form, EmojiPicker } from "@/components"
 import styles from '@/core-ui/styles/modules/Message.module.scss'
-import { useAxios } from "@/hooks"
+import { useAxios, useMessages } from "@/hooks"
 
 interface ChatInputProps {
-    apiUrl: string
-    query: Record<string, any>
     name: string
     type: "conversation" | "channel"
+    className: string
+    value?: string
+    setChanges?: Function
+    saveChanges?: FormEventHandler
 }
 
 export const ChatInput = ({
-    apiUrl,
-    query,
     name,
-    type
+    type,
+    className,
+    value,
+    setChanges,
+    saveChanges
 }: ChatInputProps) => {
     // Hooks
-    const router = useRouter()
-    const { socketEmit } = useAxios()
-
-    // Internal variables
-    const spaceName = router.query.spaceName
-    const channelName = router.query.channelName
-    const [newMessage, setNewMessage] = useState<string>('')
-
-    // Methods
-    const onSubmit = (e: any = '') => {
-        e.preventDefault()
-        const messageData = {
-            Message_Content: newMessage,
-            Channel_Name: channelName,
-            Space_Name: spaceName
-        }
-
-        // Send to API
-        socketEmit('sendChatToServer', messageData)
-        setNewMessage('')
-    }
+    const { newMessage, setNewMessage, createNewMessage } = useMessages()
 
     return (
-        <Form onSubmit={onSubmit}>
-            <Block className={styles["channel-new-message"]}>
+        <Form onSubmit={saveChanges ? saveChanges : createNewMessage}>
+            <Block className={styles["channel-message"]+" "+styles[className]}>
                 <Block className={styles["new-message-tools"]}>
                     <Block className={styles["message-add-media"]}>+</Block>
                     <Field
                         type="text"
                         lbl=""
-                        value={newMessage}
-                        placeholder={"Message " + (type === "conversation" ? name : "#"+name)}
-                        onChange={(e: string) => setNewMessage(e)}
+                        value={value ? value : newMessage}
+                        placeholder={"Message " + (type === "conversation" ? name : "#" + name)}
+                        onChange={(e: string) => setChanges ? setChanges(e) : setNewMessage(e)}
                         disabled={false}
                         className={styles["new-message-field"]}
                         autoComplete="off"
                     />
-                    <FontAwesomeIcon icon={faSmile} className={styles["message-emoticons"]} />
+                    <EmojiPicker onChange={
+                        (emoji: string) =>
+                            setChanges ? setChanges(value + emoji) : setNewMessage(newMessage + emoji)
+                    } />
                 </Block>
             </Block>
         </Form>
