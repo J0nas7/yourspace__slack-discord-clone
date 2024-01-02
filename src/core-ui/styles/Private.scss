@@ -446,14 +446,19 @@
                         cursor: pointer;
                     }
 
-                    &.members .channel-info-settings {
-                        display: block;
-                        width: 15px;
-                        height: 15px;
-                        background: none;
-                        background-image: url("../../Assets/Images/spaceMembersSettings.png");
-                        background-repeat: no-repeat;
-                        background-size: 15px;
+                    &.members {
+                        min-height: 20px;
+                        height: auto;
+
+                        .channel-info-settings {
+                            display: block;
+                            width: 15px;
+                            height: 15px;
+                            background: none;
+                            background-image: url("../../Assets/Images/spaceMembersSettings.png");
+                            background-repeat: no-repeat;
+                            background-size: 15px;
+                        }
                     }
                 }
 
@@ -616,9 +621,11 @@
                 }
             }
 
-            .space-member {
-                display: flex;
-                align-items: center;
+            .space-member-wrapper {
+                .space-member {
+                    display: flex;
+                    align-items: center;
+                }
 
                 .profile-picture.h25 {
                     order: 1;
@@ -628,19 +635,24 @@
                     order: 2;
                 }
 
-                .member-action {
-                    order: 3;
+                .space-member-tools {
+                    margin-left: 35px;
                     display: none;
-                    color: #424242;
-                    margin-left: auto;
-                    cursor: pointer;
+
+                    .member-action {
+                        float: left;
+                        margin-right: 15px;
+                        color: #424242;
+                        cursor: pointer;
+                    }
                 }
 
                 &:hover {
-                    .member-action {
+                    .space-member-tools {
                         display: block;
                     }
                 }
+
             }
         }
     }
