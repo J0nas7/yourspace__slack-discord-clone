@@ -16,6 +16,7 @@ import {
     setChannelsList,
     selectChannelsList,
     setMembersList,
+    updateMembersListPosition,
     selectMembersList,
     setHighlightedSpaces,
     selectHighlightedSpaces
@@ -139,6 +140,37 @@ export const useSpaces = () => {
                 }
             } catch (e) {
                 console.log("useSpaces createMember error", e)
+            }
+        }
+        return
+    }
+
+    // Change membership role
+    const changeMembershipRole = async (role: string, theProfile: ProfileDTO, spaceName: string) => {
+        const theProfileID = theProfile.Profile_ID
+
+        if (role && theProfileID && spaceName) {
+            // Variables to send to backend API
+            const changeMembershipRoleVariables = {
+                "Space_Name": spaceName,
+                "Profile_ID": theProfileID,
+                "New_Role": role
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("updateMembershipRole", changeMembershipRoleVariables)
+                if (data.success) {
+                    theProfile = {
+                        ...theProfile,
+                        Member_Role: role
+                    }
+                    dispatch(updateMembersListPosition({
+                        "data": theProfile
+                    }))
+                }
+            } catch (e) {
+                console.log("useSpaces changeMembershipRole error", e)
             }
         }
         return
@@ -283,7 +315,7 @@ export const useSpaces = () => {
 
     // Request space from the unique space name
     const readSpace = async (spaceName?: string) => {
-        if (urlSpaceName || spaceName) {
+        if (urlSpaceName || spaceName) {
             // Variables to send to backend API
             const getSpaceVariables = {
                 "Space_Name": spaceName ? spaceName : urlSpaceName
@@ -395,6 +427,7 @@ export const useSpaces = () => {
         getHighlightedSpacesList,
         removeMember,
         createMember,
+        changeMembershipRole,
 
         // Generic methods
         readSpace,

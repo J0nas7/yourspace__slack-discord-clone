@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { ProfileDTO } from "@/types"
 import { useAxios } from '@/hooks'
 
-export default function AccessSettings({ membersList, children }: { membersList?: ProfileDTO[] | undefined, children: React.ReactNode }) {
+export default function AccessSettings({ membersList, access, children }: { membersList?: ProfileDTO[] | undefined, access?: number, children: React.ReactNode }) {
     // Hooks
     const router = useRouter()
     const { httpGetRequest } = useAxios()
@@ -35,9 +35,10 @@ export default function AccessSettings({ membersList, children }: { membersList?
     useEffect(() => {
         if (iAm) {
             setCanEdit(() => {
-                if (/*iAm?.Member_Role == "MODERATOR" || */iAm?.Member_Role == "ADMIN" || iAm?.Member_Role == "OWNER") {
+                if (access == 4 && iAm?.Member_Role == "OWNER") {
                     return true
                 }
+                
                 router.push("/space/" + tempSpaceName)
                 return false
             })

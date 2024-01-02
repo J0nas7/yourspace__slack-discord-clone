@@ -21,10 +21,11 @@ type Props = {
     profileID?: number
     className?: string
     hook1?: Function
+    hook2?: Function
 }
 
 const Profile = ({
-    variant = 'in-channel', condition, profile, profileID, className, hook1
+    variant = 'in-channel', condition, profile, profileID, className, hook1, hook2
 }: Props) => {
     // Hooks
     const router = useRouter()
@@ -98,12 +99,15 @@ const Profile = ({
                                 {hook1 && condition == "membership" && (
                                     <FontAwesomeIcon icon={faTrash} className="member-action remove-member" onClick={() => hook1(theProfile)} />
                                 )}
-                                {hook1 && condition == "member-role" && (
+                                {hook2 && condition == "membership" && (
+                                    <FontAwesomeIcon icon={faGavel} className="member-action make-mod" onClick={() => hook2("Moderator", theProfile)} />
+                                )}
+                                {hook1 && hook2 && condition == "member-role" && (
                                     <>
-                                        <FontAwesomeIcon icon={faUser} className="member-action make-member" onClick={() => hook1("Member", theProfile)} />
-                                        <FontAwesomeIcon icon={faGavel} className="member-action make-mod" onClick={() => hook1("Moderator", theProfile)} />
-                                        <FontAwesomeIcon icon={faStar} className="member-action make-admin" onClick={() => hook1("Administrator", theProfile)} />
-                                        <FontAwesomeIcon icon={faKey} className="member-action make-owner" onClick={() => hook1("Owner", theProfile)} />
+                                        <FontAwesomeIcon icon={faUser} className="member-action make-member" onClick={() => hook2("Guest", theProfile)} />
+                                        <FontAwesomeIcon icon={faGavel} className="member-action make-mod" onClick={() => hook2("Moderator", theProfile)} />
+                                        <FontAwesomeIcon icon={faStar} className="member-action make-admin" onClick={() => hook2("Admin", theProfile)} />
+                                        <FontAwesomeIcon icon={faTrash} className="member-action remove-member" onClick={() => hook1(theProfile)} />
                                     </>
                                 )}
                             </Block>

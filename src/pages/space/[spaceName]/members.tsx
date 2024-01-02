@@ -1,4 +1,5 @@
 // External
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGavel, faStar, faKey, faCheck } from '@fortawesome/free-solid-svg-icons'
@@ -16,32 +17,33 @@ import {
 
 export default function spaceMembers() {
   // Hooks
-  const { membersList } = useSpaces()
+  const router = useRouter()
+  const { membersList, changeMembershipRole } = useSpaces()
 
   // Internal variables
   type moderatorsAndAboveObject = { [key: string]: ProfileDTO[] }
   const [settingsToRender, setSettingsToRender] = useState<SpaceDTO>()
   const [moderatorsAndAbove, setModeratorsAndAbove] = useState<moderatorsAndAboveObject>({
     'moderator': [],
-    'administrator': [],
-    'owner': [],
+    'admin': []
   })
   const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["role-item-rule-check"]} />
-
+  const tempSpaceName: string = router.query.spaceName?.toString()!
   const [iAm, setIAm] = useState<ProfileDTO>()
   const cantDoThis = "You can't perform this action"
+  const [theOwner, setTheOwner] = useState<ProfileDTO>()
 
   // Redux
   const theSpace = useTypedSelector(selectTheSpace)
 
   // Methods
   const filterModeratorsAndAbove = (role: string) => {
-    if (membersList) return membersList.filter((member: ProfileDTO, i) => member.Member_Role == role)
+    if (membersList) return membersList.filter((member: ProfileDTO, i: any) => member.Member_Role == role)
   }
 
   const makeAnotherRole = (role: string, theProfile: ProfileDTO) => {
-    if (confirm("Make " + theProfile.Profile_DisplayName + " a(n) " + role + "?")) {
-
+    if (confirm("Make " + theProfile.Profile_DisplayName + " a/an " + role + "?")) {
+      changeMembershipRole(role.toLocaleUpperCase(), theProfile, tempSpaceName)
     }
   }
 
@@ -55,12 +57,11 @@ export default function spaceMembers() {
     if (membersList) {
       const moderators: ProfileDTO[] = filterModeratorsAndAbove("MODERATOR")!
       const admins: ProfileDTO[] = filterModeratorsAndAbove("ADMIN")!
-      const owner: ProfileDTO[] = filterModeratorsAndAbove("OWNER")!
       setModeratorsAndAbove({
         'moderator': moderators,
-        'administrator': admins,
-        'owner': owner,
+        'admin': admins
       })
+      setTheOwner(filterModeratorsAndAbove("OWNER")![0])
     }
   }, [membersList])
 
@@ -69,7 +70,7 @@ export default function spaceMembers() {
   }, [theSpace])
 
   return (
-    <AccessSettings membersList={membersList}>
+    <AccessSettings membersList={membersList} access={4}>
       <Block className="other-pages-wrapper">
         <Block className={"other-pages-inner " + styles["space-settings"]}>
           <Heading title={"Space members: " + settingsToRender?.Space_Name} />
@@ -109,7 +110,7 @@ export default function spaceMembers() {
             </Block>
             <Block className={styles["member-roles-item"]}>
               <Text variant="span" className={styles["role-item-title"]}>
-                <Text variant="span">Administrator</Text>
+                <Text variant="span">Admin</Text>
                 <FontAwesomeIcon icon={faStar} className={styles["role-item-title-icon"]} />
               </Text>
               <Text variant="span" className={styles["role-item-rule"]}>
@@ -147,7 +148,7 @@ export default function spaceMembers() {
                 {content.length ? (
                   <>
                     {content && content.map((member, i) =>
-                      <ProfileCard variant="space-settings-member" condition="member-role" className={styles["space-member"]} profile={member} key={i} hook1={makeAnotherRole} />
+                      <ProfileCard variant="space-settings-member" condition="member-role" className={styles["space-member"]} profile={member} key={i} hook1={deleteMember} hook2={makeAnotherRole} />
                     )}
                   </>
                 ) : (
@@ -155,6 +156,12 @@ export default function spaceMembers() {
                 )}
               </Block>
             )}
+            <Block className="clear-both">
+              <Text variant="span" className={styles["role-members-title"]}>
+                <strong>Owner:</strong>
+              </Text>
+              <ProfileCard variant="space-settings-member" className={styles["space-member"] + " clear-both"} profile={theOwner} />
+            </Block>
             <Block className="clear-both"></Block>
           </Block>
           <Block className={"page-section " + styles["space-members-list"]}>
@@ -162,7 +169,7 @@ export default function spaceMembers() {
             {membersList ? (
               <>
                 {membersList && membersList.map((member, i) =>
-                  <ProfileCard variant="space-settings-member" condition="membership" className={styles["space-member"]} profile={member} key={i} hook1={deleteMember} />
+                  <ProfileCard variant="space-settings-member" condition="membership" className={styles["space-member"]} profile={member} key={i} hook1={deleteMember} hook2={makeAnotherRole} />
                 )}
               </>
             ) : (

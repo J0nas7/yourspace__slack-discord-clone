@@ -6,7 +6,7 @@ import { RootState } from '../store'
 import { ChannelDTO, ProfileDTO } from '@/types'
 import { Channels } from '@mui/material/styles/createPalette'
 
-type channelListObject = {[key: string]: []}
+type channelListObject = { [key: string]: [] }
 
 export interface ChannelState {
     theChannel: ChannelDTO,
@@ -34,21 +34,29 @@ export const channelSlice = createSlice({
     name: 'channel',
     initialState,
     reducers: {
-        setTheChannel: (state: ChannelState, action:PayloadAction<any>) => {
+        setTheChannel: (state: ChannelState, action: PayloadAction<any>) => {
             state.theChannel = action.payload.data
         },
-        setChannelsList: (state: ChannelState, action:PayloadAction<any>) => {
+        setChannelsList: (state: ChannelState, action: PayloadAction<any>) => {
             const channelFormat: string = action.payload.format
             if (channelFormat) state.channelsList[channelFormat] = action.payload.data
         },
-        setMembersList: (state: ChannelState, action:PayloadAction<any>) => {
+        setMembersList: (state: ChannelState, action: PayloadAction<any>) => {
             state.membersList = action.payload.data
         },
+        updateMembersListPosition: (state: ChannelState, action: PayloadAction<any>) => {
+            const index = state.membersList!.map(item => item.Profile_ID).indexOf(action.payload.data.Profile_ID)
+            state.membersList = [
+                ...state.membersList!.slice(0, index),
+                action.payload.data,
+                ...state.membersList!.slice(index + 1)
+            ]
+        }
     },
 })
 
 const { actions } = channelSlice
-export const { setTheChannel, setChannelsList, setMembersList } = actions
+export const { setTheChannel, setChannelsList, setMembersList, updateMembersListPosition } = actions
 
 export default channelSlice.reducer
 
