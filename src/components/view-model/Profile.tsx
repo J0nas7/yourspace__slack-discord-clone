@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGear, faArrowRightFromBracket, faTrash, faFont } from '@fortawesome/free-solid-svg-icons'
+import { faGear, faArrowRightFromBracket, faTrash, faFont, faGavel, faStar, faKey, faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -16,13 +16,15 @@ import { ProfileDTO, SpaceDTO } from '@/types/'
 type Variant = 'in-channel' | 'space-settings-member' | 'space-bottom' | 'profile-picture'
 type Props = {
     variant: Variant
+    condition? : string
     profile?: ProfileDTO
     profileID?: number
     className?: string
+    hook1?: Function
 }
 
 const Profile = ({
-    variant = 'in-channel', profile, profileID, className
+    variant = 'in-channel', condition, profile, profileID, className, hook1
 }: Props) => {
     // Hooks
     const router = useRouter()
@@ -86,11 +88,27 @@ const Profile = ({
         return (
             <>
                 {theProfile && (
-                    <Block className={className + " space-member"}>
-                        <ProfileCard variant="profile-picture" className="profile-picture h25" profile={theProfile} />
-                        <Text variant="span" className="display-name">{theProfile.Profile_DisplayName}</Text>
-                        <FontAwesomeIcon icon={faTrash} className="member-action remove-member" />
-                    </Block>
+                    <>
+                        <Block className={className + " space-member-wrapper"}>
+                            <Block className="space-member space-member-details">
+                                <ProfileCard variant="profile-picture" className="profile-picture h25" profile={theProfile} />
+                                <Text variant="span" className="display-name">{theProfile.Profile_DisplayName}</Text>
+                            </Block>
+                            <Block className="space-member-tools">
+                                {hook1 && condition == "membership" && (
+                                    <FontAwesomeIcon icon={faTrash} className="member-action remove-member" onClick={() => hook1(theProfile)} />
+                                )}
+                                {hook1 && condition == "member-role" && (
+                                    <>
+                                        <FontAwesomeIcon icon={faUser} className="member-action make-member" onClick={() => hook1("Member", theProfile)} />
+                                        <FontAwesomeIcon icon={faGavel} className="member-action make-mod" onClick={() => hook1("Moderator", theProfile)} />
+                                        <FontAwesomeIcon icon={faStar} className="member-action make-admin" onClick={() => hook1("Administrator", theProfile)} />
+                                        <FontAwesomeIcon icon={faKey} className="member-action make-owner" onClick={() => hook1("Owner", theProfile)} />
+                                    </>
+                                )}
+                            </Block>
+                        </Block>
+                    </>
                 )}
             </>
         )
