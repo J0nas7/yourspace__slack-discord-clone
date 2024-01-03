@@ -16,6 +16,8 @@ import {
     setChannelsList,
     selectChannelsList,
     setMembersList,
+    deleteMemberFromList,
+    updateMembersListPosition,
     selectMembersList,
     setHighlightedSpaces,
     selectHighlightedSpaces
@@ -101,28 +103,6 @@ export const useSpaces = () => {
         return true
     }
 
-    // Remove membership from the unique space name
-    const removeMember = async (Profile_ID: number = 0) => {
-        if (urlSpaceName) {
-            // Variables to send to backend API
-            const removeMembershipVariables = {
-                "Space_Name": urlSpaceName,
-                "Profile_ID": Profile_ID
-            }
-
-            // Send request to the API for membership
-            try {
-                const data = await httpPostWithData("removeMember", removeMembershipVariables)
-                if (data.success) {
-                    window.location.href = '/space/' + urlSpaceName
-                }
-            } catch (e) {
-                console.log("useSpaces removeMember error", e)
-            }
-        }
-        return
-    }
-
     // Create membership from the unique space name
     const createMember = async () => {
         if (urlSpaceName) {
@@ -139,6 +119,70 @@ export const useSpaces = () => {
                 }
             } catch (e) {
                 console.log("useSpaces createMember error", e)
+            }
+        }
+        return
+    }
+
+    // Delete membership from the unique space name
+    const deleteMember = async (theProfile: ProfileDTO, from: string, spaceName?: string) => {
+        const theProfileID = theProfile.Profile_ID
+        if (theProfileID && (spaceName || urlSpaceName)) {
+            // Variables to send to backend API
+            const removeMembershipVariables = {
+                "Space_Name": spaceName || urlSpaceName,
+                "Profile_ID": theProfileID
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("deleteMember", removeMembershipVariables)
+                // If member deleted itself
+                if (data.success && from == "member") {
+                    window.location.href = '/space/' + urlSpaceName
+                    return
+                }
+                
+                // If member is deleted by an admin
+                if (data.success && from == "admin") {
+                    dispatch(deleteMemberFromList({
+                        "data": theProfile
+                    }))
+                    return
+                }
+            } catch (e) {
+                console.log("useSpaces removeMember error", e)
+            }
+        }
+        return
+    }
+
+    // Change membership role
+    const changeMembershipRole = async (role: string, theProfile: ProfileDTO, spaceName: string) => {
+        const theProfileID = theProfile.Profile_ID
+
+        if (role && theProfileID && spaceName) {
+            // Variables to send to backend API
+            const changeMembershipRoleVariables = {
+                "Space_Name": spaceName,
+                "Profile_ID": theProfileID,
+                "New_Role": role
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("updateMembershipRole", changeMembershipRoleVariables)
+                if (data.success) {
+                    theProfile = {
+                        ...theProfile,
+                        Member_Role: role
+                    }
+                    dispatch(updateMembersListPosition({
+                        "data": theProfile
+                    }))
+                }
+            } catch (e) {
+                console.log("useSpaces changeMembershipRole error", e)
             }
         }
         return
@@ -283,7 +327,7 @@ export const useSpaces = () => {
 
     // Request space from the unique space name
     const readSpace = async (spaceName?: string) => {
-        if (urlSpaceName || spaceName) {
+        if (urlSpaceName || spaceName) {
             // Variables to send to backend API
             const getSpaceVariables = {
                 "Space_Name": spaceName ? spaceName : urlSpaceName
@@ -393,8 +437,9 @@ export const useSpaces = () => {
         getChannelsList,
         resetChannels,
         getHighlightedSpacesList,
-        removeMember,
+        deleteMember,
         createMember,
+        changeMembershipRole,
 
         // Generic methods
         readSpace,
