@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from "react"
 
 // Internal
+import { Block, Heading } from '@/components'
 import { ProfileDTO } from "@/types"
 import { useAxios } from '@/hooks'
 
@@ -38,14 +39,23 @@ export default function AccessSettings({ membersList, access, children }: { memb
                 if (access == 4 && iAm?.Member_Role == "OWNER") {
                     return true
                 }
-                
+
                 router.push("/space/" + tempSpaceName)
                 return false
             })
         }
     }, [iAm])
 
-    if (!canEdit) return ( <>Validating your access...</> )
+    if (!canEdit) return (
+        <Block className="other-pages-wrapper">
+            <Block className={"other-pages-inner "}>
+                <Heading title={"Space members: "} />
+                <Block className={"page-section "}>
+                    Validating your access...
+                </Block>
+            </Block>
+        </Block>
+    )
 
     return (
         <>{children}</>

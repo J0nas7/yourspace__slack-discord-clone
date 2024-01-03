@@ -269,6 +269,12 @@
             .member-context-details {
                 width: 90%;
                 height: 40px;
+
+                .profile-info {
+                    width: calc(100% - 50px);
+                    float: left;
+                    overflow-x: hidden;
+                }
             }
         }
     }
@@ -543,6 +549,7 @@
     .other-pages-wrapper {
         width: 75%;
         height: 100vh;
+        overflow-y: scroll;
         background-color: var(--channelBg);
         float: right;
     }

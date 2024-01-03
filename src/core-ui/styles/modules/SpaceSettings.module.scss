@@ -1,9 +1,36 @@
 .space-settings {
+    .space-public-option {
+        width: 50%;
+        float: left;
+        margin-bottom: 20px;
+
+        .public-option-title {
+            display: block;
+            width: 100%;
+            font-weight: 700;
+        }
+    }
+
     .space-member {
         width: 50%;
         float: left;
         margin-bottom: 10px;
         padding-right: 20px;
+    }
+
+    .role-item-rule,
+    .public-option-rule {
+        clear: both;
+        display: flex;
+        align-items: center;
+        font-size: .75rem;
+
+        .rule-check {
+            width: 10px;
+            float: left;
+            margin-right: 10px;
+            color: #008000;
+        }
     }
 
     .member-roles-item {
@@ -25,19 +52,6 @@
 
             .role-item-title-icon {
                 height: 18px;
-            }
-        }
-
-        .role-item-rule {
-            clear: both;
-            display: flex;
-            align-items: center;
-
-            .role-item-rule-check {
-                width: 10px;
-                float: left;
-                margin-right: 10px;
-                color: #008000;
             }
         }
 
@@ -67,7 +81,9 @@
         margin-bottom: 20px;
     }
 
-    .space-admin-channel, .space-rules-channel, .space-primary-language {
+    .space-admin-channel,
+    .space-rules-channel,
+    .space-primary-language {
         width: 200px;
     }
 }

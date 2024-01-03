@@ -1,12 +1,11 @@
 // External
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGavel, faStar, faKey, faCheck } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text, Heading, Field, Profile as ProfileCard, AccessSettings } from '@/components'
-import { ProfileDTO, SpaceDTO } from '@/types'
+import { ProfileDTO } from '@/types'
 import styles from '@/core-ui/styles/modules/SpaceSettings.module.scss'
 import { useSpaces } from '@/hooks'
 import {
@@ -17,24 +16,16 @@ import {
 
 export default function spaceMembers() {
   // Hooks
-  const router = useRouter()
-  const { membersList, filterModeratorsAndAbove, updateConfirmRole, deleteThisMember } = useSpaces()
+  const { theSpace, membersList, filterModeratorsAndAbove, updateConfirmRole, deleteThisMember } = useSpaces()
 
   // Internal variables
   type moderatorsAndAboveObject = { [key: string]: ProfileDTO[] }
-  const [settingsToRender, setSettingsToRender] = useState<SpaceDTO>()
   const [moderatorsAndAbove, setModeratorsAndAbove] = useState<moderatorsAndAboveObject>({
     'moderator': [],
     'admin': []
   })
-  const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["role-item-rule-check"]} />
-  const tempSpaceName: string = router.query.spaceName?.toString()!
-  const [iAm, setIAm] = useState<ProfileDTO>()
-  const cantDoThis = "You can't perform this action"
+  const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["rule-check"]} />
   const [theOwner, setTheOwner] = useState<ProfileDTO>()
-
-  // Redux
-  const theSpace = useTypedSelector(selectTheSpace)
 
   // Methods
   useEffect(() => {
@@ -49,15 +40,63 @@ export default function spaceMembers() {
     }
   }, [membersList])
 
-  useEffect(() => {
-    setSettingsToRender(theSpace)
-  }, [theSpace])
-
   return (
     <AccessSettings membersList={membersList} access={4}>
       <Block className="other-pages-wrapper">
         <Block className={"other-pages-inner " + styles["space-settings"]}>
-          <Heading title={"Space members: " + settingsToRender?.Space_Name} />
+          <Heading title={"Space members: " + theSpace.Space_Name} />
+          <Block className={"page-section " + styles["space-publicity"]}>
+            <Heading variant="h2" title="Space publicity" />
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Public</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Can be found in Explorer
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Anyone can join in app
+              </Text>
+            </Block>
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Private</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Can be found in Explorer
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Request membership can be required
+              </Text>
+            </Block>
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Hidden</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Hidden from public
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Link to join membership can be generated
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Request membership can be required
+              </Text>
+            </Block>
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Closed</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Hidden from public
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Closed for new members
+              </Text>
+            </Block>
+            <Block className="clear-both" />
+          </Block>
           <Block className={"page-section " + styles["space-member-roles"]}>
             <Heading variant="h2" title="Member roles" />
             <Block className={styles["member-roles-item"]}>
@@ -161,6 +200,7 @@ export default function spaceMembers() {
             )}
             <Block className="clear-both"></Block>
           </Block>
+          <Block className="clear-both"></Block>
         </Block>
       </Block>
     </AccessSettings>

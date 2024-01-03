@@ -14,7 +14,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   const { socket } = useSocket()
   const router = useRouter()
   const { httpPostWithData, httpGetRequest } = useAxios()
-  const { membersList, getMembersOfTheSpace } = useSpaces()
+  const { membersList, readMembers } = useSpaces()
   const { readFirstMessages, updateMessageStream, reduxMessageStream } = useMessages()
 
   // Internal variables
@@ -26,7 +26,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   useEffect(() => {
     updateMessageStream()
     readFirstMessages()
-    if (spaceName) getMembersOfTheSpace()
+    if (spaceName) readMembers()
   }, [channelName, spaceName])
 
   const getCurrentProfile = async () => {
