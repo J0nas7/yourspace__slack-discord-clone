@@ -31,7 +31,7 @@ const Profile = ({
     const router = useRouter()
     const { httpGetRequest } = useAxios()
     const { doLogout } = useAuthContext()
-    const { removeMember } = useSpaces()
+    const { deleteMember } = useSpaces()
 
     // Internal variables
     const now = new Date()
@@ -52,7 +52,7 @@ const Profile = ({
     const triggerLeaveSpaceModal = () => {
         setSpaceBottomActionMenu(false)
         if (confirm("Are you sure you want to leave this space?")) {
-            removeMember()
+            if (theProfile) deleteMember(theProfile, "member")
         }
     }
 

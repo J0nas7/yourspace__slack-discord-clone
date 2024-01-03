@@ -45,18 +45,24 @@ export const channelSlice = createSlice({
             state.membersList = action.payload.data
         },
         updateMembersListPosition: (state: ChannelState, action: PayloadAction<any>) => {
-            const index = state.membersList!.map(item => item.Profile_ID).indexOf(action.payload.data.Profile_ID)
+            const thisProfile: ProfileDTO = action.payload.data
+            const index = state.membersList!.map(item => item.Profile_ID).indexOf(thisProfile.Profile_ID)
+            
             state.membersList = [
                 ...state.membersList!.slice(0, index),
-                action.payload.data,
+                thisProfile,
                 ...state.membersList!.slice(index + 1)
             ]
-        }
+        },
+        deleteMemberFromList: (state: ChannelState, action: PayloadAction<any>) => {
+            const thisProfile: ProfileDTO = action.payload.data
+            state.membersList = state.membersList!.filter(member => member.Profile_ID !== thisProfile.Profile_ID)
+        },
     },
 })
 
 const { actions } = channelSlice
-export const { setTheChannel, setChannelsList, setMembersList, updateMembersListPosition } = actions
+export const { setTheChannel, setChannelsList, setMembersList, updateMembersListPosition, deleteMemberFromList } = actions
 
 export default channelSlice.reducer
 

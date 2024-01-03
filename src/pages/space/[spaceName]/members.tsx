@@ -18,7 +18,7 @@ import {
 export default function spaceMembers() {
   // Hooks
   const router = useRouter()
-  const { membersList, changeMembershipRole } = useSpaces()
+  const { membersList, deleteMember, changeMembershipRole } = useSpaces()
 
   // Internal variables
   type moderatorsAndAboveObject = { [key: string]: ProfileDTO[] }
@@ -47,9 +47,9 @@ export default function spaceMembers() {
     }
   }
 
-  const deleteMember = (theProfile: ProfileDTO) => {
+  const deleteThisMember = (theProfile: ProfileDTO) => {
     if (confirm("Are you sure you want to the delete " + theProfile.Profile_DisplayName + "'s membership of this space?")) {
-
+      deleteMember(theProfile, "admin", tempSpaceName)
     }
   }
 
@@ -148,7 +148,7 @@ export default function spaceMembers() {
                 {content.length ? (
                   <>
                     {content && content.map((member, i) =>
-                      <ProfileCard variant="space-settings-member" condition="member-role" className={styles["space-member"]} profile={member} key={i} hook1={deleteMember} hook2={makeAnotherRole} />
+                      <ProfileCard variant="space-settings-member" condition="member-role" className={styles["space-member"]} profile={member} key={i} hook1={deleteThisMember} hook2={makeAnotherRole} />
                     )}
                   </>
                 ) : (
@@ -169,7 +169,7 @@ export default function spaceMembers() {
             {membersList ? (
               <>
                 {membersList && membersList.map((member, i) =>
-                  <ProfileCard variant="space-settings-member" condition="membership" className={styles["space-member"]} profile={member} key={i} hook1={deleteMember} hook2={makeAnotherRole} />
+                  <ProfileCard variant="space-settings-member" condition="membership" className={styles["space-member"]} profile={member} key={i} hook1={deleteThisMember} hook2={makeAnotherRole} />
                 )}
               </>
             ) : (
