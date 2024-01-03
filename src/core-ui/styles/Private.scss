@@ -644,6 +644,10 @@
                         margin-right: 15px;
                         color: #424242;
                         cursor: pointer;
+
+                        &.remove-member {
+                            color: darkred;
+                        }
                     }
                 }
 

@@ -67,6 +67,10 @@ export const useSpaces = () => {
 
     const initChannels = () => !channelsList['text'].length ? getAllChannels() : 0
 
+    const filterModeratorsAndAbove = (role: string) => {
+        if (membersList) return membersList.filter((member: ProfileDTO, i: any) => member.Member_Role == role)
+    }
+
     const getMemberOfSpacesList = async () => {
         // Send request to the API for spaces array
         try {
@@ -103,114 +107,6 @@ export const useSpaces = () => {
         return true
     }
 
-    // Create membership from the unique space name
-    const createMember = async () => {
-        if (urlSpaceName) {
-            // Variables to send to backend API
-            const createMembershipVariables = {
-                "Space_Name": urlSpaceName
-            }
-
-            // Send request to the API for membership
-            try {
-                const data = await httpPostWithData("createMember", createMembershipVariables)
-                if (data.success) {
-                    window.location.href = '/space/' + urlSpaceName
-                }
-            } catch (e) {
-                console.log("useSpaces createMember error", e)
-            }
-        }
-        return
-    }
-
-    // Delete membership from the unique space name
-    const deleteMember = async (theProfile: ProfileDTO, from: string, spaceName?: string) => {
-        const theProfileID = theProfile.Profile_ID
-        if (theProfileID && (spaceName || urlSpaceName)) {
-            // Variables to send to backend API
-            const removeMembershipVariables = {
-                "Space_Name": spaceName || urlSpaceName,
-                "Profile_ID": theProfileID
-            }
-
-            // Send request to the API for membership
-            try {
-                const data = await httpPostWithData("deleteMember", removeMembershipVariables)
-                // If member deleted itself
-                if (data.success && from == "member") {
-                    window.location.href = '/space/' + urlSpaceName
-                    return
-                }
-                
-                // If member is deleted by an admin
-                if (data.success && from == "admin") {
-                    dispatch(deleteMemberFromList({
-                        "data": theProfile
-                    }))
-                    return
-                }
-            } catch (e) {
-                console.log("useSpaces removeMember error", e)
-            }
-        }
-        return
-    }
-
-    // Change membership role
-    const changeMembershipRole = async (role: string, theProfile: ProfileDTO, spaceName: string) => {
-        const theProfileID = theProfile.Profile_ID
-
-        if (role && theProfileID && spaceName) {
-            // Variables to send to backend API
-            const changeMembershipRoleVariables = {
-                "Space_Name": spaceName,
-                "Profile_ID": theProfileID,
-                "New_Role": role
-            }
-
-            // Send request to the API for membership
-            try {
-                const data = await httpPostWithData("updateMembershipRole", changeMembershipRoleVariables)
-                if (data.success) {
-                    theProfile = {
-                        ...theProfile,
-                        Member_Role: role
-                    }
-                    dispatch(updateMembersListPosition({
-                        "data": theProfile
-                    }))
-                }
-            } catch (e) {
-                console.log("useSpaces changeMembershipRole error", e)
-            }
-        }
-        return
-    }
-
-    const getMembersOfTheSpace = async () => {
-        // Request members list of space from the unique space name
-        if (urlSpaceName) {
-            // Variables to send to backend API
-            const getMembersOfSpaceVariables = {
-                "Space_Name": urlSpaceName
-            }
-
-            // Send request to the API for space
-            try {
-                const data = await httpPostWithData("readMembersOfSpaceList", getMembersOfSpaceVariables)
-                if (data.data) {
-                    dispatch(setMembersList({
-                        "data": data.data
-                    }))
-                }
-            } catch (e) {
-                console.log("useSpaces getMembersOfSpace error", e)
-            }
-        }
-        return
-    }
-
     const getChannelsList = async (channelFormat: string, forceReset: boolean = false) => {
         // Request channel lists from the unique space name
         const spaceName = theSpace?.Space_Name || urlSpaceName
@@ -238,6 +134,9 @@ export const useSpaces = () => {
         return
     }
 
+    /**
+     * Create/Update Space handling methods
+     */
     const afterSuccess = (theResult: apiResponseDTO) => {
         const spaceName = theResult.data.Space_Name
         const redirectTo = CONSTANTS.SPACE_URL + spaceName
@@ -292,6 +191,133 @@ export const useSpaces = () => {
     /**
      * Generic Methods
      */
+    /**
+     * CRUD memberships
+     */
+    // Create membership from the unique space name
+    const createMember = async () => {
+        if (urlSpaceName) {
+            // Variables to send to backend API
+            const createMembershipVariables = {
+                "Space_Name": urlSpaceName
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("createMember", createMembershipVariables)
+                if (data.success) {
+                    window.location.href = '/space/' + urlSpaceName
+                }
+            } catch (e) {
+                console.log("useSpaces createMember error", e)
+            }
+        }
+        return
+    }
+
+    // Read all members of a specific space
+    const readMembers = async () => {
+        // Request members list of space from the unique space name
+        if (urlSpaceName) {
+            // Variables to send to backend API
+            const getMembersOfSpaceVariables = {
+                "Space_Name": urlSpaceName
+            }
+
+            // Send request to the API for space
+            try {
+                const data = await httpPostWithData("readMembersOfSpaceList", getMembersOfSpaceVariables)
+                if (data.data) {
+                    dispatch(setMembersList({
+                        "data": data.data
+                    }))
+                }
+            } catch (e) {
+                console.log("useSpaces getMembersOfSpace error", e)
+            }
+        }
+        return
+    }
+
+    // Update a members role
+    const updateMemberRole = async (role: string, theProfile: ProfileDTO, spaceName: string) => {
+        const theProfileID = theProfile.Profile_ID
+
+        if (role && theProfileID && spaceName) {
+            // Variables to send to backend API
+            const changeMembershipRoleVariables = {
+                "Space_Name": spaceName,
+                "Profile_ID": theProfileID,
+                "New_Role": role
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("updateMembershipRole", changeMembershipRoleVariables)
+                if (data.success) {
+                    theProfile = {
+                        ...theProfile,
+                        Member_Role: role
+                    }
+                    dispatch(updateMembersListPosition({
+                        "data": theProfile
+                    }))
+                }
+            } catch (e) {
+                console.log("useSpaces changeMembershipRole error", e)
+            }
+        }
+        return
+    }
+
+    const updateConfirmRole = (role: string, theProfile: ProfileDTO) => {
+        if (confirm("Make " + theProfile.Profile_DisplayName + " a/an " + role + "?")) {
+            updateMemberRole(role.toLocaleUpperCase(), theProfile, urlSpaceName)
+        }
+    }
+
+    const deleteThisMember = (theProfile: ProfileDTO) => {
+        if (confirm("Are you sure you want to the delete " + theProfile.Profile_DisplayName + "'s membership of this space?")) {
+            deleteMember(theProfile, "admin", urlSpaceName)
+        }
+    }
+
+    // Delete membership from the unique space name
+    const deleteMember = async (theProfile: ProfileDTO, from: string, spaceName?: string) => {
+        const theProfileID = theProfile.Profile_ID
+        if (theProfileID && (spaceName || urlSpaceName)) {
+            // Variables to send to backend API
+            const removeMembershipVariables = {
+                "Space_Name": spaceName || urlSpaceName,
+                "Profile_ID": theProfileID
+            }
+
+            // Send request to the API for membership
+            try {
+                const data = await httpPostWithData("deleteMember", removeMembershipVariables)
+                // If member deleted itself
+                if (data.success && from == "member") {
+                    window.location.href = '/space/' + urlSpaceName
+                    return
+                }
+
+                // If member is deleted by an admin
+                if (data.success && from == "admin") {
+                    dispatch(deleteMemberFromList({
+                        "data": theProfile
+                    }))
+                    return
+                }
+            } catch (e) {
+                console.log("useSpaces removeMember error", e)
+            }
+        }
+        return
+    }
+
+    /**
+     * CRUD spaces
+     */
     const createSpace = async (spaceName: string, spaceImage: string): Promise<boolean> => {
         setStatus('resolving')
         let errorData
@@ -325,7 +351,6 @@ export const useSpaces = () => {
         return true
     }
 
-    // Request space from the unique space name
     const readSpace = async (spaceName?: string) => {
         if (urlSpaceName || spaceName) {
             // Variables to send to backend API
@@ -431,19 +456,23 @@ export const useSpaces = () => {
         highlightedSpacesList,
 
         // Misc. methods
+        filterModeratorsAndAbove,
         getMemberOfSpacesList,
-        getMembersOfTheSpace,
         initChannels,
         getChannelsList,
         resetChannels,
         getHighlightedSpacesList,
-        deleteMember,
-        createMember,
-        changeMembershipRole,
 
         // Generic methods
-        readSpace,
+        // Members
+        createMember,
+        readMembers,
+        updateConfirmRole,
+        deleteThisMember,
+        deleteMember,
+        // Spaces
         createSpace,
+        readSpace,
         updateSpace,
         deleteSpace,
     }
