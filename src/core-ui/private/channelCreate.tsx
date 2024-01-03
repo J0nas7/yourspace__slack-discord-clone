@@ -3,20 +3,20 @@ import { FormEvent, useState } from 'react'
 import { Button } from '@mui/material'
 
 // Internal
-import { useChannels } from "@/hooks"
+import { useChannels, useSpaces } from "@/hooks"
 import { Block, Modal, Text, Form, Field, FileUpload } from '@/components'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
 
 type Props = {
     defaultFormat: string,
     showCreateModal: boolean,
-    setShowCreateModal: Function,
-    resetChannels: Function,
+    setShowCreateModal: Function
 }
 
-export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModal, resetChannels}:  Props) => {
+export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModal}:  Props) => {
     // Hooks
     const { createChannel, errorMsg, status } = useChannels()
+    const { readChannelsAgain } = useSpaces()
 
     // Internal variables
     const [channelName, setChannelName] = useState<string>('')
@@ -26,7 +26,7 @@ export const ChannelCreate = ({defaultFormat, showCreateModal, setShowCreateModa
     const onSuccess = () => {
         setShowCreateModal(false)
         setChannelName('')
-        resetChannels()
+        readChannelsAgain()
     }
 
     const onCreate =(e?: FormEvent) => {

@@ -58,19 +58,11 @@ export const useSpaces = () => {
     /**
      * Misc. Methods
      */
-    const getAllChannels = () => channelTypes.map(type => getChannelsList(type))
-
-    const resetChannels = async () => {
-        console.log("reset")
-        channelTypes.map(type => getChannelsList(type, true))
-    }
-
-    const initChannels = () => !channelsList['text'].length ? getAllChannels() : 0
-
     const filterModeratorsAndAbove = (role: string) => {
         if (membersList) return membersList.filter((member: ProfileDTO, i: any) => member.Member_Role == role)
     }
 
+    // Get all spaces that a profile is a member of
     const getMemberOfSpacesList = async () => {
         // Send request to the API for spaces array
         try {
@@ -94,6 +86,7 @@ export const useSpaces = () => {
         }
     }
 
+    // Get all public spaces to the explore list
     const getHighlightedSpacesList = async () => {
         // Send get request to API
         try {
@@ -105,33 +98,6 @@ export const useSpaces = () => {
             console.log("useSpaces getHighlightedSpaces error", e)
         }
         return true
-    }
-
-    const getChannelsList = async (channelFormat: string, forceReset: boolean = false) => {
-        // Request channel lists from the unique space name
-        const spaceName = theSpace?.Space_Name || urlSpaceName
-        if (channelFormat && spaceName && (!channelsList[channelFormat].length || forceReset)) {
-            //console.log(channelFormat, spaceName, channelsList)
-            // Variables to send to backend API
-            const getChannelsVariables = {
-                "Space_Name": spaceName,
-                "Channel_Format": channelFormat
-            }
-
-            // Send request to the API for channel list
-            try {
-                const data = await httpPostWithData("readChannelsList", getChannelsVariables)
-                if (data.data && data.data.length) {
-                    dispatch(setChannelsList({
-                        "format": channelFormat,
-                        "data": data.data
-                    }))
-                }
-            } catch (e) {
-                console.log("useSpaces getChannelsList error", e)
-            }
-        }
-        return
     }
 
     /**
@@ -191,6 +157,42 @@ export const useSpaces = () => {
     /**
      * Generic Methods
      */
+    /**
+     * CRUD channels
+     */
+    const readChannels = () => !channelsList['text'].length ? channelTypes.map(type => readChannelsList(type)) : 0
+    
+    const readChannelsAgain = async () => {
+        console.log("resetChannels")
+        channelTypes.map(type => readChannelsList(type, true))
+    }
+
+    const readChannelsList = async (channelFormat: string, forceReset: boolean = false) => {
+        // Request channel lists from the unique space name
+        const spaceName = theSpace?.Space_Name || urlSpaceName
+        if (channelFormat && spaceName && (!channelsList[channelFormat].length || forceReset)) {
+            //console.log(channelFormat, spaceName, channelsList)
+            // Variables to send to backend API
+            const getChannelsVariables = {
+                "Space_Name": spaceName,
+                "Channel_Format": channelFormat
+            }
+
+            // Send request to the API for channel list
+            try {
+                const data = await httpPostWithData("readChannelsList", getChannelsVariables)
+                if (data.data && data.data.length) {
+                    dispatch(setChannelsList({
+                        "format": channelFormat,
+                        "data": data.data
+                    }))
+                }
+            } catch (e) {
+                console.log("useSpaces getChannelsList error", e)
+            }
+        }
+        return
+    }
     /**
      * CRUD memberships
      */
@@ -458,12 +460,13 @@ export const useSpaces = () => {
         // Misc. methods
         filterModeratorsAndAbove,
         getMemberOfSpacesList,
-        initChannels,
-        getChannelsList,
-        resetChannels,
         getHighlightedSpacesList,
-
+        
         // Generic methods
+        // Channels
+        readChannels,
+        readChannelsAgain,
+        readChannelsList,
         // Members
         createMember,
         readMembers,

@@ -15,7 +15,7 @@ import { CONSTANTS } from '@/data/CONSTANTS'
 export default function Space() {
   // Hooks
   const router = useRouter()
-  const { theSpace, initChannels, readMembers, readSpace, deleteSpace } = useSpaces()
+  const { theSpace, readChannels, readMembers, readSpace, deleteSpace } = useSpaces()
 
   // Internal variables
   const urlSpaceName: string = router.query.spaceName?.toString()!
@@ -48,7 +48,7 @@ export default function Space() {
   useEffect(() => {
     if (theSpace?.Space_ID) {
       const init = async () => {
-        initChannels()
+        readChannels()
         readMembers()
       }
       init()

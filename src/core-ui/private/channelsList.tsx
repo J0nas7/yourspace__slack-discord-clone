@@ -14,10 +14,9 @@ import { ChannelDTO } from '@/types/'
 type Props = {
     format: string
     channelsList: ChannelDTO[]
-    resetChannels: Function
 }
 
-export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
+export const ChannelList = ({ format, channelsList }: Props) => {
     // Hooks
     const router = useRouter()
 
@@ -37,7 +36,6 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
                             <ChannelCard
                                 variant="space-channel-format-list-item" 
                                 channel={channel} 
-                                resetChannels={resetChannels}
                                 key={i}
                             />
                         )}
@@ -46,7 +44,7 @@ export const ChannelList = ({ format, channelsList, resetChannels }: Props) => {
                     <Block className="channel-format-list-item placeholder-loading channel-name"></Block>
                 )}
             </Block>
-            <ChannelCreate defaultFormat={format} showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} resetChannels={resetChannels} />
+            <ChannelCreate defaultFormat={format} showCreateModal={showCreateModal} setShowCreateModal={setShowCreateModal} />
         </Block>
     )
 }

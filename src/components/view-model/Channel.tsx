@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 // Internal
 //import { useAxios } from '@/hooks'
-import { useChannels } from "@/hooks"
+import { useChannels, useSpaces } from "@/hooks"
 import { Block, Text, Heading, Modal, Field, Form, Channel as ChannelCard } from '@/components'
 import { ChannelDTO } from '@/types/'
 import styles from '@/core-ui/styles/modules/Sidepanel.module.scss'
@@ -20,17 +20,17 @@ type Props = {
     channel: ChannelDTO
     showModal?: boolean
     setShowModal?: Function
-    resetChannels?: Function
     className?: string
     theId?: string
 }
 
 const Channel = ({
-    variant = 'space-channel-format-list-item', channel, showModal = false, setShowModal, resetChannels, className, theId
+    variant = 'space-channel-format-list-item', channel, showModal = false, setShowModal, className, theId
 }: Props) => {
     // Hooks
     const router = useRouter()
     const { updateChannel, deleteChannel, errorMsg, status } = useChannels()
+    const { readChannelsAgain } = useSpaces()
 
     // Internal variables
     const routerChannelName = router.query.channelName
@@ -61,7 +61,7 @@ const Channel = ({
     const onSuccess = () => {
         if (setShowModal) setShowModal(false)
         setEditChannelName('')
-        resetChannels!()
+        readChannelsAgain()
     }
 
     const onEdit = (e?: FormEvent) => {
@@ -87,7 +87,7 @@ const Channel = ({
                     <FontAwesomeIcon icon={faPen} className="channel-format-list-item-action" onClick={() => setShowEditModal(true)} />
                     <FontAwesomeIcon icon={faTrashCan} className="channel-format-list-item-action" onClick={() => handleDeleteChannel()} />
                 </Block>
-                <ChannelCard variant="EDIT" channel={channel} showModal={showEditModal} setShowModal={setShowEditModal} resetChannels={resetChannels} />
+                <ChannelCard variant="EDIT" channel={channel} showModal={showEditModal} setShowModal={setShowEditModal} />
             </Block>
         )
     } else if (variant === "EDIT") {
