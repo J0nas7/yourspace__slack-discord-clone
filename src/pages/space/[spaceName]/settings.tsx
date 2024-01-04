@@ -67,9 +67,9 @@ export default function spaceSettings() {
   }, [channelsList])
 
   return (
-    <AccessSpace membersList={membersList} access={4}>
-      <Block className="other-pages-wrapper">
-        <Block className={"other-pages-inner " + styles["space-settings"]}>
+    <Block className="other-pages-wrapper">
+      <Block className={"other-pages-inner " + styles["space-settings"]}>
+        <AccessSpace membersList={membersList} access={4}>
           <Heading title={"Space settings: " + theSpace?.Space_Name} />
           <Block className={"page-section " + styles["space-public-private"]}>
             <Heading variant="h2" title="Public/private settings" />
@@ -87,7 +87,6 @@ export default function spaceSettings() {
               />
             </Block>
           </Block>
-
           <Block className={"page-section " + styles["space-community-settings"]}>
             <Heading variant="h2" title="Community settings" />
             {selectItems.length ? (
@@ -142,8 +141,8 @@ export default function spaceSettings() {
               </Block>
             )}
           </Block>
-        </Block>
+        </AccessSpace>
       </Block>
-    </AccessSpace>
+    </Block>
   )
 }

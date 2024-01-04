@@ -7,13 +7,13 @@ import { Block, Heading } from '@/components'
 import { ProfileDTO } from "@/types"
 import { useAxios } from '@/hooks'
 
-export default function AccessSpace({ membersList, access, children }: { membersList?: ProfileDTO[] | undefined, access?: number, children: React.ReactNode }) {
+export default function AccessSpace({ membersList, access, children }: { membersList: ProfileDTO[] | undefined, access: number, children: React.ReactNode }) {
     // Hooks
     const router = useRouter()
     const { httpGetRequest } = useAxios()
 
     // Internal variables
-    const tempSpaceName: string = router.query.spaceName?.toString()!
+    const urlSpaceName: string = router.query.spaceName?.toString()!
     const [canAccess, setCanAccess] = useState<boolean>(false)
     const [iAm, setIAm] = useState<ProfileDTO>()
 
@@ -36,25 +36,20 @@ export default function AccessSpace({ membersList, access, children }: { members
     useEffect(() => {
         if (iAm) {
             setCanAccess(() => {
-                if (access == 4 && iAm?.Member_Role == "OWNER") {
-                    return true
-                }
+                if (access <= 4 && iAm?.Member_Role == "OWNER") return true
+                if (access <= 3 && iAm?.Member_Role == "ADMIN") return true
+                if (access <= 2 && iAm?.Member_Role == "MODERATOR") return true
+                if (access <= 1/* && iAm?.Member_Role == "GUEST"*/) return true
+                if (access <= 0) return true
 
-                router.push("/space/" + tempSpaceName)
+                router.push("/space/" + urlSpaceName)
                 return false
             })
         }
     }, [iAm])
 
-    if (!canAccess) return (
-        <Block className="other-pages-wrapper">
-            <Block className={"other-pages-inner "}>
-                <Heading title={"Space members: "} />
-                <Block className={"page-section "}>
-                    Validating your access...
-                </Block>
-            </Block>
-        </Block>
+    if (!canAccess && 1 < access) return (
+        <>Validating your access...</>
     )
 
     return (

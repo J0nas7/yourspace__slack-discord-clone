@@ -27,7 +27,7 @@ export default function spaceMembers() {
   })
   const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["rule-check"]} />
   const [theOwner, setTheOwner] = useState<ProfileDTO>()
-  const [privacyOption,setPrivacyOption] = useState<string>('')
+  const [privacyOption, setPrivacyOption] = useState<string>('')
   const privacyItems = [
     { "value": "public", "title": "Public" },
     { "value": "private", "title": "Private" },
@@ -55,9 +55,9 @@ export default function spaceMembers() {
   }, [theSpace])
 
   return (
-    <AccessSpace membersList={membersList} access={4}>
-      <Block className="other-pages-wrapper">
-        <Block className={"other-pages-inner " + styles["space-settings"]}>
+    <Block className="other-pages-wrapper">
+      <Block className={"other-pages-inner " + styles["space-settings"]}>
+        <AccessSpace membersList={membersList} access={4}>
           <Heading title={"Space memberships: " + theSpace?.Space_Name} />
           <Block className={"page-section " + styles["space-publicity-roles"]}>
             <Heading variant="h2" title="Space publicity roles" />
@@ -229,8 +229,8 @@ export default function spaceMembers() {
             <Block className="clear-both"></Block>
           </Block>
           <Block className="clear-both"></Block>
-        </Block>
+        </AccessSpace>
       </Block>
-    </AccessSpace>
+    </Block>
   )
 }
