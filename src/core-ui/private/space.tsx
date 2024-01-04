@@ -15,7 +15,7 @@ import { CONSTANTS } from '@/data/CONSTANTS'
 export default function Space() {
   // Hooks
   const router = useRouter()
-  const { theSpace, readChannels, readMembers, readSpace, deleteSpace } = useSpaces()
+  const { theSpace, readSpace, deleteSpace, readChannels, readMembers } = useSpaces()
 
   // Internal variables
   const urlSpaceName: string = router.query.spaceName?.toString()!
@@ -46,12 +46,9 @@ export default function Space() {
   }, [urlSpaceName])
 
   useEffect(() => {
-    if (theSpace?.Space_ID) {
-      const init = async () => {
-        readChannels()
-        readMembers()
-      }
-      init()
+    if (theSpace?.Space_Name) {
+      readChannels()
+      readMembers()
     }
   }, [theSpace])
 
@@ -95,7 +92,7 @@ export default function Space() {
                     className="space-action-menu-item-clickable"
                   >
                     <FontAwesomeIcon icon={faUsers} />
-                    Manage members
+                    Manage memberships
                   </Link>
                 </li>
                 <li className="space-action-menu-item">

@@ -7,14 +7,14 @@ import { Block, Heading } from '@/components'
 import { ProfileDTO } from "@/types"
 import { useAxios } from '@/hooks'
 
-export default function AccessSettings({ membersList, access, children }: { membersList?: ProfileDTO[] | undefined, access?: number, children: React.ReactNode }) {
+export default function AccessSpace({ membersList, access, children }: { membersList?: ProfileDTO[] | undefined, access?: number, children: React.ReactNode }) {
     // Hooks
     const router = useRouter()
     const { httpGetRequest } = useAxios()
 
     // Internal variables
     const tempSpaceName: string = router.query.spaceName?.toString()!
-    const [canEdit, setCanEdit] = useState<boolean>(false)
+    const [canAccess, setCanAccess] = useState<boolean>(false)
     const [iAm, setIAm] = useState<ProfileDTO>()
 
     // Methods
@@ -35,7 +35,7 @@ export default function AccessSettings({ membersList, access, children }: { memb
 
     useEffect(() => {
         if (iAm) {
-            setCanEdit(() => {
+            setCanAccess(() => {
                 if (access == 4 && iAm?.Member_Role == "OWNER") {
                     return true
                 }
@@ -46,7 +46,7 @@ export default function AccessSettings({ membersList, access, children }: { memb
         }
     }, [iAm])
 
-    if (!canEdit) return (
+    if (!canAccess) return (
         <Block className="other-pages-wrapper">
             <Block className={"other-pages-inner "}>
                 <Heading title={"Space members: "} />

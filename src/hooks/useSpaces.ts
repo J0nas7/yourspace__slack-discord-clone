@@ -31,12 +31,13 @@ export const useSpaces = () => {
     const router = useRouter()
 
     // Internal variables
+    const urlSpaceName: string = router.query.spaceName?.toString()!
+    const routerChannelName = router.query.channelName
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [alreadyMember, setAlreadyMember] = useState<boolean>(true)
     const [spacesList, setSpacesList] = useState<SpaceDTO[]>()
-    const urlSpaceName: string = router.query.spaceName?.toString()!
-    const routerChannelName = router.query.channelName
+    const channelTypes: string[] = ['text', 'audio', 'video']
     const errorCodes: { [key: string]: string } = {
         wrong_credentials: 'Incorrect credentials. Please try again.'
     }
@@ -45,7 +46,6 @@ export const useSpaces = () => {
         'audio': [],
         'video': [],
     }
-    const channelTypes: string[] = ['text', 'audio', 'video']
 
     // Redux
     const dispatch = useAppDispatch()
@@ -161,7 +161,7 @@ export const useSpaces = () => {
      * CRUD channels
      */
     const readChannels = () => !channelsList['text'].length ? channelTypes.map(type => readChannelsList(type)) : 0
-    
+
     const readChannelsAgain = async () => {
         console.log("resetChannels")
         channelTypes.map(type => readChannelsList(type, true))
@@ -230,6 +230,7 @@ export const useSpaces = () => {
             try {
                 const data = await httpPostWithData("readMembersOfSpaceList", getMembersOfSpaceVariables)
                 if (data.data) {
+                    console.log("useSpaces readMembers")
                     dispatch(setMembersList({
                         "data": data.data
                     }))
@@ -354,7 +355,7 @@ export const useSpaces = () => {
     }
 
     const readSpace = async (spaceName?: string) => {
-        if (urlSpaceName || spaceName) {
+        if (spaceName || urlSpaceName) {
             // Variables to send to backend API
             const getSpaceVariables = {
                 "Space_Name": spaceName ? spaceName : urlSpaceName
@@ -461,7 +462,7 @@ export const useSpaces = () => {
         filterModeratorsAndAbove,
         getMemberOfSpacesList,
         getHighlightedSpacesList,
-        
+
         // Generic methods
         // Channels
         readChannels,

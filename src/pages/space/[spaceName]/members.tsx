@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGavel, faStar, faKey, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { SelectChangeEvent } from '@mui/material'
 
 // Internal
-import { Block, Text, Heading, Field, Profile as ProfileCard, AccessSettings } from '@/components'
+import { Block, Text, Heading, SelectField, Profile as ProfileCard, AccessSpace } from '@/components'
 import { ProfileDTO } from '@/types'
 import styles from '@/core-ui/styles/modules/SpaceSettings.module.scss'
 import { useSpaces } from '@/hooks'
@@ -16,7 +17,7 @@ import {
 
 export default function spaceMembers() {
   // Hooks
-  const { theSpace, membersList, filterModeratorsAndAbove, updateConfirmRole, deleteThisMember } = useSpaces()
+  const { theSpace, membersList, readSpace, filterModeratorsAndAbove, updateConfirmRole, deleteThisMember } = useSpaces()
 
   // Internal variables
   type moderatorsAndAboveObject = { [key: string]: ProfileDTO[] }
@@ -26,8 +27,17 @@ export default function spaceMembers() {
   })
   const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["rule-check"]} />
   const [theOwner, setTheOwner] = useState<ProfileDTO>()
+  const [privacyOption,setPrivacyOption] = useState<string>('')
+  const privacyItems = [
+    { "value": "public", "title": "Public" },
+    { "value": "private", "title": "Private" },
+    { "value": "hidden", "title": "Hidden" },
+    { "value": "closed", "title": "Closed" },
+  ]
 
   // Methods
+  const handlePrivacyOption = (event: SelectChangeEvent) => setPrivacyOption(event.target.value)
+
   useEffect(() => {
     if (membersList) {
       const moderators: ProfileDTO[] = filterModeratorsAndAbove("MODERATOR")!
@@ -40,13 +50,17 @@ export default function spaceMembers() {
     }
   }, [membersList])
 
+  useEffect(() => {
+    if (!theSpace.Space_Name) readSpace()
+  }, [theSpace])
+
   return (
-    <AccessSettings membersList={membersList} access={4}>
+    <AccessSpace membersList={membersList} access={4}>
       <Block className="other-pages-wrapper">
         <Block className={"other-pages-inner " + styles["space-settings"]}>
-          <Heading title={"Space members: " + theSpace.Space_Name} />
-          <Block className={"page-section " + styles["space-publicity"]}>
-            <Heading variant="h2" title="Space publicity" />
+          <Heading title={"Space memberships: " + theSpace?.Space_Name} />
+          <Block className={"page-section " + styles["space-publicity-roles"]}>
+            <Heading variant="h2" title="Space publicity roles" />
             <Block className={styles["space-public-option"]}>
               <Text variant="span" className={styles["public-option-title"]}>Public</Text>
               <Text variant="span" className={styles["public-option-rule"]}>
@@ -94,6 +108,20 @@ export default function spaceMembers() {
                 {Checkmark}
                 Closed for new members
               </Text>
+            </Block>
+            <Block className="clear-both" />
+          </Block>
+          <Block className={"page-section " + styles["space-publicity"]}>
+            <Heading variant="h2" title="Privacy details" />
+            <Block className={styles["space-public-setting"]}>
+              <SelectField
+                lbl="Privacy option"
+                title="Privacy option"
+                value={privacyOption}
+                items={privacyItems}
+                onChange={(e: any) => handlePrivacyOption}
+                disabled={false}
+              />
             </Block>
             <Block className="clear-both" />
           </Block>
@@ -203,6 +231,6 @@ export default function spaceMembers() {
           <Block className="clear-both"></Block>
         </Block>
       </Block>
-    </AccessSettings>
+    </AccessSpace>
   )
 }
