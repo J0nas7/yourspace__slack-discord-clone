@@ -12,7 +12,7 @@ export * from './chat/chat-input'
 export * from './chat/emoji-picker'
 
 export { default as EditSpaceName } from './space-stuff/editSpaceName'
-export { default as AccessSettings } from './space-stuff/accessSettings'
+export { default as AccessSpace } from './space-stuff/accessSpace'
 
 export { default as Message } from './view-model/Message'
 export { default as Space } from './view-model/Space'

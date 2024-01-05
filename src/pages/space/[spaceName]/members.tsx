@@ -1,12 +1,12 @@
 // External
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGavel, faStar, faKey, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { SelectChangeEvent } from '@mui/material'
 
 // Internal
-import { Block, Text, Heading, Field, Profile as ProfileCard, AccessSettings } from '@/components'
-import { ProfileDTO, SpaceDTO } from '@/types'
+import { Block, Text, Heading, SelectField, Profile as ProfileCard, AccessSpace } from '@/components'
+import { ProfileDTO } from '@/types'
 import styles from '@/core-ui/styles/modules/SpaceSettings.module.scss'
 import { useSpaces } from '@/hooks'
 import {
@@ -17,41 +17,26 @@ import {
 
 export default function spaceMembers() {
   // Hooks
-  const router = useRouter()
-  const { membersList, deleteMember, changeMembershipRole } = useSpaces()
+  const { theSpace, membersList, readSpace, filterModeratorsAndAbove, updateConfirmRole, deleteThisMember } = useSpaces()
 
   // Internal variables
   type moderatorsAndAboveObject = { [key: string]: ProfileDTO[] }
-  const [settingsToRender, setSettingsToRender] = useState<SpaceDTO>()
   const [moderatorsAndAbove, setModeratorsAndAbove] = useState<moderatorsAndAboveObject>({
     'moderator': [],
     'admin': []
   })
-  const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["role-item-rule-check"]} />
-  const tempSpaceName: string = router.query.spaceName?.toString()!
-  const [iAm, setIAm] = useState<ProfileDTO>()
-  const cantDoThis = "You can't perform this action"
+  const Checkmark = <FontAwesomeIcon icon={faCheck} className={styles["rule-check"]} />
   const [theOwner, setTheOwner] = useState<ProfileDTO>()
-
-  // Redux
-  const theSpace = useTypedSelector(selectTheSpace)
+  const [privacyOption, setPrivacyOption] = useState<string>('')
+  const privacyItems = [
+    { "value": "public", "title": "Public" },
+    { "value": "private", "title": "Private" },
+    { "value": "hidden", "title": "Hidden" },
+    { "value": "closed", "title": "Closed" },
+  ]
 
   // Methods
-  const filterModeratorsAndAbove = (role: string) => {
-    if (membersList) return membersList.filter((member: ProfileDTO, i: any) => member.Member_Role == role)
-  }
-
-  const makeAnotherRole = (role: string, theProfile: ProfileDTO) => {
-    if (confirm("Make " + theProfile.Profile_DisplayName + " a/an " + role + "?")) {
-      changeMembershipRole(role.toLocaleUpperCase(), theProfile, tempSpaceName)
-    }
-  }
-
-  const deleteThisMember = (theProfile: ProfileDTO) => {
-    if (confirm("Are you sure you want to the delete " + theProfile.Profile_DisplayName + "'s membership of this space?")) {
-      deleteMember(theProfile, "admin", tempSpaceName)
-    }
-  }
+  const handlePrivacyOption = (event: SelectChangeEvent) => setPrivacyOption(event.target.value)
 
   useEffect(() => {
     if (membersList) {
@@ -66,14 +51,80 @@ export default function spaceMembers() {
   }, [membersList])
 
   useEffect(() => {
-    setSettingsToRender(theSpace)
+    if (!theSpace.Space_Name) readSpace()
   }, [theSpace])
 
   return (
-    <AccessSettings membersList={membersList} access={4}>
-      <Block className="other-pages-wrapper">
-        <Block className={"other-pages-inner " + styles["space-settings"]}>
-          <Heading title={"Space members: " + settingsToRender?.Space_Name} />
+    <Block className="other-pages-wrapper">
+      <Block className={"other-pages-inner " + styles["space-settings"]}>
+        <AccessSpace membersList={membersList} access={4}>
+          <Heading title={"Space memberships: " + theSpace?.Space_Name} />
+          <Block className={"page-section " + styles["space-publicity-roles"]}>
+            <Heading variant="h2" title="Space publicity roles" />
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Public</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Can be found in Explorer
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Anyone can join in app
+              </Text>
+            </Block>
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Private</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Can be found in Explorer
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Request membership can be required
+              </Text>
+            </Block>
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Hidden</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Hidden from public
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Link to join membership can be generated
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Request membership can be required
+              </Text>
+            </Block>
+            <Block className={styles["space-public-option"]}>
+              <Text variant="span" className={styles["public-option-title"]}>Closed</Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Hidden from public
+              </Text>
+              <Text variant="span" className={styles["public-option-rule"]}>
+                {Checkmark}
+                Closed for new members
+              </Text>
+            </Block>
+            <Block className="clear-both" />
+          </Block>
+          <Block className={"page-section " + styles["space-publicity"]}>
+            <Heading variant="h2" title="Privacy details" />
+            <Block className={styles["space-public-setting"]}>
+              <SelectField
+                lbl="Privacy option"
+                title="Privacy option"
+                value={privacyOption}
+                items={privacyItems}
+                onChange={(e: any) => handlePrivacyOption}
+                disabled={false}
+              />
+            </Block>
+            <Block className="clear-both" />
+          </Block>
           <Block className={"page-section " + styles["space-member-roles"]}>
             <Heading variant="h2" title="Member roles" />
             <Block className={styles["member-roles-item"]}>
@@ -148,7 +199,7 @@ export default function spaceMembers() {
                 {content.length ? (
                   <>
                     {content && content.map((member, i) =>
-                      <ProfileCard variant="space-settings-member" condition="member-role" className={styles["space-member"]} profile={member} key={i} hook1={deleteThisMember} hook2={makeAnotherRole} />
+                      <ProfileCard variant="space-settings-member" condition="member-role" className={styles["space-member"]} profile={member} key={i} hook1={deleteThisMember} hook2={updateConfirmRole} />
                     )}
                   </>
                 ) : (
@@ -169,7 +220,7 @@ export default function spaceMembers() {
             {membersList ? (
               <>
                 {membersList && membersList.map((member, i) =>
-                  <ProfileCard variant="space-settings-member" condition="membership" className={styles["space-member"]} profile={member} key={i} hook1={deleteThisMember} hook2={makeAnotherRole} />
+                  <ProfileCard variant="space-settings-member" condition="membership" className={styles["space-member"]} profile={member} key={i} hook1={deleteThisMember} hook2={updateConfirmRole} />
                 )}
               </>
             ) : (
@@ -177,8 +228,9 @@ export default function spaceMembers() {
             )}
             <Block className="clear-both"></Block>
           </Block>
-        </Block>
+          <Block className="clear-both"></Block>
+        </AccessSpace>
       </Block>
-    </AccessSettings>
+    </Block>
   )
 }

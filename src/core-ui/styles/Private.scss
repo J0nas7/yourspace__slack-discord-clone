@@ -269,6 +269,12 @@
             .member-context-details {
                 width: 90%;
                 height: 40px;
+
+                .profile-info {
+                    width: calc(100% - 50px);
+                    float: left;
+                    overflow-x: hidden;
+                }
             }
         }
     }
@@ -352,7 +358,7 @@
                 left: auto;
                 right: 1px;
                 top: var(--headerH);
-                width: 200px;
+                width: 210px;
                 background-color: #c3c5c7;
 
                 &.visible {
@@ -543,6 +549,7 @@
     .other-pages-wrapper {
         width: 75%;
         height: 100vh;
+        overflow-y: scroll;
         background-color: var(--channelBg);
         float: right;
     }
@@ -644,6 +651,10 @@
                         margin-right: 15px;
                         color: #424242;
                         cursor: pointer;
+
+                        &.remove-member {
+                            color: darkred;
+                        }
                     }
                 }
 

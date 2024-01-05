@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 
 // Internal
-import { Block, Text, Heading, Field, SelectField, Profile as ProfileCard } from '@/components'
+import { Block, Text, Heading, Field, SelectField, Profile as ProfileCard, AccessSpace } from '@/components'
 import { SpaceDTO, ChannelDTO } from '@/types'
 import styles from '@/core-ui/styles/modules/SpaceSettings.module.scss'
 import { useSpaces } from '@/hooks'
@@ -16,10 +16,9 @@ import {
 
 export default function spaceSettings() {
   // Hooks
-  const { theSpace, channelsList } = useSpaces()
+  const { theSpace, readSpace, membersList, channelsList } = useSpaces()
 
   // Internal variables
-  const [settingsToRender, setSettingsToRender] = useState<SpaceDTO>()
   const [selectItems, setSelectItems] = useState<any[]>([])
   const [adminTextChannel, setAdminTextChannel] = useState<number | string>('')
   const [rulesTextChannel, setRulesTextChannel] = useState<number | string>('')
@@ -53,7 +52,7 @@ export default function spaceSettings() {
   }, [adminTextChannel, rulesTextChannel])
 
   useEffect(() => {
-    setSettingsToRender(theSpace)
+    if (!theSpace.Space_Name) readSpace()
   }, [theSpace])
 
   useEffect(() => {
@@ -70,78 +69,79 @@ export default function spaceSettings() {
   return (
     <Block className="other-pages-wrapper">
       <Block className={"other-pages-inner " + styles["space-settings"]}>
-        <Heading title={"Space settings: " + settingsToRender?.Space_Name} />
-        <Block className={"page-section " + styles["space-public-private"]}>
-          <Heading variant="h2" title="Public/private settings" />
-          <Block>
-            Public invite url
-            <Field
-              type="text"
-              lbl=""
-              displayLabel={false}
-              innerLabel={false}
-              value={"https://"}
-              onChange={() => 0}
-              disabled={true}
-              className="login-field"
-            />
-          </Block>
-        </Block>
-
-        <Block className={"page-section " + styles["space-community-settings"]}>
-          <Heading variant="h2" title="Community settings" />
-          {selectItems.length ? (
-            <>
-              {selectItems.length && (
-                <Block className={styles["space-settings-rule"] + " " + styles["space-rules-channel"]}>
-                  {channelsList['text'].length && (
-                    <SelectField
-                      lbl="rules-text-channel"
-                      title="Rules/guidelines channel"
-                      value={rulesTextChannel}
-                      items={selectItems}
-                      onChange={(e: any) => handleRulesChannel}
-                      disabled={false}
-                    />
-                  )}
-                  Valgt: {printRulesChannelName ? printRulesChannelName : '-'}
-                </Block>
-              )}
-              {selectItems.length && (
-                <Block className={styles["space-settings-rule"] + " " + styles["space-admin-channel"]}>
-                  {channelsList['text'].length && (
-                    <SelectField
-                      lbl="admin-only-text-channel"
-                      title="Admin-only text channel"
-                      value={adminTextChannel}
-                      items={selectItems}
-                      onChange={(e: any) => handleAdminChannel}
-                      disabled={false}
-                    />
-                  )}
-                  Valgt: {printAdminChannelName ? printAdminChannelName : '-'}
-                </Block>
-              )}
-            </>
-          ) : (
-            <Block className={styles["space-settings-rule"]}>No channels to use for settings</Block>
-          )}
-          {languages.length && (
-            <Block className={styles["space-settings-language"] + " " + styles["space-primary-language"]}>
-              {languages.length && (
-                <SelectField
-                  lbl="space-language"
-                  title="Primary language"
-                  value={channelLanguage}
-                  items={languages}
-                  onChange={(e: any) => handlePrimaryLanguage}
-                  disabled={false}
-                />
-              )}
-              Valgt: {channelLanguage ? channelLanguage : '-'}
+        <AccessSpace membersList={membersList} access={4}>
+          <Heading title={"Space settings: " + theSpace?.Space_Name} />
+          <Block className={"page-section " + styles["space-public-private"]}>
+            <Heading variant="h2" title="Public/private settings" />
+            <Block>
+              Public invite url
+              <Field
+                type="text"
+                lbl=""
+                displayLabel={false}
+                innerLabel={false}
+                value={"https://"}
+                onChange={() => 0}
+                disabled={true}
+                className="login-field"
+              />
             </Block>
-          )}
-        </Block>
+          </Block>
+          <Block className={"page-section " + styles["space-community-settings"]}>
+            <Heading variant="h2" title="Community settings" />
+            {selectItems.length ? (
+              <>
+                {selectItems.length && (
+                  <Block className={styles["space-settings-rule"] + " " + styles["space-rules-channel"]}>
+                    {channelsList['text'].length && (
+                      <SelectField
+                        lbl="rules-text-channel"
+                        title="Rules/guidelines channel"
+                        value={rulesTextChannel}
+                        items={selectItems}
+                        onChange={(e: any) => handleRulesChannel}
+                        disabled={false}
+                      />
+                    )}
+                    Valgt: {printRulesChannelName ? printRulesChannelName : '-'}
+                  </Block>
+                )}
+                {selectItems.length && (
+                  <Block className={styles["space-settings-rule"] + " " + styles["space-admin-channel"]}>
+                    {channelsList['text'].length && (
+                      <SelectField
+                        lbl="admin-only-text-channel"
+                        title="Admin-only text channel"
+                        value={adminTextChannel}
+                        items={selectItems}
+                        onChange={(e: any) => handleAdminChannel}
+                        disabled={false}
+                      />
+                    )}
+                    Valgt: {printAdminChannelName ? printAdminChannelName : '-'}
+                  </Block>
+                )}
+              </>
+            ) : (
+              <Block className={styles["space-settings-rule"]}>No channels to use for settings</Block>
+            )}
+            {languages.length && (
+              <Block className={styles["space-settings-language"] + " " + styles["space-primary-language"]}>
+                {languages.length && (
+                  <SelectField
+                    lbl="space-language"
+                    title="Primary language"
+                    value={channelLanguage}
+                    items={languages}
+                    onChange={(e: any) => handlePrimaryLanguage}
+                    disabled={false}
+                  />
+                )}
+                Valgt: {channelLanguage ? channelLanguage : '-'}
+              </Block>
+            )}
+          </Block>
+        </AccessSpace>
       </Block>
     </Block>
   )

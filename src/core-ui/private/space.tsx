@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 // Internal
-import { Block, Text, Field, EditSpaceName, Space as SpaceCard } from '@/components'
+import { Block, Text, Field, EditSpaceName, Space as SpaceCard, AccessSpace } from '@/components'
 import { ChannelsAndSettings } from "../"
 import { useSpaces } from '@/hooks'
 import { SpaceDTO } from '@/types'
@@ -15,7 +15,7 @@ import { CONSTANTS } from '@/data/CONSTANTS'
 export default function Space() {
   // Hooks
   const router = useRouter()
-  const { theSpace, initChannels, getMembersOfTheSpace, readSpace, deleteSpace } = useSpaces()
+  const { theSpace, readSpace, deleteSpace, readChannels, readMembers, membersList } = useSpaces()
 
   // Internal variables
   const urlSpaceName: string = router.query.spaceName?.toString()!
@@ -46,90 +46,89 @@ export default function Space() {
   }, [urlSpaceName])
 
   useEffect(() => {
-    if (theSpace?.Space_ID) {
-      const init = async () => {
-        initChannels()
-        getMembersOfTheSpace()
-      }
-      init()
+    if (theSpace?.Space_Name) {
+      readChannels()
+      readMembers()
     }
   }, [theSpace])
 
   return (
     <Block className="second-wrapper">
-      <Block className="second-header">
-        <Block className="left-side">
-          <Text className="second-title">
-            <SpaceCard variant='name' withLabel={false} space={tempSpace} />
-          </Text>
-        </Block>
-        <Block className="right-side">
-          <FontAwesomeIcon className="space-action-menu-button" icon={faEllipsis} onClick={() => setSpaceActionMenu(!spaceActionMenu)} />
-          <Block className={"space-action-menu " + (spaceActionMenu ? "visible" : "")}>
-            <nav>
-              <ul>
-                <li className="space-action-menu-item">
-                  <Text
-                    variant="span"
-                    onClick={() => triggerEditModal()}
-                    className="space-action-menu-item-clickable"
-                  >
-                    <FontAwesomeIcon icon={faFont} />
-                    Edit space name
-                  </Text>
-                </li>
-                <li className="space-action-menu-item">
-                  <Link
-                    onClick={() => setSpaceActionMenu(false)}
-                    href={"/space/" + tempSpace.Space_Name + "/settings"}
-                    className="space-action-menu-item-clickable"
-                  >
-                    <FontAwesomeIcon icon={faGear} />
-                    Space settings
-                  </Link>
-                </li>
-                <li className="space-action-menu-item">
-                  <Link
-                    onClick={() => setSpaceActionMenu(false)}
-                    href={"/space/" + tempSpace.Space_Name + "/members"}
-                    className="space-action-menu-item-clickable"
-                  >
-                    <FontAwesomeIcon icon={faUsers} />
-                    Manage members
-                  </Link>
-                </li>
-                <li className="space-action-menu-item">
-                  <Text
-                    variant="span"
-                    onClick={() => confirmDeleteSpace()}
-                    className="space-action-menu-item-clickable"
-                  >
-                    <FontAwesomeIcon icon={faTrashCan} />
-                    Delete space
-                  </Text>
-                </li>
-              </ul>
-            </nav>
+      <AccessSpace membersList={membersList} access={1}>
+        <Block className="second-header">
+          <Block className="left-side">
+            <Text className="second-title">
+              <SpaceCard variant='name' withLabel={false} space={tempSpace} />
+            </Text>
           </Block>
-          {showEditModal && (<EditSpaceName visible={showEditModal} trigger={setShowEditModal} />)}
+          <Block className="right-side">
+            <FontAwesomeIcon className="space-action-menu-button" icon={faEllipsis} onClick={() => setSpaceActionMenu(!spaceActionMenu)} />
+            <Block className={"space-action-menu " + (spaceActionMenu ? "visible" : "")}>
+              <nav>
+                <ul>
+                  <li className="space-action-menu-item">
+                    <Text
+                      variant="span"
+                      onClick={() => triggerEditModal()}
+                      className="space-action-menu-item-clickable"
+                    >
+                      <FontAwesomeIcon icon={faFont} />
+                      Edit space name
+                    </Text>
+                  </li>
+                  <li className="space-action-menu-item">
+                    <Link
+                      onClick={() => setSpaceActionMenu(false)}
+                      href={"/space/" + tempSpace.Space_Name + "/settings"}
+                      className="space-action-menu-item-clickable"
+                    >
+                      <FontAwesomeIcon icon={faGear} />
+                      Space settings
+                    </Link>
+                  </li>
+                  <li className="space-action-menu-item">
+                    <Link
+                      onClick={() => setSpaceActionMenu(false)}
+                      href={"/space/" + tempSpace.Space_Name + "/members"}
+                      className="space-action-menu-item-clickable"
+                    >
+                      <FontAwesomeIcon icon={faUsers} />
+                      Manage memberships
+                    </Link>
+                  </li>
+                  <li className="space-action-menu-item">
+                    <Text
+                      variant="span"
+                      onClick={() => confirmDeleteSpace()}
+                      className="space-action-menu-item-clickable"
+                    >
+                      <FontAwesomeIcon icon={faTrashCan} />
+                      Delete space
+                    </Text>
+                  </li>
+                </ul>
+              </nav>
+            </Block>
+            {showEditModal && (<EditSpaceName visible={showEditModal} trigger={setShowEditModal} />)}
+          </Block>
         </Block>
-      </Block>
-      <Block className="space-content">
-        <Block className="space-search">
-          <Field
-            type="text"
-            lbl=""
-            placeholder="Search"
-            hiddenMUILabel={true}
-            value={spaceSearch}
-            onChange={(e: string) => setSpaceSearch(e)}
-            disabled={false}
-            className="space-search-field"
-          />
+        <Block className="space-content">
+          <Block className="space-search">
+            <Field
+              type="text"
+              lbl=""
+              placeholder="Search"
+              hiddenMUILabel={true}
+              value={spaceSearch}
+              onChange={(e: string) => setSpaceSearch(e)}
+              disabled={false}
+              className="space-search-field"
+            />
+          </Block>
+          <ChannelsAndSettings />
+          <Block className="clear-both"></Block>
         </Block>
-        <ChannelsAndSettings />
-        <Block className="clear-both"></Block>
-      </Block>
+      </AccessSpace>
     </Block>
   )
 }
