@@ -1,6 +1,7 @@
 export * from './modal'
 
 export * from './ui/block_text'
+export * from './ui/flexible_box'
 export * from './ui/heading'
 export * from './ui/input_field'
 export * from './ui/select_field'

@@ -11,17 +11,18 @@ import Link from 'next/link'
 import { env, paths } from '@/env.local'
 import { useAxios, useAuthContext, useSpaces } from '@/hooks'
 import { Block, Text, Profile as ProfileCard } from '@/components'
+import { FullProfile } from '@/components/view-model/FullProfile'
 import { ProfileDTO, SpaceDTO } from '@/types/'
 
-type Variant = 'in-channel' | 'space-settings-member' | 'space-bottom' | 'profile-picture'
+type Variant = 'in-channel' | 'full-profile' | 'space-settings-member' | 'space-bottom' | 'profile-display-name' | 'profile-picture'
 type Props = {
     variant: Variant
-    condition? : string
+    condition?: string
     profile?: ProfileDTO
     profileID?: number
     className?: string
-    hook1?: Function
-    hook2?: Function
+    hook1?: any
+    hook2?: any
 }
 
 const Profile = ({
@@ -29,7 +30,7 @@ const Profile = ({
 }: Props) => {
     // Hooks
     const router = useRouter()
-    const { httpGetRequest } = useAxios()
+    const { httpPostWithData } = useAxios()
     const { doLogout } = useAuthContext()
     const { deleteMember } = useSpaces()
 
@@ -56,17 +57,20 @@ const Profile = ({
         }
     }
 
-    const profileMyself = async () => {
-        //console.log(variant + " myself", profile, profileID, theProfile)
-        const profileData = await httpGetRequest("readUser")
+    const getProfileDetails = async (profileID?: number) => {
+        const getProfileDetailsVariables = {
+            "Profile_ID": profileID
+        }
+        const profileData = await httpPostWithData("readUser", getProfileDetailsVariables)
+        console.log(profileID, typeof profileID, profileData)
         if (profileData.data) setTheProfile(profileData.data)
     }
 
     useEffect(() => {
-        if (profile) setTheProfile(profile)
-        // Set profile to logged-in user, if none is provided from props
-        if (!profile && !profileID) {
-            profileMyself()
+        if (profile) {
+            setTheProfile(profile)
+        } else {
+            getProfileDetails(profileID)
         }
     }, [])
 
@@ -83,6 +87,19 @@ const Profile = ({
         return (
             <>
                 {theProfile && <Text variant="span" className={className}>{theProfile?.Profile_DisplayName}</Text>}
+            </>
+        )
+    } else if (variant == "full-profile") {
+        return (
+            <>
+                {theProfile &&
+                    <>
+                        <FullProfile
+                            theProfile={theProfile}
+                            profileID={profileID}
+                        />
+                    </>
+                }
             </>
         )
     } else if (variant == "space-settings-member") {
@@ -123,7 +140,7 @@ const Profile = ({
                     <Block className={"yourprofile-global " + className}>
                         <ProfileCard variant="profile-picture" className="profile-picture" profile={theProfile} />
                         <Block className="profile-info">
-                            {theProfile?.Profile_DisplayName}
+                            <ProfileCard variant="profile-display-name" className="profile-picture" profile={theProfile} />
                         </Block>
                         <Block className="profile-actions">
                             <FontAwesomeIcon icon={faArrowRightFromBracket} className="profile-logout" onClick={() => doLogout()} />
@@ -159,21 +176,41 @@ const Profile = ({
                 )}
             </>
         )
+    } else if (variant == "profile-display-name") {
+        return (
+            <>
+                {theProfile && (
+                    <Link
+                        href={"/profile/" + theProfile.Profile_DisplayName + "/" + theProfile.Profile_ID}
+                        className="profile-displayname-link"
+                    >
+                        {theProfile.Profile_DisplayName}
+                    </Link>
+                )}
+            </>
+        )
     } else if (variant == "profile-picture") {
+        const width: number = (hook1 ? hook1 : 40)
+        const height: number = (hook2 ? hook2 : 40)
         return (
             <>
                 {theProfile && imgSrc && (
-                    <Image
-                        alt=""
-                        width={40}
-                        height={40}
-                        className={className}
-                        src={imgSrc}
-                        priority={false}
-                        onError={() => {
-                            setImgSrc(demoImg)
-                        }}
-                    />
+                    <Link
+                        href={"/profile/" + theProfile.Profile_DisplayName + "/" + theProfile.Profile_ID}
+                        className="profile-picture-link"
+                    >
+                        <Image
+                            alt=""
+                            width={width}
+                            height={height}
+                            className={className}
+                            src={imgSrc}
+                            priority={false}
+                            onError={() => {
+                                setImgSrc(demoImg)
+                            }}
+                        />
+                    </Link>
                 )}
             </>
         )

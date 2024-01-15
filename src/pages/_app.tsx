@@ -4,6 +4,7 @@ import { Provider } from "react-redux"
 
 // Internal
 import '@/core-ui/styles/Global.styles.scss'
+import '@/core-ui/styles/Flexible-Box.scss'
 import '@/core-ui/styles/Guest.scss'
 import '@/core-ui/styles/Private.scss'
 import appStore from '@/redux/store'
