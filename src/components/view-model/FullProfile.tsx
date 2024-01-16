@@ -1,7 +1,9 @@
 // External
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleDot, faGamepad, faHeadset, faMagnifyingGlass, faPeopleGroup, faRocket, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faCircleDot, faMagnifyingGlass, faPeopleGroup, faRocket, faUser } from '@fortawesome/free-solid-svg-icons'
+import { hasFlag } from 'country-flag-icons'
+import * as allFlags from 'country-flag-icons/react/3x2'
 
 // Internal
 import { ProfileDTO, SpaceDTO } from '@/types/'
@@ -17,10 +19,13 @@ type Props = {
 export const FullProfile = ({
     theProfile, profileID, className
 }: Props) => {
+    const profileNationality = "DK"
+    const Flag = hasFlag(profileNationality) ? allFlags[profileNationality] : allFlags['DK']
+
     return (
         <Block className={"full-pages-wrapper " + className}>
             <Block className={"w-full !grid grid-wrapper max-cols-4 float-left " + styles["profile-wrapper"] + " " + styles["profile-page"]}>
-                <FlexibleBox numberOfColumns={4} className='no-box text-white'>
+                <FlexibleBox numberOfColumns={4} className='no-box'>
                     <Block>
                         <Block className={"relative overflow-hidden rounded-t-lg " + styles["profile-cover"]}>
                             <Image
@@ -43,7 +48,7 @@ export const FullProfile = ({
                                 />
                             </Block>
                             <Block className="mx-5 pl-36 absolute -top-11 w-[calc(100%-2.5rem)]">
-                                <Text variant="p" className="w-full">
+                                <Text variant="p" className="w-full text-white">
                                     <Text variant="span" className="text-xl font-bold float-left">Jonas Sørensen</Text>
                                     <Text variant="span" className="ml-1 float-left">({theProfile.Profile_DisplayName})</Text>
                                     <Text variant="span" className="ml-1 float-left">
@@ -52,48 +57,38 @@ export const FullProfile = ({
                                     <Text variant="span" className="clear-both"></Text>
                                 </Text>
 
-                                <Block className="flex items-center gap-8">
+                                <Block className="w-full flex items-center gap-4">
                                     <Block className="order-1">
-                                        <Block variant="p" className="w-full">
+                                        <Block variant="p" className="my-1">
                                             <Text variant="span" className="flex items-center">
                                                 <FontAwesomeIcon icon={faCircleDot} className="text-green-300 w-4 h-3 mr-1 rounded-full float-left" />
                                                 <Text variant="span" className="text-sm">Online: a moment ago</Text>
                                             </Text>
                                             <Text variant="span" className="clear-both"></Text>
                                         </Block>
-                                        <Block variant="p" className="w-full">
-                                            <Text variant="span" className="flex items-center">
-                                                <Text variant="span" className="text-sm">Denmark / Danish</Text>
-                                            </Text>
-                                            <Text variant="span" className="clear-both"></Text>
-                                        </Block>
-                                        <Block variant="p" className="w-full hidden">
+                                        <Block variant="p" className="my-1">
                                             <Text variant="span" className="flex items-center">
                                                 <FontAwesomeIcon icon={faUser} className="w-4 h-3 mr-1 rounded-full float-left" />
-                                                <Text variant="span" className="text-sm">Male / 30 years</Text>
+                                                <Text variant="span" className="text-sm">Created: nov. 2024</Text>
                                             </Text>
                                             <Text variant="span" className="clear-both"></Text>
                                         </Block>
                                     </Block>
 
                                     <Block className="order-2 hidden">
-                                        <Block variant="p" className="w-full">
+                                        <Block variant="p" className="my-1">
                                             <Text variant="span" className="flex items-center">
-                                                <FontAwesomeIcon icon={faGamepad} className="w-4 h-3 mr-1 rounded-full float-left" />
+                                                <FontAwesomeIcon icon={faUser} className="w-4 h-3 mr-1 rounded-full float-left" />
                                                 <Text variant="span" className="text-sm mr-1">
-                                                    <Text variant="span"><strong>Playstyle: </strong>Hardcore</Text>
+                                                    <Text variant="span"><strong>Male </strong> 30 years old</Text>
                                                 </Text>
-                                                <FontAwesomeIcon icon={faHeadset} className="w-4 h-3 rounded-full float-left" />
                                             </Text>
                                             <Text variant="span" className="clear-both"></Text>
                                         </Block>
-                                        <Block variant="p" className="w-full">
+                                        <Block variant="p" className="my-1">
                                             <Text variant="span" className="flex items-center">
-                                                <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-3 mr-1 rounded-full float-left" />
-                                                <Text variant="span" className="text-sm mr-1">
-                                                    <Text variant="span"><strong>Looking for: </strong>Marriage</Text>
-                                                </Text>
-                                                <FontAwesomeIcon icon={faPeopleGroup} className="w-4 h-3 rounded-full float-left" />
+                                                <Flag className="w-4 h-3 mr-1" />
+                                                <Text variant="span" className="text-sm">Denmark / Danish</Text>
                                             </Text>
                                             <Text variant="span" className="clear-both"></Text>
                                         </Block>
@@ -103,15 +98,11 @@ export const FullProfile = ({
                                         <Block className="flex items-center gap-8">
                                             <Block className="order-1">
                                                 <Text variant="span" className="font-semibold text-2xl">35</Text>
-                                                <Text variant="span" className="font-extralight">Games won</Text>
+                                                <Text variant="span" className={"font-extralight "+styles["spaces-joined"]}>Spaces joined</Text>
                                             </Block>
                                             <Block className="order-2">
                                                 <Text variant="span" className="font-semibold text-2xl">3040</Text>
-                                                <Text variant="span" className="font-extralight">Followers</Text>
-                                            </Block>
-                                            <Block className="order-3">
-                                                <Text variant="span" className="font-semibold text-2xl">17</Text>
-                                                <Text variant="span" className="font-extralight">Trophies</Text>
+                                                <Text variant="span" className="font-extralight">Friends</Text>
                                             </Block>
                                         </Block>
                                     </Block>

@@ -36,11 +36,11 @@ const theElement = ({
     variant = 'div', className, theId, style, onClick, children
 } : Props) => {
     const Element = elements[variant]
-    className = className ? className+' ' : ''
+    className = className ? ' '+className : ''
 
     return (
         <Element 
-            className={`${className+classes[variant]}`} 
+            className={`${classes[variant]+className}`} 
             id={theId} 
             style={style}
             onClick={onClick ?

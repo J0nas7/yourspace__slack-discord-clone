@@ -9,7 +9,7 @@
     }
 
     .bottom-banner {
-        background: var(--sidepanelBg);
+        background: var(--channelBg);
     }
 
     .profile-picture-wrapper {
@@ -27,5 +27,9 @@
                @apply rounded-full border-4 p-1 bg-[var(--sidepanelBg)];
             }
         }
+    }
+
+    .spaces-joined {
+        width: 120px;
     }
 }
