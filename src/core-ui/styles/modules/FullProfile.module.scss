@@ -1,35 +1,150 @@
 .profile-wrapper.profile-page {
-    .profile-cover {
-        min-height: 200px;
-    }
+    @apply w-full grid float-left;
 
-    .protect-layer {
-        background: rgba(34, 38, 47, 0.5);
-        box-shadow: 0px 2px 2px rgb(0 0 0 / 25%);
-    }
+    .profile-jumbotron {
+        .profile-cover {
+            min-height: 200px;
+            @apply relative overflow-hidden rounded-t-lg;
+        }
 
-    .bottom-banner {
-        background: var(--channelBg);
-    }
+        .protect-layer {
+            background: rgba(34, 38, 47, 0.5);
+            box-shadow: 0px 2px 2px rgb(0 0 0 / 25%);
+        }
 
-    .profile-picture-wrapper {
-        width: 112px;
-        height: 112px;
-        
-        a, .profile-picture {
+        .bottom-banner {
+            background: var(--channelBg);
+            @apply h-16 px-4 mb-6 rounded-b-lg relative z-30 flex items-center;
+        }
+
+        .profile-picture-wrapper {
             width: 112px;
             height: 112px;
-            display: block;
-            float: left;
-            
-            &.profile-picture {
-               @apply absolute top-auto bottom-0 left-0 object-cover;
-               @apply rounded-full border-4 p-1 bg-[var(--sidepanelBg)];
+            @apply ml-5 absolute -top-20 z-30;
+
+            a,
+            .profile-picture {
+                width: 112px;
+                height: 112px;
+                display: block;
+                float: left;
+
+                &.profile-picture {
+                    @apply absolute top-auto bottom-0 left-0 object-cover;
+                    @apply rounded-full border-4 p-1 bg-[var(--sidepanelBg)];
+                }
+            }
+        }
+
+        .profile-main-details {
+            @apply mx-5 pl-36 absolute -top-11 w-[calc(100%-2.5rem)];
+
+            .name-area {
+                @apply w-full text-white;
+
+                .full-name {
+                    @apply text-xl font-bold float-left;
+                }
+
+                .display-name-and-symbol {
+                    @apply ml-1 float-left;
+
+                    .symbol-size {
+                        @apply w-6 h-5;
+                    }
+                }
+            }
+
+            .other-profile-info {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                @apply w-full grid gap-4;
+
+                & > div {
+                    @apply flex items-center;
+                }
+
+                .info-item {
+                    @apply my-1;
+
+                    .item-content {
+                        @apply flex items-center;
+
+                        .item-icon {
+                            @apply w-4 h-3 mr-1;
+
+                            &:not(.flag) {
+                                @apply rounded-full float-left;
+                            }
+                        }
+
+                        .item-text {
+                            @apply text-sm;
+                        }
+                    }
+                }
+
+                .profile-counters-wrap {
+                    .profile-counters {
+                        @apply flex items-center gap-8;
+    
+                        .counter-number {
+                            @apply font-semibold text-2xl;
+                        }
+    
+                        .counter-title {
+                            @apply font-extralight;
+    
+                            &.spaces-joined {
+                                width: 120px;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-    .spaces-joined {
-        width: 120px;
+    .profile-feed {
+        @apply lg:col-span-2 xl:col-span-3;
+    }
+
+    .profile-details {
+        .details-grid {
+            @apply w-full grid float-left lg:block;
+
+            .details-row {
+                @apply mb-6;
+            }
+
+            .profile-socials {
+                padding: 0;
+                background: none;
+                @apply shadow-none;
+
+                .social-icons {
+                    @apply flex justify-center mb-4 mt-4;
+
+                    .social-icon {
+                        @apply h-12 w-12 mx-1 rounded-full flex items-center justify-center text-white font-bold;
+
+                        &.reddit { @apply bg-[#F2581C]; }
+                        &.facebook { @apply bg-blue-600; }
+                        &.instagram { @apply bg-[#D300C5]; }
+                        &.google { @apply bg-red-600; }
+                    }
+                }
+                .social-button-wrap {
+                    @apply text-center mb-4;
+
+                    .social-button {
+                        @apply max-w-[216px] normal-case;
+
+                        .social-button-icon {
+                            @apply mr-2;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

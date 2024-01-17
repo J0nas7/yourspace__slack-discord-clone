@@ -1,3 +1,11 @@
+/*@layer components {
+    .content-box-flexible:not(.no-box) {
+        padding: 24px;
+        background-color: #edeff1;
+        @apply rounded-lg shadow-md;
+    }
+}*/
+
 .grid-wrapper {
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
 
@@ -17,7 +25,8 @@
     // General
     &:not(.no-box) {
         padding: 24px;
-        @apply bg-gray-800 rounded-lg shadow-md;
+        background-color: #edeff1;
+        @apply rounded-lg shadow-md;
     }
 
     // Width
@@ -48,7 +57,7 @@
 
     .box-title-icon,
     .box-title {
-        @apply text-orange-500;
+        @apply text-[orange];
     }
 
     .box-title-icon {
