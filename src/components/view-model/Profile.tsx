@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGear, faArrowRightFromBracket, faTrash, faFont, faGavel, faStar, faKey, faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import Link from 'next/link'
+import clsx from 'clsx'
 
 // Internal
 import { env, paths } from '@/env.local'
@@ -14,19 +15,21 @@ import { Block, Text, Profile as ProfileCard } from '@/components'
 import { FullProfile } from '@/components/view-model/FullProfile'
 import { ProfileDTO, SpaceDTO } from '@/types/'
 
-type Variant = 'in-channel' | 'full-profile' | 'space-settings-member' | 'space-bottom' | 'profile-display-name' | 'profile-picture'
+type Variant = 'in-channel' | 'in-channel-full-profile' | 'full-profile' | 'space-settings-member' | 'space-bottom' | 'profile-display-name' | 'profile-picture'
 type Props = {
     variant: Variant
     condition?: string
     profile?: ProfileDTO
     profileID?: number
     className?: string
+    style?: object
     hook1?: any
     hook2?: any
+    onClick?: Function
 }
 
 const Profile = ({
-    variant = 'in-channel', condition, profile, profileID, className, hook1, hook2
+    variant = 'in-channel', condition, profile, profileID, className, style, hook1, hook2, onClick
 }: Props) => {
     // Hooks
     const router = useRouter()
@@ -62,7 +65,6 @@ const Profile = ({
             "Profile_ID": profileID
         }
         const profileData = await httpPostWithData("readUser", getProfileDetailsVariables)
-        console.log(profileID, typeof profileID, profileData)
         if (profileData.data) setTheProfile(profileData.data)
     }
 
@@ -86,7 +88,25 @@ const Profile = ({
     if (variant == "in-channel") {
         return (
             <>
-                {theProfile && <Text variant="span" className={className}>{theProfile?.Profile_DisplayName}</Text>}
+                {theProfile && (
+                    <Block
+                        className={className}
+                        onClick={onClick ? (e: MouseEvent) => onClick(e) : undefined}
+                    >
+                        <Text variant="span">{theProfile?.Profile_DisplayName}</Text>
+                        <ProfileCard variant="in-channel-full-profile" className={hook1} profile={theProfile} />
+                    </Block>
+                )}
+            </>
+        )
+    } else if (variant == "in-channel-full-profile") {
+        return (
+            <>
+                {theProfile && (
+                    <Block className={className} style={style}>
+                        {theProfile.Profile_LastActive && <>{theProfile.Profile_LastActive}</>}
+                    </Block>
+                )}
             </>
         )
     } else if (variant == "full-profile") {
@@ -195,22 +215,17 @@ const Profile = ({
         return (
             <>
                 {theProfile && imgSrc && (
-                    <Link
-                        href={"/profile/" + theProfile.Profile_DisplayName + "/" + theProfile.Profile_ID}
-                        className="profile-picture-link"
-                    >
-                        <Image
-                            alt=""
-                            width={width}
-                            height={height}
-                            className={className}
-                            src={imgSrc}
-                            priority={false}
-                            onError={() => {
-                                setImgSrc(demoImg)
-                            }}
-                        />
-                    </Link>
+                    <Image
+                        alt=""
+                        width={width}
+                        height={height}
+                        className={className}
+                        src={imgSrc}
+                        priority={false}
+                        onError={() => {
+                            setImgSrc(demoImg)
+                        }}
+                    />
                 )}
             </>
         )

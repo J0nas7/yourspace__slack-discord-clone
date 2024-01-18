@@ -18,6 +18,8 @@ model Space_Profile {
   Profile_Email       String @db.Text
   Profile_Password    String
   Profile_ImageUrl    String @db.Text
+  Profile_Country     String @default("DK")
+  Profile_Socials     String @db.Text
 
   Profile_Spaces   Space_Space[]
   Profile_Members  Space_Member[]

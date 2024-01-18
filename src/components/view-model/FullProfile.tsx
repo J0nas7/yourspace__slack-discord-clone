@@ -1,17 +1,19 @@
 // External
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleDot, faEnvelope, faRocket, faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { faFacebook, faGoogle, faInstagram, faReddit } from '@fortawesome/free-brands-svg-icons'
 import { Button } from '@mui/material'
 import { hasFlag } from 'country-flag-icons'
 import * as allFlags from 'country-flag-icons/react/3x2'
+import clsx from 'clsx'
 
 // Internal
 import { ProfileDTO, SpaceDTO } from '@/types/'
-import { Block, Text, Profile as ProfileCard, FlexibleBox } from '@/components'
+import { Block, Text, Profile as ProfileCard, FlexibleBox, Space } from '@/components'
 import styles from '@/core-ui/styles/modules/FullProfile.module.scss'
-import clsx from 'clsx'
+import { useSpaces } from '@/hooks'
 
 type Props = {
     theProfile: ProfileDTO,
@@ -22,18 +24,60 @@ type Props = {
 export const FullProfile = ({
     theProfile, profileID, className
 }: Props) => {
-    const profileNationality = "DK"
-    const Flag = hasFlag(profileNationality) ? allFlags[profileNationality] : allFlags['DK']
+    // Hooks
+    const { getMemberOfSpacesList, spacesList } = useSpaces()
+
+    // Internal variables
+    const profileNationality = theProfile.Profile_Country!
+    const Flag: allFlags.FlagComponent = hasFlag(profileNationality) ?
+        allFlags[profileNationality as keyof allFlags.FlagComponent] : allFlags['DK']
+    const [profileLastActiveTxt, setProfileLastActiveTxt] = useState<string>('')
 
     // Time-related stuff
-    const date = new Date()
+    const now = new Date()
     const profileCreated = new Date(theProfile.Profile_CreatedAt!)
     const profileBirthday: any = new Date(theProfile.Profile_Birthday!)
     const profileLastActive = new Date(theProfile.Profile_LastActive!.toLocaleString())
     const profileCreatedTxt = profileCreated.getDate() + "/" + (profileCreated.getMonth() + 1) + "-" + profileCreated.getFullYear()
-    const profileYearsOld = new Date(date as any - profileBirthday).getFullYear() - 1970
-    const seconds = (date.getTime() - profileLastActive.getTime()) / 1000
-    const profileLastActiveTxt = Math.floor(seconds/60)+" minutes ago"+profileLastActive.getHours()
+    const profileYearsOld = new Date(now as any - profileBirthday).getFullYear() - 1970
+
+    // Methods
+    const calculateLastActive = () => {
+        const profileLastActive = new Date(theProfile.Profile_LastActive!)
+        let timeAgo = Math.floor((now.getTime() - profileLastActive.getTime()) / 1000)
+
+        setProfileLastActiveTxt("active now")
+        if (timeAgo > 59) { // minutes ago
+            timeAgo = Math.floor(timeAgo / 60)
+            setProfileLastActiveTxt(timeAgo + " minutes ago")
+
+            if (timeAgo > 59) { // hours ago
+                timeAgo = Math.floor(timeAgo / 60)
+                setProfileLastActiveTxt(timeAgo + " hours ago")
+
+                if (timeAgo > 23) { // days ago
+                    timeAgo = Math.floor(timeAgo / 24)
+                    setProfileLastActiveTxt(timeAgo + " day ago")
+
+                    // more than a week ago
+                    if (timeAgo > 6) setProfileLastActiveTxt("more than a week ago")
+                }
+            }
+        }
+
+        /*if (timeAgo > 86399 || msgCreated.getDate() !== now.getDate()) setTheDay("yesterday at ")
+        if (timeAgo > 172799) setTheDay(msgCreated.getDate() + "/" + (msgCreated.getMonth() + 1) + ", ")
+        setTimestamp(msgCreated.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' }))*/
+    }
+
+    useEffect(() => {
+        calculateLastActive()
+        getMemberOfSpacesList()
+    }, [])
+
+    useEffect(() => {
+        console.log(spacesList)
+    }, [spacesList])
 
     return (
         <Block className={clsx("full-pages-wrapper", className)}>
@@ -45,6 +89,7 @@ export const FullProfile = ({
                                 src={"https://miro.medium.com/v2/resize:fit:1000/1*v3XndYeIsBtk4CkpMf7vmA.jpeg"}
                                 className="absolute top-0 left-0 w-full h-full object-cover"
                                 alt="Profile banner picture"
+                                priority={true}
                                 fill={true}
                             />
                             <Block className={"absolute w-full h-full z-20 top-0 left-0 " + styles["protect-layer"]}></Block>
@@ -102,7 +147,7 @@ export const FullProfile = ({
                                             <Block variant="p" className={styles["info-item"]}>
                                                 <Text variant="span" className={styles["item-content"]}>
                                                     <Flag className={clsx(styles["item-icon"], styles["flag"])} />
-                                                    <Text variant="span" className={styles["item-text"]}>Denmark / Danish</Text>
+                                                    <Text variant="span" className={styles["item-text"]}>{theProfile.Profile_Country}</Text>
                                                 </Text>
                                                 <Text variant="span" className="clear-both"></Text>
                                             </Block>
@@ -112,11 +157,11 @@ export const FullProfile = ({
                                     <Block className={clsx("order-2 ml-auto uppercase", styles["profile-counters-wrap"])}>
                                         <Block className={styles["profile-counters"]}>
                                             <Block className="order-1">
-                                                <Text variant="span" className={styles["counter-number"]}>35</Text>
+                                                {spacesList && <Text variant="span" className={styles["counter-number"]}>{(spacesList.length).toLocaleString()}</Text>}
                                                 <Text variant="span" className={clsx(styles["counter-title"], styles["spaces-joined"])}>Spaces joined</Text>
                                             </Block>
                                             <Block className="order-2">
-                                                <Text variant="span" className={styles["counter-number"]}>3040</Text>
+                                                <Text variant="span" className={styles["counter-number"]}>{(3040).toLocaleString()}</Text>
                                                 <Text variant="span" className={styles["counter-title"]}>Friends</Text>
                                             </Block>
                                         </Block>
@@ -160,7 +205,20 @@ export const FullProfile = ({
                             </Block>
                         </FlexibleBox>
                         <FlexibleBox title="Joined Spaces" className={clsx(styles["details-row"], styles["side-boxes"])}>
-                            test
+
+                            {spacesList && spacesList.length ? (
+                                <>
+                                    {
+                                        spacesList.map((space: SpaceDTO, i) =>
+                                            <Text variant="span" className={styles["space-joined"]} key={i}>
+                                                <Space variant='name' withLabel={true} space={space} />
+                                            </Text>
+                                        )
+                                    }
+                                </>
+                            ) : (
+                                <Text variant="span" className={styles["no-spaces-joined"]}>No spaces joined</Text>
+                            )}
                         </FlexibleBox>
                     </Block>
                 </FlexibleBox>

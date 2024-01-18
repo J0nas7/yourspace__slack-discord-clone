@@ -5,6 +5,7 @@ export type ProfileDTO = {
     
     // Optional
     Profile_ImageUrl?: string,
+    Profile_Country?: string,
     Profile_RealName?: string,
     Profile_Email?: string,
     Profile_LastActive?: Date

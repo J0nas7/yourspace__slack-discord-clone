@@ -114,6 +114,10 @@
 
             .details-row {
                 @apply mb-6;
+
+                .space-joined {
+                    @apply block w-full;
+                }
             }
 
             .profile-socials {

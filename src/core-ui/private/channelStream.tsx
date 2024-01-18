@@ -21,6 +21,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   const spaceName: string = router.query.spaceName?.toString()!
   const [messages, setMessages] = useState<MessageDTO[]>([])
   const [currentProfile, setCurrentProfile] = useState<ProfileDTO>()
+  const [openProfileInMessage, setOpenProfileInMessage] = useState<number>(0)
 
   // Methods
   useEffect(() => {
@@ -52,7 +53,16 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
         <Block className="reverse-messages">
           {currentProfile && membersList && reduxMessageStream
             && reduxMessageStream.map((message, i) =>
-              <MessageCard variant="in-channel" className="channel-message" message={message} currentProfile={currentProfile} membersList={membersList} key={i} />
+              <MessageCard 
+                variant="in-channel"
+                className="channel-message"
+                message={message}
+                openProfile={openProfileInMessage}
+                setOpenProfile={setOpenProfileInMessage}
+                currentProfile={currentProfile}
+                membersList={membersList}
+                key={i}
+              />
             )}
         </Block>
       </Block>

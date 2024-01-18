@@ -63,12 +63,15 @@ export const useSpaces = () => {
     }
 
     // Get all spaces that a profile is a member of
-    const getMemberOfSpacesList = async () => {
+    const getMemberOfSpacesList = async (profileID?: number) => {
         // Send request to the API for spaces array
         try {
-            const data = await httpGetRequest("readMemberOfSpacesList")
+            const getMemberOfSpacesListVariables = {
+                "Profile_ID": profileID
+            }
+            const data = await httpPostWithData("readMemberOfSpacesList", getMemberOfSpacesListVariables)
             const goToCreateSpace = "/create/space"
-            if (data.message == "NotMemberOfSpace" && router.asPath !== goToCreateSpace) {
+            if (!profileID && data.message == "NotMemberOfSpace" && router.asPath !== goToCreateSpace) {
                 if (confirm("You are not a member of a space. Click OK to create your own. Or cancel to continue exploring others.")) {
                     window.location.href = goToCreateSpace
                 }

@@ -16,6 +16,11 @@
     &:nth-child(2n) {
         background-color: #f0f0f0;
     }
+
+    img {
+        width: 40px;
+        height: 40px;
+    }
     
     .message-details {
         float: left;
@@ -46,6 +51,12 @@
             float: left;
             font-size: .9rem;
             color: #5c5c5c;
+            position: relative;
+
+            .in-channel-full-profile {
+                @apply absolute z-20 w-[350px] h-[550px] bg-white p-2;
+                @apply border border-solid border-gray-500;
+            }
         }
     }
 
