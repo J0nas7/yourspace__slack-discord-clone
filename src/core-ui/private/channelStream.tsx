@@ -1,9 +1,10 @@
 // External
-import { useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import clsx from 'clsx'
 
 // Internal
-import { Block, Field, Text, ChatInput, Message as MessageCard } from '@/components'
+import { Block, Field, Text, ChatInput, Message as MessageCard, Profile as ProfileCard } from '@/components'
 import { MessageDTO, ProfileDTO } from '@/types/'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { useSocket } from "@/components/providers/socket-provider"
@@ -21,7 +22,8 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   const spaceName: string = router.query.spaceName?.toString()!
   const [messages, setMessages] = useState<MessageDTO[]>([])
   const [currentProfile, setCurrentProfile] = useState<ProfileDTO>()
-  const [openProfileInMessage, setOpenProfileInMessage] = useState<number>(0)
+  const [openProfileInMessage, setOpenProfileInMessage] = useState<ProfileDTO>()
+  const [openProfileModalCSS, setOpenProfileModalCSS] = useState<CSSProperties>({})
 
   // Methods
   useEffect(() => {
@@ -50,14 +52,25 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
   return (
     <Block className="channel-inner-content">
       <Block className={styles["channel-messages"]}>
+        {openProfileInMessage && (
+          <ProfileCard
+            variant="in-channel-full-profile"
+            className={clsx(
+              styles["in-channel-full-profile"],
+              { "!hidden": !openProfileInMessage }
+            )}
+            profile={openProfileInMessage}
+            style={openProfileModalCSS}
+          />
+        )}
         <Block className="reverse-messages">
           {currentProfile && membersList && reduxMessageStream
             && reduxMessageStream.map((message, i) =>
-              <MessageCard 
+              <MessageCard
                 variant="in-channel"
                 className="channel-message"
                 message={message}
-                openProfile={openProfileInMessage}
+                openProfile={openProfileInMessage?.Profile_ID || 0}
                 setOpenProfile={setOpenProfileInMessage}
                 currentProfile={currentProfile}
                 membersList={membersList}

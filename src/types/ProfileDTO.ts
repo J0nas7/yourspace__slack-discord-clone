@@ -15,4 +15,5 @@ export type ProfileDTO = {
     
     // Only with messages
     Member_Role?: string
+    Member_CreatedAt?: string
 }

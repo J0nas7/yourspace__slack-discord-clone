@@ -4,6 +4,21 @@
     overflow-y: scroll;
     display: flex;
     flex-direction: column-reverse;
+    position: relative;
+}
+
+.in-channel-full-profile {
+    top: 50%;
+    margin-top: -225px;
+    left: calc(25% + 37.5% - 175px);
+    background-color: #c3c5c7;
+    @apply fixed z-20;
+    @apply w-[350px] max-h-[550px] p-2;
+    @apply rounded-lg;
+
+    .profile-picture {
+        display: none;
+    }
 }
 
 .message-item {
@@ -45,18 +60,16 @@
             float: left;
             font-weight: 700;
             margin-right: 10px;
+
+            &:hover {
+                @apply underline cursor-pointer;
+            }
         }
 
         .message-datestamp {
             float: left;
             font-size: .9rem;
             color: #5c5c5c;
-            position: relative;
-
-            .in-channel-full-profile {
-                @apply absolute z-20 w-[350px] h-[550px] bg-white p-2;
-                @apply border border-solid border-gray-500;
-            }
         }
     }
 

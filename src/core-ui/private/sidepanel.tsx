@@ -7,7 +7,7 @@ import { faCompass, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from '@/components'
-import pp_logo from '@/Assets/Images/headerLogo.png'
+import yourspace_logo from '@/Assets/Images/headerLogo.png'
 import { useSpaces } from '@/hooks'
 import { Space, Profile as ProfileCard } from '@/components/'
 import { SpaceDTO } from '@/types'
@@ -26,7 +26,7 @@ export default function Sidepanel() {
         <Link href="/">
           <Image
             id="logo"
-            src={pp_logo}
+            src={yourspace_logo}
             alt="Spaces logo"
             priority={true}
           />
@@ -38,7 +38,7 @@ export default function Sidepanel() {
         {spacesList && spacesList.length ? (
           <>
             {spacesList.map((space: SpaceDTO, i) =>
-              <Space variant='sidepanel' withLabel={true} space={space} key={i}></Space>
+              <Space variant='sidepanel' withLabel={true} space={space} key={i} />
             )}
           </>
         ) : (

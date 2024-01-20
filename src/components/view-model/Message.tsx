@@ -44,7 +44,6 @@ const Message = ({
     const [timestamp, setTimestamp] = useState<string>('')
     const fileType = theMessage.Message_FileUrl?.split(".").pop()
     const theMember: ProfileDTO = membersList?.filter((member) => member.Profile_ID == theMessage.Message_MemberID).pop()!
-    const [profileModalCSS, setProfileModalCSS] = useState<CSSProperties>({})
 
     // Channel priviligies
     const isAdmin = currentProfile.Member_Role === MemberRole.ADMIN
@@ -80,16 +79,16 @@ const Message = ({
         /*console.log("event", event.clientY)
         console.log("window", window.innerHeight)
         console.log("stream", ((window.innerHeight) - 60 - 100))
-        console.log("modal", ((event.clientY) + 550) - 60)*/
+        console.log("modal", ((event.clientY) + 550) - 60)
         const streamHeight = ((window.innerHeight) - 60 - 100)
         const modalHeight = (((event.clientY) + 550) - 60)
         if (modalHeight > streamHeight) {
             setProfileModalCSS({
                 top: "-" + (modalHeight - streamHeight) + "px"
             })
-        }
+        }*/
 
-        setOpenProfile(theMessage.Message_ID)
+        setOpenProfile(theMember)
     }
 
     useEffect(() => {
@@ -114,15 +113,6 @@ const Message = ({
                             {theDay && timestamp && (
                                 <Text variant="span" className={styles["message-datestamp"]}>
                                     {theDay + timestamp} ({theMessage.Message_ID})
-                                    <ProfileCard
-                                        variant="in-channel-full-profile"
-                                        className={clsx(
-                                            styles["in-channel-full-profile"],
-                                            { "!hidden": openProfile !== theMessage.Message_ID }
-                                        )}
-                                        profileID={theMember.Profile_ID}
-                                        style={profileModalCSS}
-                                    />
                                 </Text>
                             )}
                         </Block>

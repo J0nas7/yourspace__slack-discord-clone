@@ -1,6 +1,5 @@
-.profile-wrapper.profile-page {
-    @apply w-full grid float-left;
-
+.profile-wrapper.profile-page,
+.in-channel-full-profile {
     .profile-jumbotron {
         .profile-cover {
             min-height: 200px;
@@ -22,23 +21,21 @@
             height: 112px;
             @apply ml-5 absolute -top-20 z-30;
 
-            a,
             .profile-picture {
-                width: 112px;
-                height: 112px;
-                display: block;
-                float: left;
-
-                &.profile-picture {
-                    @apply absolute top-auto bottom-0 left-0 object-cover;
-                    @apply rounded-full border-4 p-1 bg-[var(--sidepanelBg)];
-                }
+                @apply absolute top-auto bottom-0 left-0 object-cover;
             }
         }
 
-        .profile-main-details {
-            @apply mx-5 pl-36 absolute -top-11 w-[calc(100%-2.5rem)];
+        a,
+        .profile-picture {
+            width: 112px;
+            height: 112px;
+            display: block;
+            float: left;
+            @apply rounded-full border-4 p-1 bg-[var(--sidepanelBg)];
+        }
 
+        .profile-main-details {
             .name-area {
                 @apply w-full text-white;
 
@@ -56,13 +53,6 @@
             }
 
             .other-profile-info {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                @apply w-full grid gap-4;
-
-                & > div {
-                    @apply flex items-center;
-                }
-
                 .info-item {
                     @apply my-1;
 
@@ -86,14 +76,14 @@
                 .profile-counters-wrap {
                     .profile-counters {
                         @apply flex items-center gap-8;
-    
+
                         .counter-number {
                             @apply font-semibold text-2xl;
                         }
-    
+
                         .counter-title {
                             @apply font-extralight;
-    
+
                             &.spaces-joined {
                                 width: 120px;
                             }
@@ -131,12 +121,24 @@
                     .social-icon {
                         @apply h-12 w-12 mx-1 rounded-full flex items-center justify-center text-white font-bold;
 
-                        &.reddit { @apply bg-[#F2581C]; }
-                        &.facebook { @apply bg-blue-600; }
-                        &.instagram { @apply bg-[#D300C5]; }
-                        &.google { @apply bg-red-600; }
+                        &.reddit {
+                            @apply bg-[#F2581C];
+                        }
+
+                        &.facebook {
+                            @apply bg-blue-600;
+                        }
+
+                        &.instagram {
+                            @apply bg-[#D300C5];
+                        }
+
+                        &.google {
+                            @apply bg-red-600;
+                        }
                     }
                 }
+
                 .social-button-wrap {
                     @apply text-center mb-4;
 
@@ -147,6 +149,99 @@
                             @apply mr-2;
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+// Full Profile page
+.profile-wrapper.profile-page {
+    @apply w-full grid float-left;
+
+    .profile-jumbotron {
+        .profile-main-details {
+            @apply mx-5 pl-36 absolute -top-11 w-[calc(100%-2.5rem)];
+
+            .other-profile-info {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                @apply w-full grid gap-4;
+
+                &>div {
+                    @apply flex items-center;
+                }
+            }
+        }
+    }
+}
+
+// In-channel Profile page
+.in-channel-full-profile {
+    box-shadow: 0px 2px 2px rgb(0 0 0 / 50%);
+
+    .profile-jumbotron {
+        @apply flex items-center mb-3 p-2;
+
+        .profile-picture {
+            @apply mr-2;
+        }
+
+        .profile-main-details {
+            @apply float-left w-[200px];
+        }
+    }
+
+    .profile-more {
+        @apply w-full clear-both p-2;
+        @apply bg-[#585858] text-white;
+        @apply rounded-lg;
+
+        .profile-id {
+            color: #888;
+            @apply text-sm;
+        }
+
+        .profile-info {
+            @apply w-full clear-both py-2;
+
+            &:not(:last-child) {
+                border-bottom: 2px solid #888;
+            }
+
+            .profile-info-title {
+                @apply text-sm font-bold uppercase;
+            }
+
+            .member-since-wrapper {
+                @apply flex items-center;
+
+                .yourspace-logo, 
+                .profile-since, 
+                .space-logo, 
+                .member-since {
+                    @apply float-left mr-2;
+                }
+            }
+
+            .profile-info-role {
+                @apply lowercase;
+
+                &::first-letter {
+                    @apply capitalize;
+                }
+            }
+
+            .profile-info-connect {
+                @apply mt-2;
+
+                button {
+                    @apply w-[48%] mx-[1%];
+                    @apply text-xs;
+                }
+
+                .social-button-icon {
+                    @apply mr-2;
+
                 }
             }
         }
