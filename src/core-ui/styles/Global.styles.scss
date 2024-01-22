@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 *, html {
     top: 0;
     left: 0;
@@ -25,6 +21,10 @@
 @mixin button-green {
     background-color: rgb(76, 207, 150) !important;
     color: white !important;
+    
+    &:hover {
+        background-color: rgb(55, 176, 124) !important;
+    }
 }
 
 h1 {

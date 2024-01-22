@@ -43,6 +43,11 @@ const Channel = ({
         'AUDIO': <FontAwesomeIcon icon={faMicrophoneLines} className="channel-format-list-item-link-icon" />,
         'VIDEO': <FontAwesomeIcon icon={faVideo} className="channel-format-list-item-link-icon" />,
     }
+    let newLink = CONSTANTS.SPACE_URL + router.query.spaceName +
+            (channel.Channel_Type == "TEXT" ? CONSTANTS.CHANNEL_URL : '') + 
+            (channel.Channel_Type == "AUDIO" ? CONSTANTS.AUDIO_URL : '') + 
+            (channel.Channel_Type == "VIDEO" ? CONSTANTS.VIDEO_URL : '') + 
+            channel.Channel_Name
 
     // Methods
     const listItemLinkHandler = (newName: string) => {
@@ -79,10 +84,10 @@ const Channel = ({
                 variant="span"
                 className={"channel-format-list-item " + (routerChannelName === channel.Channel_Name ? " active" : "")}
             >
-                <Text variant="span" className="channel-format-list-item-link" onClick={() => listItemLinkHandler(channel.Channel_Name)}>
+                <Link href={newLink} className="channel-format-list-item-link">
                     {channelTypeIcons[channel.Channel_Type]}
                     {channel.Channel_Name}
-                </Text>
+                </Link>
                 <Block variant="span" className="channel-format-list-item-actions">
                     <FontAwesomeIcon icon={faPen} className="channel-format-list-item-action" onClick={() => setShowEditModal(true)} />
                     <FontAwesomeIcon icon={faTrashCan} className="channel-format-list-item-action" onClick={() => handleDeleteChannel()} />

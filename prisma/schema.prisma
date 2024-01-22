@@ -18,14 +18,17 @@ model Space_Profile {
   Profile_Email       String @db.Text
   Profile_Password    String
   Profile_ImageUrl    String @db.Text
+  Profile_Country     String @default("DK")
+  Profile_Socials     String @db.Text
 
   Profile_Spaces   Space_Space[]
   Profile_Members  Space_Member[]
   Profile_Channels Space_Channel[]
 
-  Profile_Birthday  DateTime
-  Profile_CreatedAt DateTime @default(now())
-  Profile_UpdatedAt DateTime @updatedAt
+  Profile_LastActive DateTime @default(now())
+  Profile_Birthday   DateTime
+  Profile_CreatedAt  DateTime @default(now())
+  Profile_UpdatedAt  DateTime @updatedAt
 }
 
 model Space_Space {
@@ -40,8 +43,8 @@ model Space_Space {
   Space_Members  Space_Member[]
   Space_Channels Space_Channel[]
 
-  Space_CreatedAt DateTime @default(now())
-  Space_UpdatedAt DateTime @updatedAt
+  Space_CreatedAt DateTime  @default(now())
+  Space_UpdatedAt DateTime  @updatedAt
   Space_DeletedAt DateTime?
 
   @@index([Space_ProfileID])
@@ -70,8 +73,8 @@ model Space_Member {
   Member_ConversationsInitiated Space_Conversation[] @relation("MemberOne")
   Member_ConversationsReceived  Space_Conversation[] @relation("MemberTwo")
 
-  Member_CreatedAt DateTime @default(now())
-  Member_UpdatedAt DateTime @updatedAt
+  Member_CreatedAt DateTime  @default(now())
+  Member_UpdatedAt DateTime  @updatedAt
   Member_DeletedAt DateTime?
 
   @@index([Member_ProfileID])
@@ -98,8 +101,8 @@ model Space_Channel {
 
   Channel_Messages Space_Message[]
 
-  Channel_CreatedAt DateTime @default(now())
-  Channel_UpdatedAt DateTime @updatedAt
+  Channel_CreatedAt DateTime  @default(now())
+  Channel_UpdatedAt DateTime  @updatedAt
   Channel_DeletedAt DateTime?
 
   @@index([Channel_ProfileID])
@@ -120,8 +123,8 @@ model Space_Message {
 
   deleted Boolean @default(false)
 
-  Message_CreatedAt DateTime @default(now())
-  Message_UpdatedAt DateTime @updatedAt
+  Message_CreatedAt DateTime  @default(now())
+  Message_UpdatedAt DateTime  @updatedAt
   Message_DeletedAt DateTime?
 
   @@index([Message_MemberID])

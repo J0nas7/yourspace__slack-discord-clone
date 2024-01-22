@@ -1,7 +1,7 @@
 // Internal
 import { Text } from '..'
 
-type Variant = 'h1' | 'h2'
+type Variant = 'h1' | 'h2' | 'h3'
 /**
  * Renders a form field.
  *

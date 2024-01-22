@@ -1,10 +1,11 @@
 // External
 import { useRouter } from 'next/navigation'
-import { FormEvent, useEffect, useState } from 'react'
+import { CSSProperties, FormEvent, MouseEvent, useEffect, useState } from 'react'
 import { Button } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
+import clsx from 'clsx'
 
 // Internal
 import { useAxios, useMessages } from '@/hooks'
@@ -17,6 +18,8 @@ type Variant = 'in-channel'
 type Props = {
     variant: Variant
     message: MessageDTO
+    openProfile: number
+    setOpenProfile: Function
     className?: string
     currentProfile: ProfileDTO
     membersList?: ProfileDTO[]
@@ -24,7 +27,7 @@ type Props = {
 }
 
 const Message = ({
-    variant = 'in-channel', message, className, currentProfile, membersList, theId
+    variant = 'in-channel', message, openProfile, setOpenProfile, className, currentProfile, membersList, theId
 }: Props) => {
     // Hooks
     const router = useRouter()
@@ -35,7 +38,7 @@ const Message = ({
     const theMessage: MessageDTO = message
     const [editMsg, setEditMsg] = useState<string>(theMessage.Message_Content)
     const [editModal, setEditModal] = useState<boolean>(false)
-    const [newContent,setNewContent] = useState<string>(theMessage.Message_Content)
+    const [newContent, setNewContent] = useState<string>(theMessage.Message_Content)
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const [theDay, setTheDay] = useState<string>('')
     const [timestamp, setTimestamp] = useState<string>('')
@@ -53,7 +56,7 @@ const Message = ({
 
     // Methods
     const editMessage = () => canEdit ? setEditModal(true) : false
-    
+
     const saveChanges = (e?: FormEvent) => {
         e?.preventDefault()
         if (canEdit) {
@@ -72,6 +75,22 @@ const Message = ({
         setTimestamp(msgCreated.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' }))
     }
 
+    const openThisProfile = (event: MouseEvent) => {
+        /*console.log("event", event.clientY)
+        console.log("window", window.innerHeight)
+        console.log("stream", ((window.innerHeight) - 60 - 100))
+        console.log("modal", ((event.clientY) + 550) - 60)
+        const streamHeight = ((window.innerHeight) - 60 - 100)
+        const modalHeight = (((event.clientY) + 550) - 60)
+        if (modalHeight > streamHeight) {
+            setProfileModalCSS({
+                top: "-" + (modalHeight - streamHeight) + "px"
+            })
+        }*/
+
+        setOpenProfile(theMember)
+    }
+
     useEffect(() => {
         setDateAndTime()
     }, [theMessage.Message_CreatedAt])
@@ -83,7 +102,14 @@ const Message = ({
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
                         <Block className="left-side">
-                            {theMember && <ProfileCard variant="in-channel" className={styles["message-username"]} profile={theMember} />}
+                            {theMember && (
+                                <ProfileCard
+                                    variant="in-channel"
+                                    className={styles["message-username"]}
+                                    profile={theMember}
+                                    onClick={(e: MouseEvent) => openThisProfile(e)}
+                                />
+                            )}
                             {theDay && timestamp && (
                                 <Text variant="span" className={styles["message-datestamp"]}>
                                     {theDay + timestamp} ({theMessage.Message_ID})

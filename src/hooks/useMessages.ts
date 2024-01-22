@@ -72,7 +72,7 @@ export const useMessages = () => {
         setNewMessage('')
     }
 
-    // Request first 10 messages in the channel
+    // Request first 25 messages in the channel
     const readFirstMessages = async () => {
         if (channelName && spaceName) {
             // Variables to send to backend API
@@ -83,7 +83,7 @@ export const useMessages = () => {
 
             // Send request to the API for messages
             try {
-                const data = await httpPostWithData("read10Messages", getMessagesVariables)
+                const data = await httpPostWithData("read25Messages", getMessagesVariables)
                 if (data.data && data.data.length) {
                     dispatch(setMessageStream({
                         "data": [...data.data]

@@ -4,4 +4,6 @@ export const CONSTANTS = {
 
     'SPACE_URL': '/space/',
     'CHANNEL_URL': '/channel/',
+    'AUDIO_URL': '/audio/',
+    'VIDEO_URL': '/video/',
 }

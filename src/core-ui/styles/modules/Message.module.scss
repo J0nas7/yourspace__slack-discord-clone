@@ -4,6 +4,21 @@
     overflow-y: scroll;
     display: flex;
     flex-direction: column-reverse;
+    position: relative;
+}
+
+.in-channel-full-profile {
+    top: 50%;
+    margin-top: -225px;
+    left: calc(25% + 37.5% - 175px);
+    background-color: #c3c5c7;
+    @apply fixed z-20;
+    @apply w-[350px] max-h-[550px] p-2;
+    @apply rounded-lg;
+
+    .profile-picture {
+        display: none;
+    }
 }
 
 .message-item {
@@ -15,6 +30,11 @@
 
     &:nth-child(2n) {
         background-color: #f0f0f0;
+    }
+
+    img {
+        width: 40px;
+        height: 40px;
     }
     
     .message-details {
@@ -40,6 +60,10 @@
             float: left;
             font-weight: 700;
             margin-right: 10px;
+
+            &:hover {
+                @apply underline cursor-pointer;
+            }
         }
 
         .message-datestamp {
