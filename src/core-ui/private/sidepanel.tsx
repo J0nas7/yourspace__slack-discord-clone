@@ -18,7 +18,7 @@ export default function Sidepanel() {
 
   useEffect(() => {
     getMemberOfSpacesList()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Block className="sidepanel-wrapper">

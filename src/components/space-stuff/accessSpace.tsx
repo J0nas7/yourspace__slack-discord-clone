@@ -31,7 +31,7 @@ export default function AccessSpace({ membersList, access, children }: { members
             }
             getIAm()
         }
-    }, [membersList])
+    }, [membersList]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (iAm) {
@@ -46,7 +46,7 @@ export default function AccessSpace({ membersList, access, children }: { members
                 return false
             })
         }
-    }, [iAm])
+    }, [iAm]) // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!canAccess && 1 < access) return (
         <>Validating your access...</>

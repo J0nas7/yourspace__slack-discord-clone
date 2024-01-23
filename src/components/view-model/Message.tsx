@@ -93,7 +93,7 @@ const Message = ({
 
     useEffect(() => {
         setDateAndTime()
-    }, [theMessage.Message_CreatedAt])
+    }, [theMessage.Message_CreatedAt]) // eslint-disable-line react-hooks/exhaustive-deps
 
     if (variant == "in-channel") {
         return (

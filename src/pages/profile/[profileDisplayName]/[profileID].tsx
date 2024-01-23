@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Profile as ProfileCard } from '@/components/'
 import { useEffect } from 'react'
 
-export default function profileID() {
+export default function ProfileID() {
   // Hooks
   const router = useRouter()
 

@@ -30,7 +30,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
     updateMessageStream()
     readFirstMessages()
     if (spaceName) readMembers()
-  }, [channelName, spaceName])
+  }, [channelName, spaceName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const getCurrentProfile = async () => {
     const getUserDataVariables = {
@@ -43,7 +43,7 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
 
   useEffect(() => {
     getCurrentProfile()
-  }, [spaceName])
+  }, [spaceName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   socket?.on('sendChatToClient', (message: MessageDTO) => {
     if (message.Channel_Name == channelName) updateMessageStream(false, message)

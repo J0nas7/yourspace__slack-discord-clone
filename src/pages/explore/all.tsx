@@ -15,7 +15,7 @@ import {
     selectMembersList
 } from '@/redux'
 
-export default function exploreAll() {
+export default function ExploreAll() {
     // Hooks
     const { highlightedSpacesList, getHighlightedSpacesList } = useSpaces()
 
@@ -26,7 +26,7 @@ export default function exploreAll() {
     // Methods
     useEffect(() => {
         getHighlightedSpacesList()
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>

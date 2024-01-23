@@ -73,7 +73,7 @@ export const FullProfile = ({
     useEffect(() => {
         calculateLastActive()
         getMemberOfSpacesList()
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         console.log(spacesList)

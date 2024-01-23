@@ -15,7 +15,7 @@ import {
   selectMembersList
 } from '@/redux'
 
-export default function spaceMembers() {
+export default function SpaceMembers() {
   // Hooks
   const { theSpace, membersList, readSpace, filterModeratorsAndAbove, updateConfirmRole, deleteThisMember } = useSpaces()
 
@@ -48,11 +48,11 @@ export default function spaceMembers() {
       })
       setTheOwner(filterModeratorsAndAbove("OWNER")![0])
     }
-  }, [membersList])
+  }, [membersList]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!theSpace.Space_Name) readSpace()
-  }, [theSpace])
+  }, [theSpace]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Block className="other-pages-wrapper">

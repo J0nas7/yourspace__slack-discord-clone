@@ -37,7 +37,7 @@ export const ChannelsAndSettings = () => {
 
     useEffect(() => {
         setChannelsListRender(emptyChannels)
-    }, [urlSpaceName])
+    }, [urlSpaceName]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>

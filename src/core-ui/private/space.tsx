@@ -43,14 +43,14 @@ export default function Space() {
   useEffect(() => {
     console.log("wrapper", urlSpaceName)
     if (urlSpaceName) readSpace(urlSpaceName)
-  }, [urlSpaceName])
+  }, [urlSpaceName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (theSpace?.Space_Name) {
       readChannels()
       readMembers()
     }
-  }, [theSpace])
+  }, [theSpace]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Block className="second-wrapper">

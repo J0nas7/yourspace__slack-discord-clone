@@ -19,7 +19,7 @@ export const Channel = () => {
   // Methods
   useEffect(() => {
     if (!theSpace.Space_Name) readSpace()
-  }, [theSpace])
+  }, [theSpace]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Block className="channel-wrapper">
