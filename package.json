@@ -5,8 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -p 8080",
+    "lint": "next lint",
+    "gcp-build": "npm run build",
+    "deploy": "gcloud config set project next-developerjones-dk && gcloud app deploy app.yaml --version=0-1-0"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "@emoji-mart/data": "^1.1.2",
