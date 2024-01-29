@@ -41,11 +41,11 @@ export const MediaRoom = ({
       }
     }
     if (chatId) loadMedia()
-  }, [chatId])
+  }, [chatId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!theSpace.Space_Name) readSpace()
-  }, [theSpace])
+  }, [theSpace]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (token === "") {
     return <>Loading...</>

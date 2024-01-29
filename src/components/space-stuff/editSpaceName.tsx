@@ -13,7 +13,7 @@ type Props = {
     trigger: Function
 }
 
-export default function editSpaceName({
+export default function EditSpaceName({
     visible, trigger
 }: Props) {
     // Hooks

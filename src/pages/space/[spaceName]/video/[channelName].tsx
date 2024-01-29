@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 // Internal
 import { MediaRoom } from '@/core-ui'
 
-export default function channelName() {
+export default function ChannelName() {
     // Hooks
     const router = useRouter()
 

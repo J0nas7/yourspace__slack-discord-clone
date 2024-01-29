@@ -1,9 +1,11 @@
+// External
 import { createNextPageApiHandler } from "uploadthing/next-legacy";
- 
-import { ourFileRouter } from "@/pages/server/uploadthing";
+
+// Internal
+import { OurFileRouter } from "@/pages/server/uploadthing";
  
 const handler = createNextPageApiHandler({
-  router: ourFileRouter,
+  router: OurFileRouter,
 });
  
 export default handler;

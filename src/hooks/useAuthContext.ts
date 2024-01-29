@@ -86,11 +86,11 @@ export const useAuthContext = (__templateCheck?: Function) => {
     useEffect(() => {
         const tokens: jwtTokensDTO = { 'accessToken': accessToken, 'refreshToken': refreshToken }
         saveTokens(tokens)
-    }, [accessToken, refreshToken])
+    }, [accessToken, refreshToken]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (__templateCheck) __templateCheck()
-    }, [isLoggedIn])
+    }, [isLoggedIn]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         // This will only be called once the component is mounted inside the browser
@@ -103,7 +103,7 @@ export const useAuthContext = (__templateCheck?: Function) => {
         if (getAuthContext("accessToken")) dispatch(setAccessToken({ "data": getAuthContext("accessToken") }))
         if (getAuthContext("refreshToken")) dispatch(setRefreshToken({ "data": getAuthContext("refreshToken") }))
         setIsLoading(false)
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return {
         isLoggedIn,

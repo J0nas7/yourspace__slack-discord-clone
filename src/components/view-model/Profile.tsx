@@ -90,7 +90,7 @@ const Profile = ({
         } else {
             getProfileDetails(profileID)
         }
-    }, [profileID])
+    }, [profileID])// eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         const profileImage = theProfile?.Profile_ImageUrl
@@ -153,7 +153,7 @@ const Profile = ({
                                     Called:
                                 </Text>
                                 {theProfile.Profile_RealName}<br />
-                                "{theProfile.Profile_DisplayName}"
+                                &quot;{theProfile.Profile_DisplayName}&quot;
                             </Text>
                             <Text className={styles["profile-info"]} variant="span">
                                 <Text className={styles["profile-info-title"]} variant="span">

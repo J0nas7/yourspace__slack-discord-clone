@@ -14,7 +14,7 @@ import {
   selectChannelsList
 } from '@/redux'
 
-export default function spaceSettings() {
+export default function SpaceSettings() {
   // Hooks
   const { theSpace, readSpace, membersList, channelsList } = useSpaces()
 
@@ -49,11 +49,11 @@ export default function spaceSettings() {
   useEffect(() => {
     if (adminTextChannel) filterSelectItem(adminTextChannel, setPrintAdminChannelName)
     if (rulesTextChannel) filterSelectItem(rulesTextChannel, setPrintRulesChannelName)
-  }, [adminTextChannel, rulesTextChannel])
+  }, [adminTextChannel, rulesTextChannel]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!theSpace.Space_Name) readSpace()
-  }, [theSpace])
+  }, [theSpace]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (channelsList['text'].length) {

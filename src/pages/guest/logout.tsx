@@ -10,7 +10,7 @@ export default function Login() {
 
     useEffect(() => {
         logout()
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Block className="logout">
