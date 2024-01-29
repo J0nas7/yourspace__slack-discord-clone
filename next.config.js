@@ -3,14 +3,30 @@ const nextConfig = {
   /**
    * Deployment
    */
-  basePath: process.env.NODE_ENV === "production" ? "/discord_clone" : undefined,
-  assetPrefix: process.env.NODE_ENV === "production" ? "/discord_clone" : undefined,
+  basePath: process.env.NODE_ENV === "production" ? "" : undefined, // "/subfolder"
+  assetPrefix: process.env.NODE_ENV === "production" ? "" : undefined, // "/subfolder"
   /**
    * Development
    */
   reactStrictMode: true,
   images: {
-    domains: ["localhost", "developerjones.dk", "uploadthing.com", "utfs.io", "miro.medium.com"]
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.developerjones.dk',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.googleapis.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.googleusercontent.com',
+        port: '',
+      },
+    ],
   }
 }
 
