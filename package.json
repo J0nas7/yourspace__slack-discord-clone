@@ -8,7 +8,9 @@
     "start": "next start -p 8080",
     "lint": "next lint",
     "gcp-build": "npm run build",
-    "deploy": "gcloud config set project next-developerjones-dk && gcloud app deploy app.yaml --version=0-1-0"
+    "deploy": "gcloud config set project next-developerjones-dk && gcloud app deploy app.yaml --version=0-1-0",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "engines": {
     "node": ">=18"
@@ -58,7 +60,13 @@
     "uploadthing": "^5.7.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.1",
+    "@testing-library/react": "^14.2.1",
     "@types/cookie-parser": "^1.4.4",
-    "prisma": "^5.4.1"
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prisma": "^5.4.1",
+    "ts-node": "^10.9.2"
   }
 }
