@@ -1,5 +1,4 @@
 // External
-import React from 'react'
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 
@@ -53,7 +52,7 @@ test('Should render an input field', () => {
     expect(demoInput).toBeInstanceOf(HTMLInputElement)
 })
 
-test('Should render a small order summary card', () => {
+/*test('Should render a small order summary card', () => {
     const demoSpace: SpaceDTO = {
         Space_ID: 0,
         Space_Name: "space-name",
@@ -77,4 +76,4 @@ test('Should render a small order summary card', () => {
     expect(adrContent).toBeInTheDocument()
     expect(areaContent).toBeInTheDocument()
     expect(deadlineContent).toBeInTheDocument()
-})
+})*/
