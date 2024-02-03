@@ -1,6 +1,7 @@
 // External
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
+import { useRouter } from "next/navigation"
 
 // Internal
 import {
@@ -9,6 +10,15 @@ import {
 } from '../components'
 import { SpaceDTO } from '../types'
 import { PrivateLayoutMock } from './test-env'
+
+// Mock useRouter:
+jest.mock("next/navigation", () => ({
+    useRouter() {
+        return {
+            prefetch: () => null
+        }
+    }
+}))
 
 test('Should render header and same text passed in to title prop', () => {
     render(<Heading title='My header' />)
@@ -52,28 +62,19 @@ test('Should render an input field', () => {
     expect(demoInput).toBeInstanceOf(HTMLInputElement)
 })
 
-/*test('Should render a small order summary card', () => {
+test('Should render a space name card with label', () => {
     const demoSpace: SpaceDTO = {
         Space_ID: 0,
-        Space_Name: "space-name",
+        Space_Name: "Find space name",
     }
     render(
-        <PrivateLayoutMock>
-            <SpaceCard
-                space={demoSpace}
-                variant='name'
-                withLabel={false}
-            />
-        </PrivateLayoutMock>
+        <SpaceCard
+            space={demoSpace}
+            variant='name'
+            withLabel={true}
+        />
     )
-    const orderIdContent = screen.queryByText(/321/i)
-    const totalSaleContent = screen.getByText("Kr. 1234")
-    const adrContent = screen.getByText("The front door")
-    const areaContent = screen.getByText("At home")
-    const deadlineContent = screen.getByText("ASAP")
-    expect(orderIdContent).not.toBeInTheDocument()
-    expect(totalSaleContent).toBeInTheDocument()
-    expect(adrContent).toBeInTheDocument()
-    expect(areaContent).toBeInTheDocument()
-    expect(deadlineContent).toBeInTheDocument()
-})*/
+    const spaceNameLink = screen.getByText("Find space name")
+    expect(spaceNameLink).toHaveClass('with-label')
+    expect(spaceNameLink).toBeInTheDocument()
+})

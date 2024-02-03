@@ -8,9 +8,9 @@ import { ReduxProviderWrapper } from "./test.reduxWrapper"
 export const GuestLayoutMock = ({ children }: any) => {
     return (
         <ReduxProviderWrapper>
-                <LayoutController>
+                <GuestLayout>
                     {children}
-                </LayoutController>
+                </GuestLayout>
         </ReduxProviderWrapper>
     )
 }
@@ -18,9 +18,9 @@ export const GuestLayoutMock = ({ children }: any) => {
 export const PrivateLayoutMock = ({ children }: any) => {
     return (
         <ReduxProviderWrapper>
-            <LayoutController>
+            <PrivateLayout>
                 {children}
-            </LayoutController>
+            </PrivateLayout>
         </ReduxProviderWrapper>
     )
 }
