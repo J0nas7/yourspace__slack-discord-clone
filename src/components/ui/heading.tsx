@@ -9,15 +9,17 @@ type Variant = 'h1' | 'h2' | 'h3'
  */
 
 export const Heading = ({
-    title,
+    title = '',
     variant = 'h1',
-    className = ''
+    className = '',
+    children = ''
 } : {
-    title: string,
+    title?: string,
     variant?: Variant
     className?: string,
+    children?: React.ReactNode,
 }) => {
 	return (
-        <Text variant={variant} className={className}>{title}</Text>
+        <Text variant={variant} className={className}>{(title || children)}</Text>
     )
 }

@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 
 // Internal
 import { Profile as ProfileCard } from '@/components/'
-import { useEffect } from 'react'
 
 export default function ProfileID() {
   // Hooks

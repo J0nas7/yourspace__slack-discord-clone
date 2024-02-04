@@ -10,7 +10,15 @@ import styles from '@/core-ui/styles/modules/Message.module.scss'
 import { useSocket } from "@/components/providers/socket-provider"
 import { useAxios, useSpaces, useMessages } from '@/hooks'
 
-export const ChannelName = ({ channelName }: { channelName: string }) => {
+type MessageStreamProps = {
+  channelName?: string,
+  instantChat?: number
+}
+
+export const ChannelName = ({
+  channelName,
+  instantChat
+}: MessageStreamProps) => {
   // Hooks
   const { socket } = useSocket()
   const router = useRouter()
@@ -79,11 +87,11 @@ export const ChannelName = ({ channelName }: { channelName: string }) => {
             )}
         </Block>
       </Block>
-      <ChatInput
+      {channelName && <ChatInput
         name={channelName}
         type="channel"
         className="new-message"
-      />
+      />}
     </Block>
   )
 }

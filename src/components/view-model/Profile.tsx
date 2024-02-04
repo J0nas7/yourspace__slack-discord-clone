@@ -202,14 +202,22 @@ const Profile = ({
                                     Connect:
                                 </Text>
                                 <Text className={styles["profile-info-connect"]} variant="span">
-                                    <Button className={clsx("button", "button-green", styles["social-button"])}>
-                                        <FontAwesomeIcon icon={faUserPlus} className={styles["social-button-icon"]} />
-                                        Add Friend
-                                    </Button>
-                                    <Button className={clsx("button", "button-green", styles["social-button"])}>
-                                        <FontAwesomeIcon icon={faEnvelope} className={styles["social-button-icon"]} />
-                                        Send Message
-                                    </Button>
+                                    <Link
+                                        href={"/chat/" + theProfile.Profile_DisplayName + "/" + theProfile.Profile_ID}
+                                    >
+                                        <Button className={clsx("button", "button-green", styles["social-button"])}>
+                                            <FontAwesomeIcon icon={faUserPlus} className={styles["social-button-icon"]} />
+                                            Add Friend
+                                        </Button>
+                                    </Link>
+                                    <Link
+                                        href={"/chat/" + theProfile.Profile_DisplayName + "/" + theProfile.Profile_ID}
+                                    >
+                                        <Button className={clsx("button", "button-green", styles["social-button"])}>
+                                            <FontAwesomeIcon icon={faEnvelope} className={styles["social-button-icon"]} />
+                                            Send Message
+                                        </Button>
+                                    </Link>
                                 </Text>
                             </Text>
                         </Block>

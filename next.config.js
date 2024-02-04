@@ -18,6 +18,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: '**.medium.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
         hostname: '**.googleapis.com',
         port: '',
       },

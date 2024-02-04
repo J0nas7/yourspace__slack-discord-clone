@@ -175,7 +175,7 @@ body {
 
         .sidepanel-header {
             width: 100%;
-            height: auto;
+            height: 86px;
 
             #logo,
             #logo-text {
@@ -199,8 +199,10 @@ body {
 
         .sidepanel-spaces-list {
             width: 100%;
+            height: calc(100vh - 86px);
             padding: 5px;
-            height: auto;
+            padding-bottom: 15px;
+            overflow-y: scroll;
 
             a {
                 display: flex;
@@ -573,8 +575,8 @@ body {
         }
     }
 
-    .channel-wrapper {
-        .channel-header {
+    .channel-wrapper, .chat-wrapper {
+        .channel-header, .chat-header {
             width: 100%;
             height: var(--headerH);
             display: flex;
@@ -615,6 +617,10 @@ body {
                         background-color: rgb(195, 135, 61);
                     }
                 }
+            }
+
+            &.chat-header h1 {
+                margin-bottom: 0;
             }
         }
 
