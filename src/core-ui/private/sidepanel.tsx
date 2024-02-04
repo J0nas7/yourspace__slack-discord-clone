@@ -38,12 +38,7 @@ export default function Sidepanel() {
         {spacesList && spacesList.length ? (
           <>
             {spacesList.map((space: SpaceDTO, i) =>
-              <>
-                <Space variant='sidepanel' withLabel={true} space={space} key={i} />
-                <Space variant='sidepanel' withLabel={true} space={space} key={i} />
-                <Space variant='sidepanel' withLabel={true} space={space} key={i} />
-                <Space variant='sidepanel' withLabel={true} space={space} key={i} />
-              </>
+              <Space variant='sidepanel' withLabel={true} space={space} key={i} />
             )}
           </>
         ) : (

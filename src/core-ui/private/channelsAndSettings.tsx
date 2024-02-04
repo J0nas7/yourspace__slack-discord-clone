@@ -41,7 +41,7 @@ export const ChannelsAndSettings = () => {
 
     return (
         <>
-            {!alreadyMember &&
+            {alreadyMember === false &&
                 <Block className="already-member">
                     <Block className="already-member-teaser">
                         Lige nu er du bare med på en kigger. Meld dig ind i spacet for at deltage i snakken!
@@ -70,7 +70,7 @@ export const ChannelsAndSettings = () => {
                             )}
                         </>
                     ) : (
-                        <Block>There is no members</Block>
+                        <Block>There are no members</Block>
                     )}
                 </Block>
             </Block>

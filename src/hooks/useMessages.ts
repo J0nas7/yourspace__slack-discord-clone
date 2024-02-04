@@ -8,10 +8,13 @@ import {
     useAppDispatch,
     useTypedSelector,
     setMessageStream,
-    selectMessageStream
+    selectMessageStream,
+    setConversationStream,
+    selectConversationStream,
 } from '@/redux'
 import { CONSTANTS } from "@/data/CONSTANTS"
-import { MessageDTO, ProfileDTO } from "@/types";
+import { DirectMessageDTO, MessageDTO, ProfileDTO } from "@/types";
+import { channel } from "diagnostics_channel";
 
 export const useMessages = () => {
     // Hooks
@@ -23,36 +26,67 @@ export const useMessages = () => {
     const [errorMsg, setErrorMsg] = useState<string>('')
     const [newMessage, setNewMessage] = useState<string>('')
     const [editMessage, setEditMessage] = useState<boolean | MessageDTO>(false)
-    const spaceName = router.query.spaceName?.toString()!
-    const channelName = router.query.channelName
+    const spaceName: string = router.query.spaceName ? router.query.spaceName as string : ""
+    const channelName: string = router.query.channelName ? router.query.channelName as string : ""
+    const partnerProfileID: number = router.query.profileID ? parseInt(router.query.profileID.toString()) : 0
 
     // Redux
     const dispatch = useAppDispatch()
     const reduxMessageStream = useTypedSelector(selectMessageStream)
+    const reduxConversationStream = useTypedSelector(selectConversationStream)
 
     /**
      * Misc. Methods
      */
-    const updateMessageFromStream = (updateMessage: MessageDTO) => {
-        if (reduxMessageStream) {
-            const index = reduxMessageStream.findIndex((message: MessageDTO) => message.Message_ID === updateMessage.Message_ID)
-            const newStream = [
-                ...reduxMessageStream.slice(0, index),
-                updateMessage,
-                ...reduxMessageStream.slice(index + 1, reduxMessageStream.length)
-            ]
-            dispatch(setMessageStream({
-                "data": newStream
-            }))
+    const updateMessageFromStream = (updateMessage: any) => {
+        let stream
+        if (spaceName && channelName && reduxMessageStream) {
+            stream = reduxMessageStream
+        } else if (partnerProfileID && reduxConversationStream) {
+            stream = reduxConversationStream
+        }
+
+        if (stream) {
+            let index
+            if (spaceName && channelName) {
+                stream = stream as MessageDTO[]
+                index = stream.findIndex((message: MessageDTO) => message.Message_ID === updateMessage.Message_ID)
+            } else if (partnerProfileID) {
+                stream = stream as DirectMessageDTO[]
+                index = stream.findIndex((dm: DirectMessageDTO) => dm.DM_ID === updateMessage.DM_ID)
+            }
+
+            if (index) {
+                const newStream = [
+                    ...stream.slice(0, index),
+                    updateMessage,
+                    ...stream.slice(index + 1, stream.length)
+                ]
+                if (spaceName && channelName) {
+                    dispatch(setMessageStream({
+                        "data": newStream
+                    }))
+                } else if (partnerProfileID) {
+                    dispatch(setConversationStream({
+                        "data": newStream
+                    }))
+                }
+            }
         }
     }
 
-    const deleteMessageFromStream = (deleteMessage: MessageDTO) => {
-        const newStream = reduxMessageStream?.filter((message: MessageDTO) => message.Message_ID !== deleteMessage.Message_ID)
-
-        dispatch(setMessageStream({
-            "data": newStream
-        }))
+    const deleteMessageFromStream = (deleteMessage: any) => {
+        if (spaceName && channelName) {
+            const newStream = reduxMessageStream?.filter((message: MessageDTO) => message.Message_ID !== deleteMessage.Message_ID)
+            dispatch(setMessageStream({
+                "data": newStream
+            }))
+        } else if (partnerProfileID) {
+            const newStream = reduxConversationStream?.filter((dm: DirectMessageDTO) => dm.DM_ID !== deleteMessage.DM_ID)
+            dispatch(setConversationStream({
+                "data": newStream
+            }))
+        }
     }
 
     /**
@@ -64,7 +98,8 @@ export const useMessages = () => {
         const messageData = {
             Message_Content: newMessage,
             Channel_Name: channelName,
-            Space_Name: spaceName
+            Space_Name: spaceName,
+            Partner_ProfileID: partnerProfileID
         }
 
         // Send to API
@@ -74,20 +109,28 @@ export const useMessages = () => {
 
     // Request first 25 messages in the channel
     const readFirstMessages = async () => {
-        if (channelName && spaceName) {
+        if ((channelName && spaceName) || partnerProfileID) {
             // Variables to send to backend API
             const getMessagesVariables = {
                 "Space_Name": spaceName,
                 "Channel_Name": channelName,
+                "Partner_ProfileID": partnerProfileID,
             }
 
             // Send request to the API for messages
             try {
                 const data = await httpPostWithData("read25Messages", getMessagesVariables)
+
                 if (data.data && data.data.length) {
-                    dispatch(setMessageStream({
-                        "data": [...data.data]
-                    }))
+                    if (channelName && spaceName) {
+                        dispatch(setMessageStream({
+                            "data": [...data.data]
+                        }))
+                    } else if (partnerProfileID) {
+                        dispatch(setConversationStream({
+                            "data": [...data.data]
+                        }))
+                    }
                 }
             } catch (e) {
                 console.log("useMessages readFirstMessages error", e)
@@ -115,16 +158,24 @@ export const useMessages = () => {
 
     // Reset message stream on channel-load
     const updateMessageStream = async (reset: boolean = true, message?: MessageDTO) => {
-        let newMessageStream: MessageDTO[]
-        if (message) {
+        let newMessageStream: any
+        if (message && spaceName && channelName) {
             newMessageStream = [...reduxMessageStream!, message]
+        } else if (message && partnerProfileID) {
+            newMessageStream = [...reduxConversationStream!, message]
         } else if (reset) {
             newMessageStream = []
         }
-
-        dispatch(setMessageStream({
-            "data": newMessageStream!
-        }))
+        
+        if (spaceName && channelName) {
+            dispatch(setMessageStream({
+                "data": newMessageStream!
+            }))
+        } else if (partnerProfileID) {
+            dispatch(setConversationStream({
+                "data": newMessageStream!
+            }))
+        }
     }
 
     // Delete message
@@ -151,6 +202,7 @@ export const useMessages = () => {
 
         // Variables
         reduxMessageStream,
+        reduxConversationStream,
 
         // Methods
         createNewMessage,

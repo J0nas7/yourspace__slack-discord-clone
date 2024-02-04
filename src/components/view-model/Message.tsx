@@ -11,13 +11,14 @@ import clsx from 'clsx'
 import { useAxios, useMessages } from '@/hooks'
 import { Block, Text, Modal, Profile as ProfileCard, ChatInput } from '@/components'
 import styles from '@/core-ui/styles/modules/Message.module.scss'
-import { MessageDTO, ProfileDTO } from '@/types'
+import { DirectMessageDTO, MessageDTO, ProfileDTO } from '@/types'
 import { MemberRole } from "@prisma/client"
 
-type Variant = 'in-channel'
+type Variant = 'in-channel' | 'in-conversation'
 type Props = {
     variant: Variant
-    message: MessageDTO
+    message?: MessageDTO
+    dm?: DirectMessageDTO
     openProfile: number
     setOpenProfile: Function
     className?: string
@@ -27,7 +28,7 @@ type Props = {
 }
 
 const Message = ({
-    variant = 'in-channel', message, openProfile, setOpenProfile, className, currentProfile, membersList, theId
+    variant = 'in-channel', message, dm, openProfile, setOpenProfile, className, currentProfile, membersList, theId
 }: Props) => {
     // Hooks
     const router = useRouter()
@@ -35,39 +36,40 @@ const Message = ({
     const { updateExistingMessage, deleteMessage } = useMessages()
 
     // Internal variables
-    const theMessage: MessageDTO = message
-    const [editMsg, setEditMsg] = useState<string>(theMessage.Message_Content)
+    const theMessage: MessageDTO | boolean = message ? message : false
+    const theDM: DirectMessageDTO | boolean = dm ? dm : false
+    const [editMsg, setEditMsg] = useState<string>('')
     const [editModal, setEditModal] = useState<boolean>(false)
-    const [newContent, setNewContent] = useState<string>(theMessage.Message_Content)
+    const [newContent, setNewContent] = useState<string>('')
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const [theDay, setTheDay] = useState<string>('')
     const [timestamp, setTimestamp] = useState<string>('')
-    const fileType = theMessage.Message_FileUrl?.split(".").pop()
-    const theMember: ProfileDTO = membersList?.filter((member) => member.Profile_ID == theMessage.Message_MemberID).pop()!
+    const [fileType, setFileType] = useState<any>('')
+    const [theMember, setTheMember] = useState<ProfileDTO>()
 
     // Channel priviligies
     const isAdmin = currentProfile.Member_Role === MemberRole.ADMIN
     const isModerator = currentProfile.Member_Role === MemberRole.MODERATOR
-    const isOwner = currentProfile.Profile_ID == theMessage.Message_MemberID
-    const canDelete = !theMessage.deleted && (isAdmin || isModerator || isOwner)
-    const canEdit = !theMessage.deleted && isOwner && !theMessage.Message_FileUrl
-    const isPDF = fileType === "pdf" && theMessage.Message_FileUrl
-    const isImage = !isPDF && theMessage.Message_FileUrl
+    const [isOwner, setIsOwner] = useState<boolean>(false)
+    const [canDelete, setCanDelete] = useState<boolean>(false)
+    const [canEdit, setCanEdit] = useState<boolean>(false)
+    const [isPDF, setIsPDF] = useState<boolean>(false)
+    const [isImage, setIsImage] = useState<boolean>(false)
 
     // Methods
     const editMessage = () => canEdit ? setEditModal(true) : false
 
     const saveChanges = (e?: FormEvent) => {
         e?.preventDefault()
-        if (canEdit) {
+        if (canEdit && theMessage) {
             setEditModal(false)
             updateExistingMessage(theMessage, newContent)
         }
     }
 
-    const setDateAndTime = () => {
+    const setDateAndTime = (createdObj: Date) => {
         const now = new Date()
-        const msgCreated = new Date(theMessage.Message_CreatedAt)
+        const msgCreated = new Date(createdObj)
         let timeAgo = Math.floor((now.getTime() - msgCreated.getTime()) / 1000)
         setTheDay("today at ")
         if (timeAgo > 86399 || msgCreated.getDate() !== now.getDate()) setTheDay("yesterday at ")
@@ -91,11 +93,33 @@ const Message = ({
         setOpenProfile(theMember)
     }
 
+    // Initiate message vs dm
     useEffect(() => {
-        setDateAndTime()
-    }, [theMessage.Message_CreatedAt]) // eslint-disable-line react-hooks/exhaustive-deps
+        if (theMessage) {
+            setEditMsg(theMessage.Message_Content)
+            setNewContent(theMessage.Message_Content)
+            setIsOwner(currentProfile.Profile_ID == theMessage.Message_MemberID)
+            setCanDelete((isAdmin || isModerator || isOwner))
+            setCanEdit(isOwner && !theMessage.Message_FileUrl)
+            setDateAndTime(theMessage.Message_CreatedAt)
 
-    if (variant == "in-channel") {
+            if (theMessage.Message_FileUrl) {
+                setFileType(theMessage.Message_FileUrl.split(".").pop())
+                setIsPDF(fileType === "pdf")
+                setIsImage(!isPDF)
+            }
+            if (membersList) setTheMember(membersList.filter((member) => member.Profile_ID == theMessage.Message_MemberID).pop()!)
+        }
+    }, [theMessage])
+
+    useEffect(() => {
+        if (theDM) {
+            setDateAndTime(theDM.DM_CreatedAt)
+        }
+    }, [theDM])
+
+    if ((variant == "in-channel" && theMessage) ||
+        (variant == "in-conversation" && theDM)) {
         return (
             <Block className={styles["message-item"]}>
                 {theMember && <ProfileCard variant="profile-picture" className="profile-picture" profile={theMember} />}
@@ -112,17 +136,23 @@ const Message = ({
                             )}
                             {theDay && timestamp && (
                                 <Text variant="span" className={styles["message-datestamp"]}>
-                                    {theDay + timestamp} ({theMessage.Message_ID})
+                                    {theDay + timestamp} ({
+                                        theMessage && theMessage.Message_ID || 
+                                        theDM && theDM.DM_ID
+                                    })
                                 </Text>
                             )}
                         </Block>
                         <Block className={"right-side " + styles["message-actions"]}>
                             {canEdit && (<FontAwesomeIcon icon={faPen} className={styles["message-action"]} onClick={() => editMessage()} />)}
-                            {canDelete && (<FontAwesomeIcon icon={faTrashCan} className={styles["message-action"]} onClick={() => deleteMessage(theMessage)} />)}
+                            {canDelete && (<FontAwesomeIcon icon={faTrashCan} className={styles["message-action"]} onClick={() => theMessage ? deleteMessage(theMessage) : undefined} />)}
                         </Block>
                     </Block>
                     <Block className={styles["message-content"]}>
-                        {theMessage.Message_Content}
+                        {
+                            theMessage && theMessage.Message_Content ||
+                            theDM && theDM.DM_Content
+                        }
                     </Block>
                 </Block>
 
@@ -131,7 +161,7 @@ const Message = ({
                         openModal={editModal}
                         closeModal={() => setEditModal(false)}
                         title="Edit the message"
-                        className={styles["edit-message-dialog"] + " m" + theMessage.Message_MemberID}
+                        className={styles["edit-message-dialog"] + " m" + (theMessage && theMessage.Message_MemberID)}
                     >
                         <ChatInput
                             name={""}
@@ -151,7 +181,7 @@ const Message = ({
     }
 
     return (
-        <></>
+        <>tester</>
     )
 }
 

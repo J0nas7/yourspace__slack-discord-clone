@@ -35,7 +35,7 @@ export const useSpaces = () => {
     const routerChannelName = router.query.channelName
     const [status, setStatus] = useState<string>('')
     const [errorMsg, setErrorMsg] = useState<string>('')
-    const [alreadyMember, setAlreadyMember] = useState<boolean>(true)
+    const [alreadyMember, setAlreadyMember] = useState<boolean>() // TODO redux
     const [spacesList, setSpacesList] = useState<SpaceDTO[]>()
     const channelTypes: string[] = ['text', 'audio', 'video']
     const errorCodes: { [key: string]: string } = {
