@@ -8,36 +8,46 @@ import { SocketProvider } from '@/components/providers/socket-provider'
 import { ChannelName } from '@/core-ui'
 import { ProfileDTO } from '@/types'
 import { useAxios } from '@/hooks'
+import styles from '@/core-ui/styles/modules/DirectMessage.module.scss'
 
-export default function directChat() {
+export default function ProfileID() {
   // Hooks
   const router = useRouter()
-  const { httpPostWithData } = useAxios()
+  const { httpPostWithData, httpGetRequest } = useAxios()
 
   // Internal variables
   const partnerID: number = parseInt(router.query.profileID?.toString()!)
   const partnerDisplayName: string = router.query.profileDisplayName?.toString()!
-  const [currentInstantChat, setCurrentInstantChat] = useState<string>('')
+  const [partnerData, setPartnerData] = useState<ProfileDTO>()
+  const [myData, setMyData] = useState<ProfileDTO>()
+  const [conversationList, setConversationList] = useState<ProfileDTO[]>()
 
   // Methods
-  const getCurrentInstantChat = async () => {
-    const getCurrentInstantChatVariables = {
-      "Partner_Profile_ID": partnerID
+  const getMembersOfInstantChat = async () => {
+    const getMembersOfInstantChatVariables = {
+      "Profile_ID": partnerID
     }
     // Send request to the API for user data
-    const chatData = await httpPostWithData("readUser", getCurrentInstantChatVariables)
-    if (chatData.data) setCurrentInstantChat(chatData.data)
+    const partnerData = await httpPostWithData("readUser", getMembersOfInstantChatVariables)
+    const myData = await httpGetRequest("readUser")
+    if (partnerData) setPartnerData(partnerData.data)
+    if (myData) setMyData(myData.data)
   }
 
   useEffect(() => {
-    getCurrentInstantChat()
+    getMembersOfInstantChat()
   }, [partnerID])
 
+  useEffect(() => {
+    console.log("data data", partnerData, myData)
+    if (partnerData && myData) setConversationList([partnerData, myData])
+  }, [partnerData, myData])
+
   return (
-    <Block className="other-pages-wrapper">
-      <Block className="other-pages-inner chat-wrapper">
+    <Block className={"full-pages-wrapper " + styles["chat-wrapper"]}>
+      <Block className={"full-pages-inner"}>
         <SocketProvider>
-          <Block className="chat-header">
+          <Block className={styles["chat-header"]}>
             <Block className="left-side">
               <Heading>
                 {"Chat with: "}
@@ -48,7 +58,9 @@ export default function directChat() {
               <SocketIndicator />
             </Block>
           </Block>
-          <ChannelName instantChat={partnerDisplayName} />
+          <Block className="dm-conversation">
+            {conversationList && <ChannelName instantChat={partnerDisplayName} conversationList={conversationList} />}
+          </Block>
         </SocketProvider>
       </Block>
     </Block>

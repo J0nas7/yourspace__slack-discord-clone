@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCompass, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faCompass, faPlus, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 // Internal
 import { Block, Text } from '@/components'
@@ -35,6 +35,14 @@ export default function Sidepanel() {
         <Block className="clear-both"></Block>
       </Block>
       <Block className="sidepanel-spaces-list">
+        <Link href={"/chat/all"} className="all-dms with-label">
+          <FontAwesomeIcon icon={faEnvelope} className="all-messages" />
+          <Text variant="span" className="space-label">
+            <Text variant="span" className="inner-label">
+              All&nbsp;messages
+            </Text>
+          </Text>
+        </Link>
         {spacesList && spacesList.length ? (
           <>
             {spacesList.map((space: SpaceDTO, i) =>
@@ -52,7 +60,7 @@ export default function Sidepanel() {
           <FontAwesomeIcon icon={faPlus} className="create" />
           <Text variant="span" className="space-label">
             <Text variant="span" className="inner-label">
-              Opret&nbsp;et&nbsp;space
+              Create&nbsp;et&nbsp;space
             </Text>
           </Text>
         </Link>
@@ -60,7 +68,7 @@ export default function Sidepanel() {
           <FontAwesomeIcon icon={faCompass} className="compass" />
           <Text variant="span" className="space-label">
             <Text variant="span" className="inner-label">
-              Udforsk&nbsp;spaces
+              Explore&nbsp;spaces
             </Text>
           </Text>
         </Link>

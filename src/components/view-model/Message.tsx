@@ -115,13 +115,16 @@ const Message = ({
     useEffect(() => {
         if (theDM) {
             setDateAndTime(theDM.DM_CreatedAt)
+            setIsOwner(currentProfile.Profile_ID == theDM.DM_MemberID)
+
+            if (membersList) setTheMember(membersList.filter((member) => member.Profile_ID == theDM.DM_MemberID).pop()!)
         }
     }, [theDM])
 
     if ((variant == "in-channel" && theMessage) ||
         (variant == "in-conversation" && theDM)) {
         return (
-            <Block className={styles["message-item"]}>
+            <Block className={clsx(isOwner && "is-owner", "message-card", styles["message-item"])}>
                 {theMember && <ProfileCard variant="profile-picture" className="profile-picture" profile={theMember} />}
                 <Block className={styles["message-details"]}>
                     <Block className={styles["message-top"]}>
@@ -135,7 +138,7 @@ const Message = ({
                                 />
                             )}
                             {theDay && timestamp && (
-                                <Text variant="span" className={styles["message-datestamp"]}>
+                                <Text variant="span" className={clsx("message-datestamp", styles["message-datestamp"])}>
                                     {theDay + timestamp} ({
                                         theMessage && theMessage.Message_ID || 
                                         theDM && theDM.DM_ID

@@ -204,6 +204,17 @@ body {
             padding-bottom: 15px;
             overflow-y: scroll;
 
+            // Hiding scrollbar for Chrome, Safari and Opera
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            // Hiding scrollbar for IE, Edge and Firefox
+            scrollbar-width: none;
+            // Firefox
+            -ms-overflow-style: none;
+            // IE and Edge
+
             a {
                 display: flex;
                 align-items: center;
@@ -252,9 +263,10 @@ body {
                     display: inline-block;
                 }
 
+                &.all-dms,
                 &.explore-spaces,
                 &.create-space {
-
+                    .all-messages, 
                     .compass,
                     .create {
                         width: 25px;
@@ -576,8 +588,8 @@ body {
         }
     }
 
-    .channel-wrapper, .chat-wrapper {
-        .channel-header, .chat-header {
+    .channel-wrapper {
+        .channel-header {
             width: 100%;
             height: var(--headerH);
             display: flex;
@@ -619,10 +631,6 @@ body {
                     }
                 }
             }
-
-            &.chat-header h1 {
-                margin-bottom: 0;
-            }
         }
 
         .channel-content {
@@ -630,6 +638,26 @@ body {
             padding: 10px;
             height: calc(100vh - var(--headerH));
             position: relative;
+        }
+    }
+
+    .dm-conversation {
+        .message-card {
+            width: 48% !important;
+            clear: both;
+            margin: 1%;
+            margin-bottom: 15px;
+            border-radius: 10px;
+
+            &.is-owner {
+                background-color: #3f89a1;
+                color: white;
+                float: right;
+
+                .message-datestamp {
+                    color: #bbb;
+                }
+            }
         }
     }
 

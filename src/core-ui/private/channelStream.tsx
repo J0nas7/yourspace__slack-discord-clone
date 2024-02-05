@@ -13,11 +13,13 @@ import { useAxios, useSpaces, useMessages } from '@/hooks'
 type MessageStreamProps = {
   channelName?: string,
   instantChat?: string
+  conversationList?: ProfileDTO[]
 }
 
 export const ChannelName = ({
   channelName,
-  instantChat
+  instantChat,
+  conversationList,
 }: MessageStreamProps) => {
   // Hooks
   const { socket } = useSocket()
@@ -41,7 +43,6 @@ export const ChannelName = ({
   }, [channelName, instantChat, spaceName]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    console.log("message", reduxMessageStream, "conv",  reduxConversationStream)
     if (channelName && reduxMessageStream?.length) setRenderStream(reduxMessageStream)
     if (instantChat && reduxConversationStream?.length) setRenderStream(reduxConversationStream)
   }, [reduxMessageStream, reduxConversationStream])
@@ -83,7 +84,7 @@ export const ChannelName = ({
         )}
         <Block className="reverse-messages">
           {currentProfile && renderStream &&
-            ((channelName && membersList) || instantChat) && renderStream.map((message:any, i) =>
+            (channelName || instantChat) && (membersList || conversationList) && renderStream.map((message:any, i) =>
               <MessageCard
                 variant={(channelName ? "in-channel" : "in-conversation")}
                 className={(channelName ? "channel-message" : "conversation-message")}
@@ -92,7 +93,7 @@ export const ChannelName = ({
                 openProfile={openProfileInMessage?.Profile_ID || 0}
                 setOpenProfile={setOpenProfileInMessage}
                 currentProfile={currentProfile}
-                membersList={membersList}
+                membersList={(membersList || conversationList)}
                 key={i}
               />
             )}
